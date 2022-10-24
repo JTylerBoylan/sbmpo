@@ -1,6 +1,4 @@
-1) PlannerResults to CSVMap converter
-2) CSV Writer (output)
-3) MATLAB Plotter
-4) MATLAB CSV Configurer (w checker)
-5) Verify results 
-6) Thermal Model
+1) MATLAB Plotter
+2) MATLAB CSV Configurer (w checker)
+3) Verify results 
+4) Thermal Model

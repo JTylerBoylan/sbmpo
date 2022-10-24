@@ -159,6 +159,7 @@ namespace sbmpo_models {
         time_ms.push_back(results.time_ms);
         exit_code.push_back(results.exit_code);
         path_size.push_back(results.path.size());
+        buffer_size.push_back(results.high);
         num_states.push_back(results.buffer[0].state.size());
         num_controls.push_back(results.buffer[0].control.size());
         for (sbmpo::Index idx : results.path) {
@@ -195,6 +196,8 @@ namespace sbmpo_models {
         csv_out.push_back({"path", path});
         csv_out.push_back({"buffer_size", buffer_size});
         csv_out.push_back({"buffer", buffer});
+        csv_out.push_back({"num_states", num_states});
+        csv_out.push_back({"num_controls", num_controls});
         return csv_out;
     }   
 
