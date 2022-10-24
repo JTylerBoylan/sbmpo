@@ -2,8 +2,7 @@
 #define CSV_PARSER_HPP
 
 #include <sbmpo/types.hpp>
-#include <fstream>
-#include <map>
+#include <iostream>
 #include <fstream>
 #include <stdexcept> // std::runtime_error
 #include <sstream> // std::stringstream
@@ -15,7 +14,7 @@ namespace sbmpo_models {
 
     using namespace sbmpo;
 
-    typedef std::list<std::pair<std::string, std::vector<float>>> CSVMap;
+    typedef std::vector<std::pair<std::string, std::vector<float>>> CSVMap;
 
     // CSV Reading
     CSVMap read_csv(const std::string& filename) {
@@ -56,7 +55,30 @@ namespace sbmpo_models {
     // CSV Writing
     void write_csv(const std::string& filename, const CSVMap& csv_map) {
 
-        // TODO
+        std::ofstream myFile(filename);
+
+        int max_col_length = 0;
+
+        for (int i = 0; i < csv_map.size(); i++) {
+            myFile << csv_map[i].first;
+            if (csv_map[i].second.size() > max_col_length)
+                max_col_length = csv_map[i].second.size();
+            if (i != csv_map.size() - 1) 
+                myFile << ",";
+        }
+        myFile << "\n";
+
+        for (int j = 0; j < max_col_length; j++) {
+            for (int i = 0; i < csv_map.size(); i++) {
+                std::vector<float> list = csv_map[i].second;
+                if (list.size() > j)
+                    myFile << csv_map[i].second[j];
+                if (i != csv_map.size() - 1)
+                    myFile << ",";
+            }
+        }
+
+        myFile.close();
 
     }
 
@@ -72,8 +94,6 @@ namespace sbmpo_models {
     std::vector<PlannerParameters> fromCSVMap(const CSVMap& csv_map) {
         
         const int size = csv_lookup("max_iterations", csv_map).size();
-
-        ROS_INFO("Size: %d", size);
 
         std::vector<PlannerParameters> result(size);
 
@@ -120,13 +140,61 @@ namespace sbmpo_models {
         return result;
     }
 
-    // Convert PlannerResults list to CSVMap
-    CSVMap toCSVMap(const std::vector<PlannerResults>& planner_results) {
+    // Add PlannerResults to CSVMap
+    CSVMap addToCSVMap(const PlannerResults& results, const CSVMap& csv_map) {
 
-        // TODO
+        bool csv_init = csv_map.size() > 0;
 
-        return CSVMap();
-    }
+        std::vector<float> time_ms = !csv_init ? std::vector<float>() : csv_lookup("time_ms", csv_map), 
+                           exit_code = !csv_init ? std::vector<float>() : csv_lookup("exit_code", csv_map),
+                           path_size = !csv_init ? std::vector<float>() : csv_lookup("path_size", csv_map), 
+                           path = !csv_init ? std::vector<float>() : csv_lookup("path", csv_map), 
+                           buffer_size = !csv_init ? std::vector<float>() : csv_lookup("buffer_size", csv_map), 
+                           buffer = !csv_init ? std::vector<float>() : csv_lookup("buffer", csv_map),
+                           num_states = !csv_init ? std::vector<float>() : csv_lookup("num_states", csv_map),
+                           num_controls = !csv_init ? std::vector<float>() : csv_lookup("num_controls", csv_map);
+
+        time_ms.push_back(results.time_ms);
+        exit_code.push_back(results.exit_code);
+        path_size.push_back(results.path.size());
+        num_states.push_back(results.buffer[0].state.size());
+        num_controls.push_back(results.buffer[0].control.size());
+        for (sbmpo::Index idx : results.path) {
+            sbmpo::Node node = results.buffer[idx];
+            path.push_back(node.lineage.id);
+            path.push_back(node.lineage.parent);
+            path.push_back(node.lineage.child);
+            path.push_back(node.lineage.generation);
+            path.push_back(node.heuristic.f);
+            path.push_back(node.heuristic.g);
+            for (float s : node.state)
+                path.push_back(s);
+            for (float c: node.control)
+                path.push_back(c);
+        }
+        for (int idx = 0; idx < results.high; idx++) {
+            sbmpo::Node node = results.buffer[idx];
+            buffer.push_back(node.lineage.id);
+            buffer.push_back(node.lineage.parent);
+            buffer.push_back(node.lineage.child);
+            buffer.push_back(node.lineage.generation);
+            buffer.push_back(node.heuristic.f);
+            buffer.push_back(node.heuristic.g);
+            for (float s : node.state)
+                buffer.push_back(s);
+            for (float c: node.control)
+                buffer.push_back(c);
+        }
+
+        CSVMap csv_out;
+        csv_out.push_back({"time_ms", time_ms});
+        csv_out.push_back({"exit_code", exit_code});
+        csv_out.push_back({"path_size", path_size});
+        csv_out.push_back({"path", path});
+        csv_out.push_back({"buffer_size", buffer_size});
+        csv_out.push_back({"buffer", buffer});
+        return csv_out;
+    }   
 
 }
 

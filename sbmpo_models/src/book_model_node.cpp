@@ -17,7 +17,10 @@ int main (int argc, char ** argv) {
     ros::NodeHandle node("~");
 
     std::string param_csv = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
+    std::string result_csv = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
+
     sbmpo_models::CSVMap csv_map = sbmpo_models::read_csv(param_csv);
+    sbmpo_models::CSVMap csv_results;
 
     if (VERBOSE) print_csv(csv_map);
 
@@ -33,9 +36,17 @@ int main (int argc, char ** argv) {
         sbmpo::run(book_model, *param, results);
         print_results(results);
 
+        csv_results = sbmpo_models::addToCSVMap(results, csv_results);
+
         // Call this to avoid memory leak
         sbmpo::deconstruct(results);
     }
+
+    if (VERBOSE) ROS_INFO("Writing to CSV... (%s)", result_csv.c_str());
+
+    sbmpo_models::write_csv(result_csv, csv_results);
+
+    if (VERBOSE) ROS_INFO("Finished.");
 
     return 0;
 
@@ -74,6 +85,6 @@ void print_results(const sbmpo::PlannerResults &results) {
             n.control[0], n.control[1],
             n.heuristic.g, n.heuristic.f);
     }
-
+    ROS_INFO("--------");
 }
 
