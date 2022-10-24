@@ -76,7 +76,9 @@ namespace sbmpo_models {
                 if (i != csv_map.size() - 1)
                     myFile << ",";
             }
+            myFile << "\n";
         }
+        
 
         myFile.close();
 
