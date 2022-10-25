@@ -21,11 +21,10 @@ namespace sbmpo {
         IndexKeyMap implicit_grid;
 
         // Iteration
-        Index next = 0;
         for (int iter = 0; iter < parameters.max_iterations; iter++) {
 
             // Get best node
-            Node& node = results.buffer[next];
+            Node& node = results.buffer[results.best];
 
             // Goal check
             results.exit_code = GOAL_REACHED;
@@ -113,14 +112,10 @@ namespace sbmpo {
                 break;
 
             // Get new best
-            next = queue.top();
+            results.best = queue.top();
 
             // Remove from queue
             queue.pop();
-
-            // Update best result
-            if (results.buffer[next].heuristic.f < results.buffer[results.best].heuristic.f)
-                results.best = next;
 
             results.exit_code = ITERATION_LIMIT;
         }

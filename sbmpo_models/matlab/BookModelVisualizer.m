@@ -7,7 +7,7 @@ clc
 plans = results("../results/book_model_results.csv");
 
 % Set obstacles
-obstacles = [3.1, 2.5, 0.5;
+obstacles = [3.1, 1.2, 0.5;
              3.5, 3.7, 0.5;
              1.0, 0.5, 0.5];
 
@@ -46,9 +46,9 @@ for p = 1:length(plans)
     % Plot obstacles
     obstacles(:,1:2) = obstacles(:,1:2) - obstacles(:,3);
     obstacles(:,3) = obstacles(:,3) .* 2;
+    pos = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
     for o = 1:length(obstacles)
-        pos = [obstacles(o,1:2) obstacles(o,3) obstacles(o,3)];
-        rectangle(Position=pos, Curvature=[1,1])
+        rectangle(Position=pos(o, :), Curvature=[1,1])
     end
 
 end
