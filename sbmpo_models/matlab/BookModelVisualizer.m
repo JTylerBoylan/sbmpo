@@ -40,8 +40,6 @@ for p = 1:length(plans)
     gol = [goal(1:2) goal(3) goal(3)];
     rectangle(Position=gol, Curvature=[1,1], FaceColor='b')
 
-    saveas(gcf, 'figures/book_model_result.png');
-
     % Plot path
     px = zeros(1, plans.path_size);
     py = zeros(1, plans.path_size);
@@ -62,4 +60,6 @@ for p = 1:length(plans)
     end
     plot (bx, by, 'xk', MarkerSize=2)
 
+
+    saveas(gcf, strcat('figures/book_model_result', int2str(p) ,'.png'));
 end
