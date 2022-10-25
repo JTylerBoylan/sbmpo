@@ -55,7 +55,7 @@ namespace sbmpo_models {
     // CSV Writing
     void write_csv(const std::string& filename, const CSVMap& csv_map) {
 
-        std::ofstream myFile(filename);
+        std::ofstream myFile(filename, std::ofstream::out | std::fstream::trunc);
 
         int max_col_length = 0;
 
@@ -162,19 +162,8 @@ namespace sbmpo_models {
         buffer_size.push_back(results.high);
         num_states.push_back(results.buffer[0].state.size());
         num_controls.push_back(results.buffer[0].control.size());
-        for (sbmpo::Index idx : results.path) {
-            sbmpo::Node node = results.buffer[idx];
-            path.push_back(node.lineage.id);
-            path.push_back(node.lineage.parent);
-            path.push_back(node.lineage.child);
-            path.push_back(node.lineage.generation);
-            path.push_back(node.heuristic.f);
-            path.push_back(node.heuristic.g);
-            for (float s : node.state)
-                path.push_back(s);
-            for (float c: node.control)
-                path.push_back(c);
-        }
+        for (sbmpo::Index idx : results.path)
+            path.push_back(idx);
         for (int idx = 0; idx < results.high; idx++) {
             sbmpo::Node node = results.buffer[idx];
             buffer.push_back(node.lineage.id);

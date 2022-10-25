@@ -22,8 +22,6 @@ int main (int argc, char ** argv) {
     sbmpo_models::CSVMap csv_map = sbmpo_models::read_csv(param_csv);
     sbmpo_models::CSVMap csv_results;
 
-    if (VERBOSE) print_csv(csv_map);
-
     std::vector<sbmpo::PlannerParameters> parameter_list = sbmpo_models::fromCSVMap(csv_map);
 
     sbmpo_models::SBMPOBookModel book_model;
@@ -69,6 +67,16 @@ void print_parameters(const sbmpo::PlannerParameters &params) {
     ROS_INFO("Max generations: %d", params.max_generations);
     ROS_INFO("Sample Time: %.2f", params.sample_time);
     ROS_INFO("Sample Time Increment: %.2f", params.sample_time_increment);
+    ROS_INFO("Branchout:");
+    for (sbmpo::Control ctl : params.branchout) {
+        std::string cstr;
+        for (int c = 0; c < ctl.size(); c++) {
+            cstr += std::to_string(ctl[c]);
+            if (c != ctl.size() - 1)
+                cstr += ", ";
+        }
+        ROS_INFO("  - (%s)", cstr.c_str());
+    }
 }
 
 void print_results(const sbmpo::PlannerResults &results) {

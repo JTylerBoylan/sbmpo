@@ -5,6 +5,8 @@
 #include <sbmpo_models/csv_util.hpp>
 #include <math.h>
 
+#define M_2PI 6.283185307179586
+
 namespace sbmpo_models {
 
     using namespace sbmpo;
@@ -14,7 +16,7 @@ namespace sbmpo_models {
         {6.0, 6.0}  
     };
 
-    #define BODY_RADIUS 0.5f
+    #define BODY_RADIUS 0.0f
 
     #define NUM_OBSTACLES 3
     const float obstacles[3][NUM_OBSTACLES] = {
@@ -30,6 +32,11 @@ namespace sbmpo_models {
             state2[0] = state1[0] + cosf(state1[2]) * control[0] * time_span;
             state2[1] = state1[1] + sinf(state1[2]) * control[0] * time_span;
             state2[2] = state1[2] + control[1] * time_span;
+
+            // Angle wrap
+            if (state2[2] >= M_2PI || state2[2] < 0)
+                state2[2] += state2[2] >= M_2PI ? -M_2PI : M_2PI;
+
             return true;
         }
 

@@ -21,10 +21,11 @@ namespace sbmpo {
         IndexKeyMap implicit_grid;
 
         // Iteration
+        Index next = 0;
         for (int iter = 0; iter < parameters.max_iterations; iter++) {
 
             // Get best node
-            Node& node = results.buffer[results.best];
+            Node& node = results.buffer[next];
 
             // Goal check
             results.exit_code = GOAL_REACHED;
@@ -51,11 +52,17 @@ namespace sbmpo {
                 child.control = parameters.branchout[n];
 
                 // Evaluate using model
+                bool valid = true;
                 for (float t = 0; t < parameters.sample_time; t+= parameters.sample_time_increment) {
                     model.next_state(child.state, child.state, child.control, parameters.sample_time_increment);
-                    if (!model.is_valid(child.state))
+                    if (model.is_valid(child.state))
                         continue;
+                    valid = false;
+                    break;
                 }
+
+                if (!valid)
+                    continue;
 
                 // Calculate heuristics
                 child.heuristic.g += model.cost(child.state, node.state, child.control, parameters.sample_time_increment);
@@ -69,11 +76,13 @@ namespace sbmpo {
                     // If there is a node on implicit grid, compare with the child
                     Node &grid_node = results.buffer[grid_node_index];
 
-                    // If the child node has a lower g score than the existing one, replace the existing node
+                    // If the child node has a lower g score than the existing one, swap with the existing node
                     const float diff = child.heuristic.g - grid_node.heuristic.g;
                     if (diff < 0) {
                         child.lineage.child = grid_node.lineage.child;
+                        Node temp = grid_node;
                         grid_node = child;
+                        child = temp;
                         // Propogate difference in g to child nodes
                         updateSuccessors(grid_node, results.buffer, parameters.branchout.size(), diff, node.lineage.id);
                     }
@@ -104,10 +113,14 @@ namespace sbmpo {
                 break;
 
             // Get new best
-            results.best = queue.top();
+            next = queue.top();
 
             // Remove from queue
             queue.pop();
+
+            // Update best result
+            if (results.buffer[next].heuristic.f < results.buffer[results.best].heuristic.f)
+                results.best = next;
 
             results.exit_code = ITERATION_LIMIT;
         }

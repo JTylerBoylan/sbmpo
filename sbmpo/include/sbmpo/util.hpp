@@ -2,6 +2,7 @@
 #define SBMPO_UTIL_HPP
 
 #include <sbmpo/types.hpp>
+#include <math.h>
 
 namespace sbmpo {
 
@@ -38,7 +39,7 @@ namespace sbmpo {
         const GridResolution &resolution = grid_parameters.resolution;
         for (int i = 0; i < state.size(); i++)
             if (grid_parameters.active[i])
-                key.push_back(int(state[i]/resolution[i]));
+                key.push_back(floor(state[i]/resolution[i]));
         return key;
     }
 
