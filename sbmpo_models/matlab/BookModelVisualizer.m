@@ -26,6 +26,22 @@ for p = 1:length(plans)
     xlabel("X (m)")
     ylabel("Y (m)")
 
+    % Plot obstacles
+    obstacles(:,1:2) = obstacles(:,1:2) - obstacles(:,3);
+    obstacles(:,3) = obstacles(:,3) .* 2;
+    obs = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
+    for o = 1:length(obstacles)
+        rectangle(Position=obs(o, :), Curvature=[1,1], FaceColor='k')
+    end
+
+    % Plot goal
+    goal(1:2) = goal(1:2) - goal(3);
+    goal(3) = goal(3) * 2;
+    gol = [goal(1:2) goal(3) goal(3)];
+    rectangle(Position=gol, Curvature=[1,1], FaceColor='b')
+
+    saveas(gcf, 'figures/book_model_result.png');
+
     % Plot path
     px = zeros(1, plans.path_size);
     py = zeros(1, plans.path_size);
@@ -34,7 +50,7 @@ for p = 1:length(plans)
         px(n) = node.state(1);
         py(n) = node.state(2);
     end
-    plot (px, py, '-b', LineWidth=3)
+    plot (px, py, '-g', LineWidth=3)
 
     % Plot all nodes
     bx = zeros(1, plans.buffer_size);
@@ -45,21 +61,5 @@ for p = 1:length(plans)
         by(b) = node.state(2);
     end
     plot (bx, by, 'xk', MarkerSize=2)
-
-    % Plot obstacles
-    obstacles(:,1:2) = obstacles(:,1:2) - obstacles(:,3);
-    obstacles(:,3) = obstacles(:,3) .* 2;
-    obs = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
-    for o = 1:length(obstacles)
-        rectangle(Position=obs(o, :), Curvature=[1,1], FaceColor='k', EdgeColor='r')
-    end
-
-    % Plot goal
-    goal(1:2) = goal(1:2) - goal(3);
-    goal(3) = goal(3) * 2;
-    gol = [goal(1:2) goal(3) goal(3)];
-    rectangle(Position=gol, Curvature=[1,1], FaceColor='g', EdgeColor='k')
-
-    saveas(gcf, 'figures/book_model_result.png');
 
 end
