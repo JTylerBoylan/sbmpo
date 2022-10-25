@@ -11,6 +11,9 @@ obstacles = [3.1, 1.2, 0.5;
              3.5, 3.7, 0.5;
              1.0, 0.5, 0.5];
 
+% Set goal
+goal = [5, 5, 0.5];
+
 % Convert path states to points and plot
 for p = 1:length(plans)
 
@@ -46,10 +49,16 @@ for p = 1:length(plans)
     % Plot obstacles
     obstacles(:,1:2) = obstacles(:,1:2) - obstacles(:,3);
     obstacles(:,3) = obstacles(:,3) .* 2;
-    pos = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
+    obs = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
     for o = 1:length(obstacles)
-        rectangle(Position=pos(o, :), Curvature=[1,1])
+        rectangle(Position=obs(o, :), Curvature=[1,1], FaceColor='k', EdgeColor='r')
     end
+
+    % Plot goal
+    goal(1:2) = goal(1:2) - goal(3);
+    goal(3) = goal(3) * 2;
+    gol = [goal(1:2) goal(3) goal(3)];
+    rectangle(Position=gol, Curvature=[1,1], FaceColor='g', EdgeColor='k')
 
     saveas(gcf, 'figures/book_model_result.png');
 
