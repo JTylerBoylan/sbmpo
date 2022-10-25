@@ -51,4 +51,6 @@ for p = 1:length(plans)
         rectangle(Position=pos(o, :), Curvature=[1,1])
     end
 
+    saveas(gcf, 'figures/book_model_result.png');
+
 end
