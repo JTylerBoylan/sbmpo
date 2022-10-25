@@ -1,4 +1,3 @@
-1) MATLAB Plotter
-2) MATLAB CSV Configurer (w checker)
-3) Verify results 
-4) Thermal Model
+1) MATLAB CSV Configurer (w checker)
+2) Verify results 
+3) Thermal Model
