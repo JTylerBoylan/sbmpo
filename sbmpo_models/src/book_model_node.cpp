@@ -50,15 +50,45 @@ void print_parameters(const sbmpo::PlannerParameters &params) {
     ROS_INFO("Max generations: %d", params.max_generations);
     ROS_INFO("Sample Time: %.2f", params.sample_time);
     ROS_INFO("Sample Time Increment: %.2f", params.sample_time_increment);
+    ROS_INFO("Goal Threshold: %.2f", params.conditions.goal_threshold);
+
+    std::string st;
+    for (float f : params.conditions.initial_state)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Initial State: %s", st.c_str());
+    st.clear();
+
+    for (float f : params.conditions.initial_control)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Initial Control: %s", st.c_str());
+    st.clear();
+
+    for (float f : params.conditions.goal_state)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Goal State: %s", st.c_str());
+    st.clear();
+
+    for (float f : params.grid_parameters.active)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Grid Active: %s", st.c_str());
+    st.clear();
+
+    for (float f : params.grid_parameters.resolution)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Grid Resolution: %s", st.c_str());
+    st.clear();
+
+    for (float f : params.grid_parameters.size)
+        st += std::to_string(f) + " ";
+    ROS_INFO("Grid Size: %s", st.c_str());
+    st.clear();
+
     ROS_INFO("Branchout:");
-    for (sbmpo::Control ctl : params.branchout) {
-        std::string cstr;
-        for (int c = 0; c < ctl.size(); c++) {
-            cstr += std::to_string(ctl[c]);
-            if (c != ctl.size() - 1)
-                cstr += ", ";
-        }
-        ROS_INFO("  - (%s)", cstr.c_str());
+    for (sbmpo::Control control : params.branchout) {
+        for (float f : control)
+            st += std::to_string(f) + " ";
+        ROS_INFO("  - %s", st.c_str());
+        st.clear();
     }
 }
 
