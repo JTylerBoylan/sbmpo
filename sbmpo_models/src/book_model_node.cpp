@@ -5,8 +5,6 @@
 
 #define VERBOSE true
 
-void print_csv(const sbmpo_models::CSVMap &csv_map);
-
 void print_parameters(const sbmpo::PlannerParameters &params);
 
 void print_results(const sbmpo::PlannerResults &results);
@@ -16,13 +14,11 @@ int main (int argc, char ** argv) {
     ros::init(argc, argv, "planner_node");
     ros::NodeHandle node("~");
 
-    std::string param_csv = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
-    std::string result_csv = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
+    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
+    std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
 
-    sbmpo_models::CSVMap csv_map = sbmpo_models::read_csv(param_csv);
-    sbmpo_models::CSVMap csv_results;
-
-    std::vector<sbmpo::PlannerParameters> parameter_list = sbmpo_models::fromCSVMap(csv_map);
+    std::vector<sbmpo::PlannerParameters> parameter_list;
+    sbmpo_models::fromConfig(param_config, parameter_list);
 
     sbmpo_models::SBMPOBookModel book_model;
 
@@ -34,30 +30,17 @@ int main (int argc, char ** argv) {
         sbmpo::run(book_model, *param, results);
         print_results(results);
 
-        csv_results = sbmpo_models::addToCSVMap(results, csv_results);
+        if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
+        sbmpo_models::addToData(result_datafile, results);
 
         // Call this to avoid memory leak
         sbmpo::deconstruct(results);
     }
 
-    if (VERBOSE) ROS_INFO("Writing to CSV... (%s)", result_csv.c_str());
-
-    sbmpo_models::write_csv(result_csv, csv_results);
-
     if (VERBOSE) ROS_INFO("Finished.");
 
     return 0;
 
-}
-
-void print_csv(const sbmpo_models::CSVMap &csv_map) {
-    ROS_INFO("---- Loaded CSV ----");
-    for (auto pair = csv_map.begin(); pair != csv_map.end(); ++pair) {
-        ROS_INFO("%s:", pair->first.c_str());
-        for (float f : pair->second) {
-            ROS_INFO("  - %.2f", f);
-        }
-    }
 }
 
 int seq = 0;
