@@ -17,6 +17,8 @@ int main (int argc, char ** argv) {
     std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
     std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
 
+    sbmpo_models::clearFile(result_datafile);
+
     std::vector<sbmpo::PlannerParameters> parameter_list;
     sbmpo_models::fromConfig(param_config, parameter_list);
 

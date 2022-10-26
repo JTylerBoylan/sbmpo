@@ -95,6 +95,11 @@ namespace sbmpo_models {
         myFile.close();
     }
 
+    void clearFile(const std::string &filename) {
+        std::ofstream myFile(filename, std::ofstream::out | std::fstream::trunc);
+        myFile.close();
+    }
+
     // Add to results file
     void addToData(const std::string& filename, const PlannerResults &results) {
 
@@ -119,30 +124,31 @@ namespace sbmpo_models {
         myFile << results.high;
         myFile << ",";
 
-        for (Node *node = &(results.buffer[0]); node != &(results.buffer[results.high]); ++node) {
+        for (int b = 0; b < results.high; b++) {
 
-            myFile << node->lineage.id;
-            myFile << ",";
-            myFile << node->lineage.parent;
-            myFile << ",";
-            myFile << node->lineage.child;
-            myFile << ",";
-            myFile << node->lineage.generation;
-            myFile << ",";
+            const sbmpo::Node& node = results.buffer[b];
 
-            myFile << node->heuristic.f;
+            myFile << node.lineage.id;
             myFile << ",";
-            myFile << node->heuristic.g;
+            myFile << node.lineage.parent;
+            myFile << ",";
+            myFile << node.lineage.child;
+            myFile << ",";
+            myFile << node.lineage.generation;
             myFile << ",";
 
-            for (float s : node->state) {
-                myFile << s;
+            myFile << node.heuristic.f;
+            myFile << ",";
+            myFile << node.heuristic.g;
+
+            for (float s : node.state) {
                 myFile << ",";
+                myFile << s;
             }
 
-            for (float c : node->control) {
-                myFile << c;
+            for (int c = 0; c < node.control.size(); c++) {
                 myFile << ",";
+                myFile << node.control[c];
             }
         }
         
