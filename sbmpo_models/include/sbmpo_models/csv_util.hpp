@@ -78,7 +78,7 @@ namespace sbmpo_models {
 
             std::getline(ss, value, ',');
             int num_branchouts = std::stof(value);
-            
+
             for (int b = 0; b < num_branchouts; b++) {
                 Control control;
                 for (int c = 0; c < num_controls; c++) {
@@ -146,6 +146,8 @@ namespace sbmpo_models {
             }
         }
         
+        myFile << '\n';
+
         myFile.close();
     }  
 
