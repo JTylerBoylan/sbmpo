@@ -1,10 +1,4 @@
 %% SBMPO Results Visualizer
-clear
-close all
-clc
-
-% Get results from csv
-plans = results("../results/book_model_results.csv");
 
 % Set obstacles
 obstacles = [3.1, 1.2, 0.5;
@@ -27,38 +21,34 @@ for p = 1:length(plans)
     ylabel("Y (m)")
 
     % Plot obstacles
-    obstacles(:,1:2) = obstacles(:,1:2) - obstacles(:,3);
-    obstacles(:,3) = obstacles(:,3) .* 2;
-    obs = [obstacles(:,1:2) obstacles(:,3) obstacles(:,3)];
+    obs = [obstacles(:,1:2)-obstacles(:,3) obstacles(:,3).*2 obstacles(:,3).*2];
     for o = 1:length(obstacles)
-        rectangle(Position=obs(o, :), Curvature=[1,1], FaceColor='k')
+        rectangle('Position',obs(o, :), 'Curvature', [1,1], 'FaceColor', 'k')
     end
 
     % Plot goal
-    goal(1:2) = goal(1:2) - goal(3);
-    goal(3) = goal(3) * 2;
-    gol = [goal(1:2) goal(3) goal(3)];
-    rectangle(Position=gol, Curvature=[1,1], FaceColor='b')
+    gol = [goal(1:2)-goal(3) goal(3)*2 goal(3)*2];
+    rectangle('Position', gol, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot path
-    px = zeros(1, plans.path_size);
-    py = zeros(1, plans.path_size);
-    for n = 1:plans.path_size
-        node = plans.nodes(plans.path(n) + 1);
+    px = zeros(1, plans(p).path_size);
+    py = zeros(1, plans(p).path_size);
+    for n = 1:plans(p).path_size
+        node = plans(p).nodes(plans(p).path(n) + 1);
         px(n) = node.state(1);
         py(n) = node.state(2);
     end
-    plot (px, py, '-g', LineWidth=3)
+    plot (px, py, '-g', 'LineWidth', 3)
 
     % Plot all nodes
-    bx = zeros(1, plans.buffer_size);
-    by = zeros(1, plans.buffer_size);
-    for b = 1:plans.buffer_size
-        node = plans.nodes(b);
+    bx = zeros(1, plans(p).buffer_size);
+    by = zeros(1, plans(p).buffer_size);
+    for b = 1:plans(p).buffer_size
+        node = plans(p).nodes(b);
         bx(b) = node.state(1);
         by(b) = node.state(2);
     end
-    plot (bx, by, 'xk', MarkerSize=2)
+    plot (bx, by, 'xk', 'MarkerSize', 2)
 
 
     saveas(gcf, strcat('figures/book_model_result', int2str(p) ,'.png'));
