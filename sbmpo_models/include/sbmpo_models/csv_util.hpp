@@ -108,26 +108,26 @@ namespace sbmpo_models {
         myFile << results.time_ms;
         myFile << ",";
         myFile << results.exit_code;
-        myFile << ",";
 
-        myFile << results.path.size();
         myFile << ",";
+        myFile << results.path.size();
         for (Index idx : results.path) {
-            myFile << idx;
             myFile << ",";
+            myFile << idx;
         }
 
+        myFile << ",";
         myFile << results.buffer[0].state.size();
         myFile << ",";
         myFile << results.buffer[0].control.size();
         myFile << ",";
         myFile << results.high;
-        myFile << ",";
 
         for (int b = 0; b < results.high; b++) {
 
             const sbmpo::Node& node = results.buffer[b];
 
+            myFile << ",";
             myFile << node.lineage.id;
             myFile << ",";
             myFile << node.lineage.parent;
@@ -150,6 +150,7 @@ namespace sbmpo_models {
                 myFile << ",";
                 myFile << node.control[c];
             }
+
         }
         
         myFile << '\n';
