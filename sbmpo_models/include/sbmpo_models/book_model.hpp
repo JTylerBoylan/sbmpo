@@ -16,7 +16,7 @@ namespace sbmpo_models {
         {6.0, 6.0}  
     };
 
-    #define BODY_RADIUS 0.0f
+    #define BODY_RADIUS 0.3f
 
     #define NUM_OBSTACLES 3
     const float obstacles[3][NUM_OBSTACLES] = {

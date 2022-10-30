@@ -6,7 +6,7 @@ obstacles = [3.1, 1.2, 0.5;
              1.0, 0.5, 0.5];
 
 % Set goal
-goal = [5, 5, 0.5];
+goal = [5, 5, 0.3];
 
 % Convert path states to points and plot
 for p = 1:length(plans)

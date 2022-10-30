@@ -6,7 +6,9 @@ plans = struct;
 for p = 1:size(csv_matrix, 1)
    plan = csv_matrix(p,:);
    
-   i = 0;
+   save_type = plan(1);
+
+   i = 1;
    plans(p).time_ms = plan(i + 1);
    plans(p).exit_code = plan(i + 2);
    plans(p).path_size = plan(i + 3);

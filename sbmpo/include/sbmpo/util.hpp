@@ -43,26 +43,13 @@ namespace sbmpo {
         return key;
     }
 
-    // Convert implicit grid key to buffer index
-    Key toGridIndex(const GridKey &key, const ImplicitGridParameters grid_parameters) {
-        Key index = 0;
-        for (int i = 0; i < key.size(); i++) {
-            int step = 1;
-            for (int j = 0; j < i; j++)
-                step *= grid_parameters.size[j];
-            index += key[i]*step;
-        }
-        return index;
-    }
-
     // Convert node to grid index directly
     Index& toNodeIndex(const Node &node, const ImplicitGridParameters grid_parameters, IndexKeyMap &map) {
         const GridKey key = toGridKey(node.state, grid_parameters);
-        const Key index = toGridIndex(key, grid_parameters);
-        if (map.count(index))
-            return map[index];
-        map[index] = INVALID_INDEX;
-        return map[index];
+        if (map.count(key))
+            return map[key];
+        map[key] = INVALID_INDEX;
+        return map[key];
     }
 
     // Update successors

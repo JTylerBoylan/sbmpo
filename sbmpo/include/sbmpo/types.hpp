@@ -5,7 +5,7 @@
 #include <queue>
 #include <functional>
 #include <algorithm>
-#include <unordered_map>
+#include <map>
 
 namespace sbmpo {
 
@@ -53,7 +53,7 @@ namespace sbmpo {
     typedef std::vector<int> GridSize;
 
     typedef std::vector<int> GridKey;
-    typedef std::unordered_map<Key, Index> IndexKeyMap;
+    typedef std::map<GridKey, Index> IndexKeyMap;
 
     /*
         Implicit Grid Structs

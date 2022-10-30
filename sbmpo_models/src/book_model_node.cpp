@@ -14,7 +14,7 @@ int main (int argc, char ** argv) {
     ros::init(argc, argv, "planner_node");
     ros::NodeHandle node("~");
 
-    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
+    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model_verify.csv";
     std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
 
     sbmpo_models::clearFile(result_datafile);
