@@ -39,7 +39,7 @@ namespace sbmpo {
         Control control;
     };
 
-    typedef Node* NodeBuffer;
+    typedef std::vector<Node> NodeBuffer;
     typedef std::priority_queue<Index, std::vector<Index>, const std::function<bool (Index,Index)>> NodeQueue;
 
     /*

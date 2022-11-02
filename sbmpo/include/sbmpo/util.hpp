@@ -21,7 +21,7 @@ namespace sbmpo {
     // Initializes planner
     void initialize(PlannerResults &results, const PlannerParameters &parameters) {
         const int size = parameters.max_iterations*parameters.branchout.size() + 1;
-        results.buffer = new Node[size];
+        results.buffer = NodeBuffer(size);
         results.best = 0;
         results.high = 0;
         results.exit_code = NONE;
@@ -29,9 +29,7 @@ namespace sbmpo {
     }
 
     // Deconstruct planner buffer
-    void deconstruct(PlannerResults &results) {
-        delete[] results.buffer;
-    }
+    void deconstruct(PlannerResults &results) {}
 
     // Convert state position to implicit grid key
     GridKey toGridKey(const State &state, const ImplicitGridParameters grid_parameters) {

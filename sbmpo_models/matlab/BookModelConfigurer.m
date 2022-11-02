@@ -4,7 +4,7 @@ clear
 close all
 clc
 
-max_iter = 10000;
+max_iter = 3000;
 max_gen = 100;
 samp_time = 0.3;
 samp_del_time = 0.1;
