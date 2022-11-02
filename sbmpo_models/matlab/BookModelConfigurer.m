@@ -4,7 +4,7 @@ clear
 close all
 clc
 
-max_iter = 200000;
+max_iter = 10000;
 max_gen = 100;
 samp_time = 0.3;
 samp_del_time = 0.1;
@@ -19,11 +19,11 @@ num_active = 2;
 grid_res = [0.05 0.05];
 grid_size = [100 100];
 
-num_branchout = 27;
-branchouts = zeros(1, num_branchout*num_controls);
-
 rot = [-0.785398 0 0.785398 -0.392699 0.392699 -0.196350 0.196350 -0.589049 0.589049];
 vel = [0.1 0.3 0.5];
+
+num_branchout = length(rot) * length(vel);
+branchouts = zeros(1, num_branchout*num_controls);
 
 for v = 1:length(vel)
     for u = 1:length(rot)

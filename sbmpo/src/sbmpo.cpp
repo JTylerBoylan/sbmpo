@@ -118,6 +118,7 @@ namespace sbmpo {
             queue.pop();
 
             results.exit_code = ITERATION_LIMIT;
+
         }
 
         // Generate best path
