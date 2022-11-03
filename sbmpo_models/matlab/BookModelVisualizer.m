@@ -30,16 +30,6 @@ for p = 1:length(plans)
     gol = [goal(1:2)-goal(3) goal(3)*2 goal(3)*2];
     rectangle('Position', gol, 'Curvature', [1,1], 'FaceColor', 'b')
 
-    % Plot path
-    px = zeros(1, plans(p).path_size);
-    py = zeros(1, plans(p).path_size);
-    for n = 1:plans(p).path_size
-        node = plans(p).nodes(plans(p).path(n) + 1);
-        px(n) = node.state(1);
-        py(n) = node.state(2);
-    end
-    plot (px, py, '-g', 'LineWidth', 3)
-
     % Plot all nodes
     bx = zeros(1, plans(p).buffer_size);
     by = zeros(1, plans(p).buffer_size);
@@ -50,6 +40,15 @@ for p = 1:length(plans)
     end
     plot (bx, by, 'xk', 'MarkerSize', 2)
 
+    % Plot path
+    px = zeros(1, plans(p).path_size);
+    py = zeros(1, plans(p).path_size);
+    for n = 1:plans(p).path_size
+        node = plans(p).nodes(plans(p).path(n) + 1);
+        px(n) = node.state(1);
+        py(n) = node.state(2);
+    end
+    plot (px, py, '-g', 'LineWidth', 3)
 
     saveas(gcf, strcat('figures/book_model_result', int2str(p) ,'.png'));
 end

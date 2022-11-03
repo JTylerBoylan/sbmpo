@@ -4,7 +4,7 @@ clear
 close all
 clc
 
-max_iter = 3000;
+max_iter = 10000;
 max_gen = 100;
 samp_time = 0.3;
 samp_del_time = 0.1;
@@ -38,4 +38,4 @@ conf = [max_iter max_gen samp_time samp_del_time goal_thres ...
         num_active grid_res grid_size ...
         num_branchout branchouts];
     
- writematrix(conf, 'book_model_verify.csv', 'Delimiter', ',')
+ writematrix(conf, '../config/book_model_verify.csv', 'Delimiter', ',')

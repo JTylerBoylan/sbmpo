@@ -1,10 +1,9 @@
 #include <sbmpo/sbmpo.hpp>
 
+#include <ros/ros.h>
 namespace sbmpo {
 
     void run(Model& model, const PlannerParameters &parameters, PlannerResults& results) {
-
-        std::clock_t cstart = std::clock();
 
         // Initialize planner
         initialize(results, parameters);
@@ -21,6 +20,7 @@ namespace sbmpo {
         IndexKeyMap implicit_grid;
 
         // Iteration
+        std::clock_t cstart = std::clock();
         for (int iter = 0; iter < parameters.max_iterations; iter++) {
 
             // Get best node
@@ -64,7 +64,7 @@ namespace sbmpo {
                     continue;
 
                 // Calculate heuristics
-                child.heuristic.g += model.cost(child.state, node.state, child.control, parameters.sample_time_increment);
+                child.heuristic.g += model.cost(child.state, node.state, child.control, parameters.sample_time);
                 child.heuristic.f = child.heuristic.g + model.heuristic(child.state, parameters.conditions.goal_state);
 
                 // Get location on implicit grid
@@ -77,7 +77,7 @@ namespace sbmpo {
 
                     // If the child node has a lower g score than the existing one, swap with the existing node
                     const float diff = child.heuristic.g - grid_node.heuristic.g;
-                    if (diff < 0) {
+                    if (diff < -0.000001) {
                         child.lineage.child = grid_node.lineage.child;
                         Node temp = grid_node;
                         grid_node = child;

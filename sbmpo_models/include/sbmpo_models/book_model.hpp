@@ -16,7 +16,7 @@ namespace sbmpo_models {
         {6.0, 6.0}  
     };
 
-    #define BODY_RADIUS 0.3f
+    #define BODY_RADIUS 0.20f
 
     #define NUM_OBSTACLES 3
     const float obstacles[3][NUM_OBSTACLES] = {
@@ -44,7 +44,7 @@ namespace sbmpo_models {
 
         // Get the cost of a control
         float cost(const State& state2, const State &state1, const Control& control, const float time_span) {
-            return abs(control[0]) * time_span;
+            return control[0]*time_span;
         }
 
         // Get the heuristic of a state
