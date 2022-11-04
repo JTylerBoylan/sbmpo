@@ -50,7 +50,19 @@ namespace sbmpo {
         };
     };
 
-    typedef std::priority_queue<int, std::set<int>, std::function<bool(int,int)>> Queue;
+    class Queue : public std::priority_queue<int, std::set<int>, std::function<bool(int,int)>> {
+
+        public:
+
+            Queue(std::function<bool(int,int)> comp_func) {
+                comp = comp_func;
+            }
+
+            void remove(int idx) {
+                if (c.find(idx) != c.end())
+                    c.erase(idx);
+            }
+    };
     
     struct ImplicitGrid {
 

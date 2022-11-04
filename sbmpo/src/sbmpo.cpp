@@ -82,7 +82,8 @@ namespace sbmpo {
     } 
 
     std::vector<int> SBMPO::path() {
-
+        std::vector<int> path;
+        return path;
     }
 
     const void SBMPO::generate_children(Vertex &vertex, Model &model) {
@@ -132,8 +133,7 @@ namespace sbmpo {
                 vertex.rhs = std::min(vertex.rhs, graph[pred].g + 
                     model.cost(vertex.state, graph[pred].state, vertex.control, parameters.sample_time));
         }
-        if (queue.c.find(vertex.idx))
-            queue.c.erase(vertex.idx);
+        queue.remove(vertex.idx);
         if (vertex.g != vertex.rhs) {
             vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, graph[1].state);
             queue.push(vertex.idx);
