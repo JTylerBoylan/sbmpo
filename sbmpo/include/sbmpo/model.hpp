@@ -1,7 +1,7 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include <sbmpo/util.hpp>
+#include <sbmpo/types.hpp>
 
 namespace sbmpo {
 

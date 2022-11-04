@@ -1,133 +1,143 @@
 #include <sbmpo/sbmpo.hpp>
 
-#include <ros/ros.h>
 namespace sbmpo {
 
-    void run(Model& model, const PlannerParameters &parameters, PlannerResults& results) {
+    void SBMPO::initialize(const Parameters &params) {
 
-        // Initialize planner
-        initialize(results, parameters);
+        // Copy parameters
+        parameters = params;
 
-        // Set comparator function
-        const std::function<bool(Index,Index)> comp = [&](Index a, Index b) {
-            return results.buffer[a].heuristic.f > results.buffer[b].heuristic.f;
-        };
+        // Create new graph, queue, and grid
+        graph = Graph();
+        queue = Queue(queue_compare);
+        grid = ImplicitGrid();
 
-        // Initialize queue
-        NodeQueue queue(comp);
+        // Copy starting vertex values
+        graph[0].state = params.initial_state;
+        graph[0].control = params.initial_control;
+        graph[0].g = INFINITY;
+        graph[0].rhs = 0;
 
-        // Initialize implicit grid
-        IndexKeyMap implicit_grid;
+        // Copy goal vertex values
+        graph[1].state = params.goal_state;
+        graph[1].g = INFINITY;
+        graph[1].rhs = INFINITY;
 
-        // Iteration
-        std::clock_t cstart = std::clock();
-        for (int iter = 0; iter < parameters.max_iterations; iter++) {
+        // Initialize grid
+        grid.states = params.grid_states;
+        grid.resolution = params.grid_resolution;
 
-            // Get best node
-            Node& node = results.buffer[results.best];
+        // Insert start node in implicit grid
+        grid.insert(params.initial_state, 0);
 
-            // Goal check
-            results.exit_code = GOAL_REACHED;
-            if (model.is_goal(node.state, parameters.conditions.goal_state, parameters.conditions.goal_threshold))
-                break;
+        // Add start node to priority queue
+        queue.push(0);
+    }
 
-            // Generation check
-            results.exit_code = GENERATION_LIMIT;
-            if (node.lineage.generation >= parameters.max_generations)
-                break;
+    int SBMPO::run(Model &model, const Parameters &params) {
 
-            // Sampling
-            for (int n = 0; n < parameters.branchout.size(); n++) {
+        // Initialize
+        initialize(params);
 
-                // Initialize new node
-                const Index idx = results.high + n + 1;
-                Node& child = results.buffer[idx];
-                child.lineage.id = idx;
-                child.lineage.parent = node.lineage.id;
-                child.lineage.child = INVALID_INDEX;
-                child.lineage.generation = node.lineage.generation + 1;
-                child.heuristic.g = node.heuristic.g;
-                child.state = node.state;
-                child.control = parameters.branchout[n];
+        // Calculate heuristic for start node
+        graph[0].f = model.heuristic(graph[0].state, graph[1].state);
 
-                // Evaluate using model
-                bool valid = true;
-                for (float t = 0; t < parameters.sample_time; t+= parameters.sample_time_increment) {
-                    model.next_state(child.state, child.state, child.control, parameters.sample_time_increment);
-                    if (model.is_valid(child.state))
-                        continue;
-                    valid = false;
+        // Begin iterations
+        for (int i = 0; i < parameters.max_iterations; i++) {
+
+            // Check if queue is empty
+            if (queue.empty())
+                return NO_NODES_LEFT;
+
+            // Get next best vertex
+            best = queue.top();
+            Vertex& v = graph[best];
+
+            // Check if we are at the goal
+            if (model.is_goal(v.state, graph[1].state, parameters.goal_threshold))
+                return GOAL_REACHED;
+
+            // Check if max generations is reached
+            if (v.gen > parameters.max_generations)
+                return GENERATION_LIMIT;
+
+            // Generate children
+            generate_children(v, model);
+
+            if (v.g > v.rhs) {
+                v.g = v.rhs;
+                for (int suc : v.successors)
+                    update_vertex(graph[suc], model);
+            } else {
+                v.g = INFINITY;
+                update_vertex(v, model);
+                for (int suc : v.successors)
+                    update_vertex(graph[suc], model);
+            }
+
+            // Next iteration
+        }
+
+        return ITERATION_LIMIT;
+    } 
+
+    std::vector<int> SBMPO::path() {
+
+    }
+
+    const void SBMPO::generate_children(Vertex &vertex, Model &model) {
+
+        for (Control control : parameters.samples) {
+            
+            // Create new vertex
+            Vertex child = vertex;
+            child.control = control;
+
+            // Evaluate vertex in model
+            bool invalid = false;
+            for (int t = 0; t < parameters.sample_time; t+= parameters.sample_time_increment) {
+                model.next_state(child.state, child.state, child.control, parameters.sample_time_increment);
+                if (!model.is_valid(child.state)) {
+                    invalid = true;
                     break;
-                }
-
-                if (!valid)
-                    continue;
-
-                // Calculate heuristics
-                child.heuristic.g += model.cost(child.state, node.state, child.control, parameters.sample_time);
-                child.heuristic.f = child.heuristic.g + model.heuristic(child.state, parameters.conditions.goal_state);
-
-                // Get location on implicit grid
-                Index& grid_node_index = toNodeIndex(child, parameters.grid_parameters, implicit_grid);
-
-                if (grid_node_index != INVALID_INDEX) {
-
-                    // If there is a node on implicit grid, compare with the child
-                    Node &grid_node = results.buffer[grid_node_index];
-
-                    // If the child node has a lower g score than the existing one, swap with the existing node
-                    const float diff = child.heuristic.g - grid_node.heuristic.g;
-                    if (diff < -0.000001) {
-                        child.lineage.child = grid_node.lineage.child;
-                        Node temp = grid_node;
-                        grid_node = child;
-                        child = temp;
-                        // Propogate difference in g to child nodes
-                        updateSuccessors(grid_node, results.buffer, parameters.branchout.size(), diff, node.lineage.id);
-                    }
-
-                    // No need to add node to priority queue because the existing node was already added and
-                    // the samples would be identical given they are the same
-
-                } else {
-
-                    // If there is no node on implicit grid, add child node
-                    grid_node_index = child.lineage.id;
-
-                    // Add child to queue
-                    queue.push(child.lineage.id);
-
                 }
             }
 
-            // Update child
-            node.lineage.child = results.high + 1;
+            // Skip if not valid state
+            if (invalid)
+                continue;
 
-            // Update high
-            results.high += parameters.branchout.size();
+            // Get vertex from grid
+            int u = grid.find(child.state);
 
-            // Check if queue is empty
-            results.exit_code = NO_NODES_LEFT;
-            if (queue.empty())
-                break;
-
-            // Get new best
-            results.best = queue.top();
-
-            // Remove from queue
-            queue.pop();
-
-            results.exit_code = ITERATION_LIMIT;
-
+            if (u == INVALID_INDEX) {
+            // If grid space is empty, insert child state
+                child.idx = graph.size();
+                child.rhs = INFINITY;
+                child.g = INFINITY;
+                graph.insert(child);
+                graph.add_edge(vertex, child);
+                grid.insert(child.state, child.idx);
+            } else {
+            // Else add edge from vertex to graph
+                graph.add_edge(vertex, graph[u]);
+            }
         }
+    }
 
-        // Generate best path
-        PlannerPath &path = results.path;
-        for (int i = results.best; i != -1; i = results.buffer[i].lineage.parent)
-            path.push_back(i);
-        std::reverse(path.begin(), path.end());
-
-        results.time_ms = (std::clock() - cstart) / double(CLOCKS_PER_SEC) * 1000.0;
+    const void SBMPO::update_vertex(Vertex &vertex, Model &model) {
+        if (vertex.idx != 0) {
+            vertex.rhs = INFINITY;
+            for (int pred : vertex.predecessors)
+                vertex.rhs = std::min(vertex.rhs, graph[pred].g + 
+                    model.cost(vertex.state, graph[pred].state, vertex.control, parameters.sample_time));
+        }
+        if (queue.c.find(vertex.idx))
+            queue.c.erase(vertex.idx);
+        if (vertex.g != vertex.rhs) {
+            vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, graph[1].state);
+            queue.push(vertex.idx);
+        }
     }
 
 }
