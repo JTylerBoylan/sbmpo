@@ -2,6 +2,7 @@
 #define SBMPO_HPP
 
 #include <sbmpo/model.hpp>
+#include <sbmpo/queue.hpp>
 
 namespace sbmpo {
 
@@ -32,10 +33,6 @@ namespace sbmpo {
         private:
 
             int best, high;
-
-            std::function<bool(int,int)> queue_compare = [&](int a, int b) {
-                return graph[a].f > graph[b].f; 
-            };
 
             const void generate_children(Vertex &vertex, Model &model);
 

@@ -1,8 +1,7 @@
 #ifndef SBMPO_QUEUE_HPP
 #define SBMPO_QUEUE_HPP
 
-#include <vector>
-#include <functional>
+#include <sbmpo/types.hpp>
 
 namespace sbmpo {
 
@@ -11,9 +10,16 @@ namespace sbmpo {
         public:
 
             std::vector<int> heap;
-            std::function<bool(int,int)> compare;
 
-            Queue(std::function<bool(int,int)> comp) : heap(), compare(comp) {}
+            Graph * graph;
+
+            std::function<bool(int,int)> compare = [&](int a, int b) {
+                return (*graph)[a].f > (*graph)[b].f; 
+            };
+
+            Queue() : graph(NULL) {}
+
+            Queue(Graph * grph) : graph(grph) {}
 
             void swap(int *a, int *b) {
                 int temp = *b;

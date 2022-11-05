@@ -1,7 +1,8 @@
 #ifndef SBMPO_TYPES_HPP
 #define SBMPO_TYPES_HPP
 
-#include <sbmpo/queue.hpp>
+#include <vector>
+#include <functional>
 #include <map>
 #include <algorithm>
 #include <limits>

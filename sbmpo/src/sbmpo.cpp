@@ -2,7 +2,7 @@
 
 namespace sbmpo {
 
-    SBMPO::SBMPO() : queue(queue_compare) {}
+    SBMPO::SBMPO() {}
 
     void SBMPO::initialize(const Parameters &params) {
 
@@ -11,19 +11,24 @@ namespace sbmpo {
 
         // Create new graph, queue, and grid
         graph = Graph();
-        queue = Queue(queue_compare);
+        queue = Queue(&graph);
         grid = ImplicitGrid();
 
         // Copy starting vertex values
-        graph[0].state = params.initial_state;
-        graph[0].control = params.initial_control;
-        graph[0].g = INFINITY;
-        graph[0].rhs = 0;
+        Vertex start;
+        start.state = params.initial_state;
+        start.control = params.initial_control;
+        start.g = INFINITY;
+        start.rhs = 0;
+        start.gen = 0;
+        graph.insert(start);
 
         // Copy goal vertex values
-        graph[1].state = params.goal_state;
-        graph[1].g = INFINITY;
-        graph[1].rhs = INFINITY;
+        Vertex goal;
+        goal.state = params.goal_state;
+        goal.g = INFINITY;
+        goal.rhs = INFINITY;
+        graph.insert(goal);
 
         // Initialize grid
         grid.states = params.grid_states;
