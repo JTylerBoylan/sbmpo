@@ -2,12 +2,11 @@
 #define CSV_PARSER_HPP
 
 #include <sbmpo/types.hpp>
+#include <sbmpo/sbmpo.hpp>
 #include <iostream>
 #include <fstream>
 #include <stdexcept> // std::runtime_error
 #include <sstream> // std::stringstream
-#include <vector>
-#include <algorithm>
 
 #include <ros/ros.h>
 
@@ -16,7 +15,7 @@ namespace sbmpo_models {
     using namespace sbmpo;
 
     // Read from config
-    void fromConfig(const std::string& filename, std::vector<PlannerParameters>& parameters) {
+    void fromConfig(const std::string& filename, std::vector<Parameters>& parameters) {
 
         std::ifstream myFile(filename);
         if(!myFile.is_open()) 
@@ -24,7 +23,8 @@ namespace sbmpo_models {
 
         std::string line, value;
         while (std::getline(myFile, line)) {
-            PlannerParameters param;
+
+            Parameters param;
             std::stringstream ss(line);
 
             std::getline(ss, value, ',');
@@ -36,45 +36,38 @@ namespace sbmpo_models {
             std::getline(ss, value, ',');
             param.sample_time_increment = std::stof(value);
             std::getline(ss, value, ',');
-            param.conditions.goal_threshold = std::stof(value);
+            param.goal_threshold = std::stof(value);
 
             std::getline(ss, value, ',');
             int num_states = std::stof(value);
+            std::getline(ss, value, ',');
+            int num_controls = std::stof(value);
+            std::getline(ss, value, ',');
+            int num_active = std::stof(value);
             
             for (int s = 0; s < num_states; s++) {
                 std::getline(ss, value, ',');
-                param.conditions.initial_state.push_back(std::stof(value));
+                param.initial_state.push_back(std::stof(value));
             }
 
             for (int s = 0; s < num_states; s++) {
                 std::getline(ss, value, ',');
-                param.conditions.goal_state.push_back(std::stof(value));
+                param.goal_state.push_back(std::stof(value));
             }
-
-            for (int s = 0; s < num_states; s++) {
-                std::getline(ss, value, ',');
-                param.grid_parameters.active.push_back(std::stof(value));
-            }
-
-            std::getline(ss, value, ',');
-            int num_controls = std::stof(value);
 
             for (int c = 0; c < num_controls; c++) {
                 std::getline(ss, value, ',');
-                param.conditions.initial_control.push_back(std::stof(value));
+                param.initial_control.push_back(std::stof(value));
             }
 
-            std::getline(ss, value, ',');
-            int num_active = std::stof(value);
-
-            for (int a = 0; a < num_active; a++) {
+            for (int s = 0; s < num_states; s++) {
                 std::getline(ss, value, ',');
-                param.grid_parameters.resolution.push_back(std::stof(value));
+                param.grid_states.push_back(std::stof(value));
             }
 
             for (int a = 0; a < num_active; a++) {
                 std::getline(ss, value, ',');
-                param.grid_parameters.size.push_back(std::stof(value));
+                param.grid_resolution.push_back(std::stof(value));
             }
 
             std::getline(ss, value, ',');
@@ -86,7 +79,7 @@ namespace sbmpo_models {
                     std::getline(ss, value, ',');
                     control.push_back(std::stof(value));
                 }
-                param.branchout.push_back(control);
+                param.samples.push_back(control);
             }
 
             parameters.push_back(param);
@@ -103,7 +96,8 @@ namespace sbmpo_models {
 
     // Add to results file
     enum SaveOptions {STATS = 0b1, PATH = 0b10, BUFFER = 0b100, STATE_ONLY = 0b1000};
-    void addToData(const std::string& filename, const PlannerResults &results, const int options = (STATS | PATH | BUFFER)) {
+    void addToData(const std::string& filename, SBMPO &results, 
+            const float time_ms, const int exit_code, const int options = (STATS | PATH | BUFFER)) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
 
@@ -111,16 +105,16 @@ namespace sbmpo_models {
 
         if (options & STATS) {
             myFile << ",";
-            myFile << results.time_ms;
+            myFile << time_ms;
             myFile << ",";
-            myFile << results.exit_code;
+            myFile << exit_code;
         }
         
 
         if (options & PATH) {
             myFile << ",";
-            myFile << results.path.size();
-            for (Index idx : results.path) {
+            myFile << results.path().size();
+            for (int idx : results.path()) {
                 myFile << ",";
                 myFile << idx;
             }
@@ -128,45 +122,41 @@ namespace sbmpo_models {
 
         if (options & (PATH | BUFFER)) {
             myFile << ",";
-            myFile << results.buffer[0].state.size();
+            myFile << results.graph[0].state.size();
             myFile << ",";
-            myFile << results.buffer[0].control.size();
+            myFile << results.graph[0].control.size();
             myFile << ",";
-            myFile << results.high;
+            myFile << results.size();
         }
 
-        for (int b = 0; b < results.high; b++) {
+        for (int b = 0; b < results.size(); b++) {
 
-            if (!(options & BUFFER) && (options & PATH) &&!std::count(results.path.begin(), results.path.end(), b))
+            if (!(options & BUFFER) && (options & PATH) && !std::count(results.path().begin(), results.path().end(), b))
                 continue;
 
-            const sbmpo::Node& node = results.buffer[b];
+            const sbmpo::Vertex& vertex = results.graph[b];
 
             if (!(options & STATE_ONLY)) {
                 myFile << ",";
-                myFile << node.lineage.id;
+                myFile << vertex.idx;
                 myFile << ",";
-                myFile << node.lineage.parent;
-                myFile << ",";
-                myFile << node.lineage.child;
-                myFile << ",";
-                myFile << node.lineage.generation;
+                myFile << vertex.gen;
                 myFile << ",";
 
-                myFile << node.heuristic.f;
+                myFile << vertex.f;
                 myFile << ",";
-                myFile << node.heuristic.g;
+                myFile << vertex.g;
             }
 
-            for (float s : node.state) {
+            for (float s : vertex.state) {
                 myFile << ",";
                 myFile << s;
             }
 
             if (!(options & STATE_ONLY)) {
-                for (int c = 0; c < node.control.size(); c++) {
+                for (int c = 0; c < vertex.control.size(); c++) {
                     myFile << ",";
-                    myFile << node.control[c];
+                    myFile << vertex.control[c];
                 }
             }
 

@@ -1,10 +1,7 @@
 #ifndef SBMPO_TYPES_HPP
 #define SBMPO_TYPES_HPP
 
-#include <vector>
-#include <set>
-#include <queue>
-#include <functional>
+#include <sbmpo/queue.hpp>
 #include <map>
 #include <algorithm>
 #include <limits>
@@ -49,20 +46,6 @@ namespace sbmpo {
                 v2.predecessors.push_back(v1.idx);
         };
     };
-
-    class Queue : public std::priority_queue<int, std::set<int>, std::function<bool(int,int)>> {
-
-        public:
-
-            Queue(std::function<bool(int,int)> comp_func) {
-                comp = comp_func;
-            }
-
-            void remove(int idx) {
-                if (c.find(idx) != c.end())
-                    c.erase(idx);
-            }
-    };
     
     struct ImplicitGrid {
 
@@ -97,12 +80,12 @@ namespace sbmpo {
     struct Parameters {
         int max_iterations, max_generations;
         float sample_time, sample_time_increment;
+        float goal_threshold;
         State initial_state, goal_state;
         Control initial_control;
-        float goal_threshold;
-        std::vector<Control> samples;
         std::vector<bool> grid_states;
         std::vector<float> grid_resolution;
+        std::vector<Control> samples;
     };
 
 }

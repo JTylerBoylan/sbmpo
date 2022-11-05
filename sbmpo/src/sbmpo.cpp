@@ -2,6 +2,8 @@
 
 namespace sbmpo {
 
+    SBMPO::SBMPO() : queue(queue_compare) {}
+
     void SBMPO::initialize(const Parameters &params) {
 
         // Copy parameters
@@ -31,7 +33,7 @@ namespace sbmpo {
         grid.insert(params.initial_state, 0);
 
         // Add start node to priority queue
-        queue.push(0);
+        queue.insert(0);
     }
 
     int SBMPO::run(Model &model, const Parameters &params) {
@@ -50,7 +52,7 @@ namespace sbmpo {
                 return NO_NODES_LEFT;
 
             // Get next best vertex
-            best = queue.top();
+            best = queue.pop();
             Vertex& v = graph[best];
 
             // Check if we are at the goal
@@ -83,6 +85,7 @@ namespace sbmpo {
 
     std::vector<int> SBMPO::path() {
         std::vector<int> path;
+        // TODO
         return path;
     }
 
@@ -136,7 +139,7 @@ namespace sbmpo {
         queue.remove(vertex.idx);
         if (vertex.g != vertex.rhs) {
             vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, graph[1].state);
-            queue.push(vertex.idx);
+            queue.insert(vertex.idx);
         }
     }
 

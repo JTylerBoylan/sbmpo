@@ -17,17 +17,23 @@ namespace sbmpo {
 
             ImplicitGrid grid;
 
+            SBMPO();
+
             void initialize(const Parameters &parameters);
 
             int run(Model &model, const Parameters &parameters);
 
             std::vector<int> path();
 
+            inline int size() { return high; }
+
+            inline float cost() { return graph[best].g; }
+
         private:
 
             int best, high;
 
-            const std::function<bool(int,int)> queue_compare = [&](int a, int b) {
+            std::function<bool(int,int)> queue_compare = [&](int a, int b) {
                 return graph[a].f > graph[b].f; 
             };
 
