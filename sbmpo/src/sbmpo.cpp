@@ -60,7 +60,7 @@ namespace sbmpo {
 
             // Get next best vertex
             best = queue.pop();
-            Vertex& v = graph[best];
+            const Vertex v = graph[best];
 
             // Check if we are at the goal
             if (model.is_goal(v.state, graph[1].state, parameters.goal_threshold))
@@ -74,12 +74,12 @@ namespace sbmpo {
             generate_children(v, model);
 
             if (v.g > v.rhs) {
-                v.g = v.rhs;
+                graph[best].g = v.rhs;
                 for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
             } else {
-                v.g = INFINITY;
-                update_vertex(v, model);
+                graph[best].g = INFINITY;
+                update_vertex(graph[best], model);
                 for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
             }
@@ -100,17 +100,14 @@ namespace sbmpo {
 
         for (Control control : parameters.samples) {
             
-            // Create new vertex
-            Vertex child;
-            child.state = vertex.state;
-            child.control = control;
-            child.gen = vertex.gen + 1;
+            // Create new state
+            State new_state = vertex.state;
 
-            // Evaluate vertex in model
+            // Evaluate state in model
             bool invalid = false;
             for (float t = 0.0f; t < parameters.sample_time; t += parameters.sample_time_increment) {
-                model.next_state(child.state, child.state, child.control, parameters.sample_time_increment);
-                if (!model.is_valid(child.state)) {
+                model.next_state(new_state, new_state, control, parameters.sample_time_increment);
+                if (!model.is_valid(new_state)) {
                     invalid = true;
                     break;
                 }
@@ -121,11 +118,15 @@ namespace sbmpo {
                 continue;
 
             // Get vertex from grid
-            int u = grid.find(child.state);
+            int u = grid.find(new_state);
 
             if (u == INVALID_INDEX) {
             // If grid space is empty, insert child state
+                Vertex child;
                 child.idx = graph.size();
+                child.gen = vertex.gen + 1;
+                child.state = new_state;
+                child.control = control;
                 child.rhs = INFINITY;
                 child.g = INFINITY;
                 graph.insert(child);

@@ -13,13 +13,13 @@ namespace sbmpo {
 
             Graph * graph;
 
-            std::function<bool(int,int)> compare = [&](int a, int b) {
-                return (*graph)[a].f > (*graph)[b].f; 
-            };
-
             Queue() : graph(NULL) {}
 
             Queue(Graph * grph) : graph(grph) {}
+
+            bool compare (int a, int b) {
+                return graph->buffer[a].f < graph->buffer[b].f;
+            }
 
             void swap(int *a, int *b) {
                 int temp = *b;
@@ -58,12 +58,19 @@ namespace sbmpo {
             }
 
             void remove(int idx) {
+
                 int size = heap.size();
+
                 int i;
-                for (i = 0; i < size; i++) {
+                bool found = false;
+                for (i = 0; i < size && found != true ; i++) {
                     if (idx == heap[i])
-                    break;
+                        found = true;
                 }
+
+                if (!found)
+                    return;
+                
                 swap(&heap[i], &heap[size - 1]);
 
                 heap.pop_back();

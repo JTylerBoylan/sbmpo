@@ -26,13 +26,13 @@ namespace sbmpo {
 
             std::vector<int> path();
 
-            inline int size() { return high; }
+            inline int size() { return graph.size(); }
 
             inline float cost() { return graph[best].g; }
 
         private:
 
-            int best, high;
+            int best;
 
             const void generate_children(const Vertex vertex, Model &model);
 

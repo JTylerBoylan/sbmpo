@@ -2,7 +2,7 @@
 #define SBMPO_TYPES_HPP
 
 #include <vector>
-#include <functional>
+#include <set>
 #include <map>
 #include <algorithm>
 #include <limits>
@@ -26,8 +26,8 @@ namespace sbmpo {
     struct Graph {
 
         std::vector<Vertex> buffer;
-        std::map<int, std::vector<int>> link_back;
-        std::map<int, std::vector<int>> link_forward;
+        std::map<int, std::set<int>> link_back;
+        std::map<int, std::set<int>> link_forward;
 
         Vertex &operator[](int i) {
             return buffer[i];
@@ -42,15 +42,15 @@ namespace sbmpo {
         }
 
         const void add_edge(const Vertex &v1, const Vertex &v2) {
-                link_forward[v1.idx].push_back(v2.idx);
-                link_back[v2.idx].push_back(v1.idx);
+                link_forward[v1.idx].insert(v2.idx);
+                link_back[v2.idx].insert(v1.idx);
         };
 
-        const std::vector<int> getPredecessors(const Vertex &v) {
+        const std::set<int> getPredecessors(const Vertex &v) {
             return link_back[v.idx];
         }
 
-        const std::vector<int> getSuccessors(const Vertex &v) {
+        const std::set<int> getSuccessors(const Vertex &v) {
             return link_forward[v.idx];
         }
     };
