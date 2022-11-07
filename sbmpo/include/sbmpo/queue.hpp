@@ -18,7 +18,7 @@ namespace sbmpo {
             Queue(Graph * grph) : graph(grph) {}
 
             bool compare (int a, int b) {
-                return graph->buffer[a].f < graph->buffer[b].f;
+                return graph->buffer[a].f > graph->buffer[b].f;
             }
 
             void swap(int *a, int *b) {

@@ -92,7 +92,17 @@ namespace sbmpo {
 
     std::vector<int> SBMPO::path() {
         std::vector<int> path;
-        // TODO
+        int i = best;
+        while (graph.getPredecessors(graph[i]).size() > 0) {
+            path.push_back(i);
+            i = *graph.getPredecessors(graph[i]).begin();
+            for (int pred : graph.getPredecessors(graph[i])) {
+                if (graph[pred].g < graph[i].g)
+                    i = pred;
+            }
+        }
+        path.push_back(0);
+        std::reverse(path.begin(), path.end());
         return path;
     }
 
