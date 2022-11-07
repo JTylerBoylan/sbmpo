@@ -16,6 +16,7 @@ namespace sbmpo {
 
         // Copy starting vertex values
         Vertex start;
+        start.idx = 0;
         start.state = params.initial_state;
         start.control = params.initial_control;
         start.g = INFINITY;
@@ -25,6 +26,7 @@ namespace sbmpo {
 
         // Copy goal vertex values
         Vertex goal;
+        goal.idx = 1;
         goal.state = params.goal_state;
         goal.g = INFINITY;
         goal.rhs = INFINITY;
@@ -73,12 +75,12 @@ namespace sbmpo {
 
             if (v.g > v.rhs) {
                 v.g = v.rhs;
-                for (int suc : v.successors)
+                for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
             } else {
                 v.g = INFINITY;
                 update_vertex(v, model);
-                for (int suc : v.successors)
+                for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
             }
 
@@ -94,17 +96,19 @@ namespace sbmpo {
         return path;
     }
 
-    const void SBMPO::generate_children(Vertex &vertex, Model &model) {
+    const void SBMPO::generate_children(const Vertex vertex, Model &model) {
 
         for (Control control : parameters.samples) {
             
             // Create new vertex
-            Vertex child = vertex;
+            Vertex child;
+            child.state = vertex.state;
             child.control = control;
+            child.gen = vertex.gen + 1;
 
             // Evaluate vertex in model
             bool invalid = false;
-            for (int t = 0; t < parameters.sample_time; t+= parameters.sample_time_increment) {
+            for (float t = 0.0f; t < parameters.sample_time; t += parameters.sample_time_increment) {
                 model.next_state(child.state, child.state, child.control, parameters.sample_time_increment);
                 if (!model.is_valid(child.state)) {
                     invalid = true;
@@ -129,7 +133,8 @@ namespace sbmpo {
                 grid.insert(child.state, child.idx);
             } else {
             // Else add edge from vertex to graph
-                graph.add_edge(vertex, graph[u]);
+                if (u != vertex.idx)
+                    graph.add_edge(vertex, graph[u]);
             }
         }
     }
@@ -137,7 +142,7 @@ namespace sbmpo {
     const void SBMPO::update_vertex(Vertex &vertex, Model &model) {
         if (vertex.idx != 0) {
             vertex.rhs = INFINITY;
-            for (int pred : vertex.predecessors)
+            for (int pred : graph.getPredecessors(vertex))
                 vertex.rhs = std::min(vertex.rhs, graph[pred].g + 
                     model.cost(vertex.state, graph[pred].state, vertex.control, parameters.sample_time));
         }

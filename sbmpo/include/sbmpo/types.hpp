@@ -19,8 +19,6 @@ namespace sbmpo {
     struct Vertex {
         int idx, gen;
         float f, g, rhs;
-        std::vector<int> predecessors;
-        std::vector<int> successors;
         State state;
         Control control;
     };
@@ -28,6 +26,8 @@ namespace sbmpo {
     struct Graph {
 
         std::vector<Vertex> buffer;
+        std::map<int, std::vector<int>> link_back;
+        std::map<int, std::vector<int>> link_forward;
 
         Vertex &operator[](int i) {
             return buffer[i];
@@ -38,14 +38,21 @@ namespace sbmpo {
         }
 
         const void insert(Vertex &vertex) {
-            vertex.idx = buffer.size();
             buffer.push_back(vertex);
         }
 
-        const void add_edge(Vertex &v1, Vertex &v2) {
-                v1.successors.push_back(v2.idx);
-                v2.predecessors.push_back(v1.idx);
+        const void add_edge(const Vertex &v1, const Vertex &v2) {
+                link_forward[v1.idx].push_back(v2.idx);
+                link_back[v2.idx].push_back(v1.idx);
         };
+
+        const std::vector<int> getPredecessors(const Vertex &v) {
+            return link_back[v.idx];
+        }
+
+        const std::vector<int> getSuccessors(const Vertex &v) {
+            return link_forward[v.idx];
+        }
     };
     
     struct ImplicitGrid {
