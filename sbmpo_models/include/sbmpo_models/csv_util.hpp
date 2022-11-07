@@ -154,9 +154,9 @@ namespace sbmpo_models {
             }
 
             if (!(options & STATE_ONLY)) {
-                for (int c = 0; c < vertex.control.size(); c++) {
+                for (int c = 0; c < results.graph[0].control.size(); c++) {
                     myFile << ",";
-                    myFile << vertex.control[c];
+                    myFile << (c < vertex.control.size()) ? vertex.control[c] : 0;
                 }
             }
 
