@@ -82,6 +82,7 @@ namespace sbmpo {
             // Update successors
             for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
+            update_vertex(graph[best], model);
 
             // Next iteration
         }
