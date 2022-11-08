@@ -39,7 +39,7 @@ namespace sbmpo_models {
             if (state2[2] >= M_2PI || state2[2] < 0)
                 state2[2] += state2[2] >= M_2PI ? -M_2PI : M_2PI;
 
-            return true;
+            return is_valid(state2);
         }
 
         // Get the cost of a control

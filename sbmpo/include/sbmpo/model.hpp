@@ -18,9 +18,6 @@ namespace sbmpo {
             // Get the heuristic of a state
             virtual float heuristic(const State& state, const State& goal) = 0;
 
-            // Determine if node is valid
-            virtual bool is_valid(const State& state) = 0;
-
             // Determine if state is goal
             virtual bool is_goal(const State& state, const State& goal, const float goal_threshold) = 0;
 

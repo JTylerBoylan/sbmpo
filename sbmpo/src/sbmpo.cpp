@@ -115,8 +115,7 @@ namespace sbmpo {
             // Evaluate state in model
             bool invalid = false;
             for (float t = 0.0f; t < parameters.sample_time; t += parameters.sample_time_increment) {
-                model.next_state(new_state, new_state, control, parameters.sample_time_increment);
-                if (!model.is_valid(new_state)) {
+                if (!model.next_state(new_state, new_state, control, parameters.sample_time_increment)) {
                     invalid = true;
                     break;
                 }
