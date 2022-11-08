@@ -135,7 +135,17 @@ int main(int argc, char ** argv) {
   sbmpo::SBMPO planner;
   int exit_code = planner.run(model, params);
   
-  std::cout << "Planner finished with exit code: " << exit_code << endl;
+  std::cout << "Planner finished with exit code: " << exit_code << std::endl;
+  
+  std::cout << "Path:" << std::endl;
+  for (int v : planner.path()) {
+    Vertex vertex = planner.vertex(v);
+    std::cout << "(" << v << "): [ ";
+    for (float s : vertex.state) {
+      std::cout << s << " ";
+    }
+    std::cout << "]" << std::endl;
+  }
   
   return 0;
 }
