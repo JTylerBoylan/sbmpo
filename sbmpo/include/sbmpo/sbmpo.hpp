@@ -18,6 +18,8 @@ namespace sbmpo {
 
             ImplicitGrid grid;
 
+            Vertex start, goal;
+
             SBMPO();
 
             void initialize(const Parameters &parameters);

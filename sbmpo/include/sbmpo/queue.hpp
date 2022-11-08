@@ -18,7 +18,7 @@ namespace sbmpo {
             Queue(Graph * grph) : graph(grph) {}
 
             bool compare (int a, int b) {
-                return graph->buffer[a].f > graph->buffer[b].f;
+                return graph->buffer[a].f < graph->buffer[b].f;
             }
 
             void swap(int *a, int *b) {
@@ -63,9 +63,11 @@ namespace sbmpo {
 
                 int i;
                 bool found = false;
-                for (i = 0; i < size && found != true ; i++) {
-                    if (idx == heap[i])
+                for (i = 0; i < size; i++) {
+                    if (idx == heap[i]) {
                         found = true;
+                        break;
+                    }
                 }
 
                 if (!found)
@@ -80,9 +82,11 @@ namespace sbmpo {
             }
 
             int pop() {
-                int back = heap.back();
+                int top = heap[0];
+                heap[0] = heap[heap.size() - 1];
                 heap.pop_back();
-                return back;
+                heapify(0);
+                return top;
             }
 
             bool empty() {

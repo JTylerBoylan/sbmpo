@@ -15,32 +15,23 @@ namespace sbmpo {
         grid = ImplicitGrid();
 
         // Copy starting vertex values
-        Vertex start;
         start.idx = 0;
         start.state = params.initial_state;
         start.control = params.initial_control;
         start.g = INFINITY;
         start.rhs = 0;
         start.gen = 0;
-        graph.insert(start);
 
         // Copy goal vertex values
-        Vertex goal;
         goal.idx = 1;
         goal.state = params.goal_state;
         goal.g = INFINITY;
         goal.rhs = INFINITY;
-        graph.insert(goal);
 
         // Initialize grid
         grid.states = params.grid_states;
         grid.resolution = params.grid_resolution;
 
-        // Insert start node in implicit grid
-        grid.insert(params.initial_state, 0);
-
-        // Add start node to priority queue
-        queue.insert(0);
     }
 
     int SBMPO::run(Model &model, const Parameters &params) {
@@ -49,7 +40,14 @@ namespace sbmpo {
         initialize(params);
 
         // Calculate heuristic for start node
-        graph[0].f = model.heuristic(graph[0].state, graph[1].state);
+        start.f = model.heuristic(start.state, goal.state);
+
+        // Insert start into graph
+        graph.insert(start);
+        // Insert start into implicit grid
+        grid.insert(start.state, 0);
+        // Insert start into priority queue
+        queue.insert(0);
 
         // Begin iterations
         for (int i = 0; i < parameters.max_iterations; i++) {
@@ -63,26 +61,26 @@ namespace sbmpo {
             const Vertex v = graph[best];
 
             // Check if we are at the goal
-            if (model.is_goal(v.state, graph[1].state, parameters.goal_threshold))
+            if (model.is_goal(v.state, goal.state, parameters.goal_threshold))
                 return GOAL_REACHED;
 
             // Check if max generations is reached
             if (v.gen > parameters.max_generations)
                 return GENERATION_LIMIT;
 
-            // Generate children
-            generate_children(v, model);
-
             if (v.g > v.rhs) {
                 graph[best].g = v.rhs;
-                for (int suc : graph.getSuccessors(v))
-                    update_vertex(graph[suc], model);
             } else {
                 graph[best].g = INFINITY;
                 update_vertex(graph[best], model);
-                for (int suc : graph.getSuccessors(v))
-                    update_vertex(graph[suc], model);
             }
+
+            // Generate children
+            generate_children(v, model);
+
+            // Update successors
+            for (int suc : graph.getSuccessors(v))
+                    update_vertex(graph[suc], model);
 
             // Next iteration
         }
@@ -159,7 +157,7 @@ namespace sbmpo {
         }
         queue.remove(vertex.idx);
         if (vertex.g != vertex.rhs) {
-            vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, graph[1].state);
+            vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, goal.state);
             queue.insert(vertex.idx);
         }
     }
