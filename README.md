@@ -93,6 +93,11 @@ These parameters include:
 
 #### Run the model
 To run the model, simply pass your custom model class and parameters into the SBMPO run function. The run function returns an exit code corresponding to the end result of the plan.
+```
+sbmpo::SBMPO planner;
+int exit_code = planner.run(my_custom_model, params);
+```
+
 ##### Exit Codes:
 | Exit Code | Description |
 | --------- | ----------- |
