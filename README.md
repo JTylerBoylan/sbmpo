@@ -142,7 +142,7 @@ int main(int argc, char ** argv) {
   std::cout << "Path:" << std::endl;
   for (int v : planner.path()) {
     Vertex vertex = planner.vertex(v);
-    std::cout << "(" << v << "): [ ";
+    std::cout << "  - (" << v << "): [ ";
     for (float s : vertex.state) {
       std::cout << s << " ";
     }
