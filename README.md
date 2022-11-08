@@ -33,7 +33,7 @@ To install, clone this package into your workspace and build.
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/JTylerBoylan/SBMPO.git
-cd ..
+cd ../
 catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
