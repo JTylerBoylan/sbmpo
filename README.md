@@ -136,6 +136,8 @@ int main(int argc, char ** argv) {
   int exit_code = planner.run(model, params);
   
   std::cout << "Planner finished with exit code: " << exit_code << std::endl;
+  std::cout << "Number of vertices: " << planner.size() << std::endl;
+  std::cout << "Path cost: " << planner.cost() << std::endl;
   
   std::cout << "Path:" << std::endl;
   for (int v : planner.path()) {
