@@ -26,6 +26,17 @@ author = {Mario Harper and Camilo Ordonez and Emmanuel Collins}
 This package was developed on [ROS Noetic Ninjemys](https://wiki.ros.org/noetic) 
 > [Installation (Ubuntu 20.04)](https://wiki.ros.org/noetic/Installation/Ubuntu)   
 
+## Installation
+To install, clone this package into your workspace and build.  
+*Build with `DCMAKE_BUILD_TYPE` flag set to `Release` for increased performance.*
+
+```
+cd ~/catkin_ws/src
+git clone https://github.com/JTylerBoylan/SBMPO.git
+cd ..
+catkin_make -DCMAKE_BUILD_TYPE=Release
+```
+
 
 ## Running a sample model
 ```
