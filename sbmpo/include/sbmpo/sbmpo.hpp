@@ -3,6 +3,7 @@
 
 #include <sbmpo/model.hpp>
 #include <sbmpo/queue.hpp>
+#include <ctime>
 
 namespace sbmpo {
 
@@ -20,6 +21,8 @@ namespace sbmpo {
 
             Vertex start, goal;
 
+            int best;
+
             SBMPO();
 
             void initialize(const Parameters &parameters);
@@ -33,8 +36,6 @@ namespace sbmpo {
             inline float cost() { return graph[best].g; }
 
         private:
-
-            int best;
 
             const void generate_children(const Vertex vertex, Model &model);
 

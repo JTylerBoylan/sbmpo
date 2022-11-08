@@ -29,6 +29,12 @@ namespace sbmpo {
         std::map<int, std::set<int>> link_back;
         std::map<int, std::set<int>> link_forward;
 
+        Graph() {}
+
+        Graph(int size) {
+            buffer.reserve(size);
+        }
+
         Vertex &operator[](int i) {
             return buffer[i];
         }
@@ -60,6 +66,13 @@ namespace sbmpo {
         std::map<GridKey, int> grid;
         std::vector<bool> states;
         std::vector<float> resolution;
+
+        ImplicitGrid() {}
+
+        ImplicitGrid(std::vector<bool> _states, std::vector<float> _res) {
+            states = _states;
+            resolution = _res;
+        }
 
         const GridKey to_key(const State &state) {
             GridKey key;

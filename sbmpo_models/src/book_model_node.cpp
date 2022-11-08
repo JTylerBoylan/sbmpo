@@ -5,6 +5,7 @@
 #include <ctime>
 
 #define VERBOSE true
+#define RUNS 1000
 
 void print_parameters(const sbmpo::Parameters &params);
 
@@ -15,8 +16,8 @@ int main (int argc, char ** argv) {
     ros::init(argc, argv, "planner_node");
     ros::NodeHandle node("~");
 
-    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model_verify.csv";
-    std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
+    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
+    std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model.csv";
 
     sbmpo_models::clearFile(result_datafile);
 
@@ -32,15 +33,19 @@ int main (int argc, char ** argv) {
         clock_t cstart = std::clock();
 
         sbmpo::SBMPO planner;
-        int exit_code = planner.run(book_model, *param);
+        int exit_code;
+        for (int r = 0; r < RUNS; r++) {
+            exit_code = planner.run(book_model, *param);
+        }
 
         clock_t cend = std::clock();
 
-        float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000;
+        float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000 / RUNS;
 
-        print_results(planner, time_ms, exit_code);
+        if (VERBOSE) print_results(planner, time_ms, exit_code);
 
         if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
+
         sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code);
 
     }
@@ -97,7 +102,7 @@ void print_parameters(const sbmpo::Parameters &params) {
 
 void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_code) {
     ROS_INFO("---- Planner Results [%d] ----", seq++);
-    ROS_INFO("Computing Time: %.3f ms", time_ms);
+    ROS_INFO("Computing Time: %.3f ms (%d runs)", time_ms, RUNS);
     ROS_INFO("Number of Nodes: %d", results.size());
     ROS_INFO("Exit code: %d", exit_code);
     ROS_INFO("Path:");

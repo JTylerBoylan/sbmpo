@@ -15,7 +15,9 @@ namespace sbmpo {
 
             Queue() : graph(NULL) {}
 
-            Queue(Graph * grph) : graph(grph) {}
+            Queue(Graph * grph, int size) : graph(grph) {
+                heap.reserve(size);
+            }
 
             bool compare (int a, int b) {
                 return graph->buffer[a].f < graph->buffer[b].f;

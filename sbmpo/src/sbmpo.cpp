@@ -9,10 +9,12 @@ namespace sbmpo {
         // Copy parameters
         parameters = params;
 
+        int max_size = params.max_iterations*params.samples.size();
+
         // Create new graph, queue, and grid
-        graph = Graph();
-        queue = Queue(&graph);
-        grid = ImplicitGrid();
+        graph = Graph(max_size);
+        queue = Queue(&graph, max_size);
+        grid = ImplicitGrid(params.grid_states, params.grid_resolution);
 
         // Copy starting vertex values
         start.idx = 0;
@@ -28,13 +30,12 @@ namespace sbmpo {
         goal.g = INFINITY;
         goal.rhs = INFINITY;
 
-        // Initialize grid
-        grid.states = params.grid_states;
-        grid.resolution = params.grid_resolution;
-
     }
 
     int SBMPO::run(Model &model, const Parameters &params) {
+
+        // Start clock
+        std::clock_t cstart = std::clock();
 
         // Initialize
         initialize(params);
