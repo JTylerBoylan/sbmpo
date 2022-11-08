@@ -1,5 +1,9 @@
 # Sample Based Model Predictive Optimization (SBMPO) for robot trajectory planning
 
+Sampling-Based Model Predictive Control (SBMPO) is a novel nonlinear MPC (NMPC) approach that enables
+motion planning with dynamic models. This tool is also well suited to solve traditional MPC problems and has
+been tested in various situations ranging from robotics, task scheduling, resource management, combustion
+processes, and general optimization.
 
 ## Publication
 
