@@ -141,11 +141,13 @@ namespace sbmpo_models {
                 myFile << vertex.idx;
                 myFile << ",";
                 myFile << vertex.gen;
-                myFile << ",";
 
+                myFile << ",";
                 myFile << vertex.f;
                 myFile << ",";
                 myFile << vertex.g;
+                myFile << ",";
+                myFile << vertex.rhs;
             }
 
             for (float s : vertex.state) {

@@ -28,7 +28,8 @@ for p = 1:size(csv_matrix, 1)
         plans(p).nodes(n).generation = plan(i+2);
         plans(p).nodes(n).f = plan(i+3);
         plans(p).nodes(n).g = plan(i+4);
-        i = i+4;
+        plans(p).nodes(n).rhs = plan(i+5);
+        i = i+5;
         
         plans(p).nodes(n).state = plan(i+1:i+plans(p).num_states);
         i = i+plans(p).num_states;
