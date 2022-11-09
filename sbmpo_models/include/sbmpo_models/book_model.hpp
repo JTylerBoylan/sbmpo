@@ -4,6 +4,8 @@
 #include <sbmpo/model.hpp>
 #include <sbmpo_models/csv_util.hpp>
 #include <math.h>
+#include <array>
+#include <random>
 
 #define M_2PI 6.283185307179586
 
@@ -11,21 +13,18 @@ namespace sbmpo_models {
 
     using namespace sbmpo;
 
+    #define BODY_RADIUS 0.20f
+
     const float bounds[2][2] = {
         {-1.0, -1.0},
         {6.0, 6.0}  
     };
 
-    #define BODY_RADIUS 0.20f
-
-    #define NUM_OBSTACLES 3
-    const float obstacles[3][NUM_OBSTACLES] = {
-        {3.1, 1.2, 0.5},
-        {3.5, 3.7, 0.5},
-        {1.0, 0.5, 0.5}
-    };
+    std::vector<std::array<float,3>> obstacles;
 
     class SBMPOBookModel : public Model {
+
+        public:
 
         // Evaluate a node with a control
         bool next_state(State &state2, const State &state1, const Control& control, const float time_span) {
@@ -66,7 +65,7 @@ namespace sbmpo_models {
                 return false;
 
             // Obstacle collision check
-            for (int o = 0; o < NUM_OBSTACLES; o++) {
+            for (int o = 0; o < obstacles.size(); o++) {
                 const float dx = state[0] - obstacles[o][0];
                 const float dy = state[1] - obstacles[o][1];
                 const float threshold = obstacles[o][2] + BODY_RADIUS;
@@ -80,6 +79,50 @@ namespace sbmpo_models {
         // Determine if state is goal
         bool is_goal(const State& state, const State& goal, const float goal_threshold) {
             return heuristic(state, goal) <= goal_threshold;
+        }
+
+        // Generate random obstacles
+        bool init = false;
+        void randomize_obstacles(int n) {
+
+            if (!init) {
+                srand(time(NULL));
+                init = true;
+            }
+
+            obstacles.clear();
+            for (int i = 0; i < n;) {
+
+                float x = ((rand() % int((bounds[1][0] - bounds[0][0]) * 10)) + bounds[0][0]*10) / 10.0f;
+                float y = ((rand() % int((bounds[1][1] - bounds[0][1]) * 10)) + bounds[0][1]*10) / 10.0f;
+                
+                // Distance buffer around origin (start state)
+                if (sqrtf(x*x + y*y) < 0.5)
+                    continue;
+
+                // Distance buffer around goal
+                if (sqrtf((5.0f-x)*(5.0f-x) + (5.0f-y)*(5.0f-y)) < 0.5)
+                    continue;
+
+                // Check for overlap
+                bool lap = false;
+                for (std::array<float,3> ob : obstacles) {
+                    float dox = ob[0] - x;
+                    float doy = ob[1] - y;
+                    if (sqrtf(dox*dox + doy*doy) > 0.5) {
+                        lap = true;
+                        break;
+                    }
+                }
+
+                // Add obstacle
+                if (!lap) {
+                    obstacles.push_back({x, y, 0.5f});
+                    i++;
+                }
+
+            }
+            
         }
 
     };

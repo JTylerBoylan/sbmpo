@@ -5,7 +5,7 @@
 #include <ctime>
 
 #define VERBOSE true
-#define RUNS 100
+#define RUNS 5
 
 void print_parameters(const sbmpo::Parameters &params);
 
@@ -30,23 +30,27 @@ int main (int argc, char ** argv) {
 
         if (VERBOSE) print_parameters(*param);
 
-        clock_t cstart = std::clock();
-
-        sbmpo::SBMPO planner;
-        int exit_code;
         for (int r = 0; r < RUNS; r++) {
+
+            clock_t cstart = std::clock();
+
+            sbmpo::SBMPO planner;
+            int exit_code;
+
+            book_model.randomize_obstacles(3);
             exit_code = planner.run(book_model, *param);
+
+            clock_t cend = std::clock();
+
+            float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000 / RUNS;
+
+            if (VERBOSE) print_results(planner, time_ms, exit_code);
+
+            if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
+
+            sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code);
+
         }
-
-        clock_t cend = std::clock();
-
-        float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000 / RUNS;
-
-        if (VERBOSE) print_results(planner, time_ms, exit_code);
-
-        if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
-
-        sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code);
 
     }
 
