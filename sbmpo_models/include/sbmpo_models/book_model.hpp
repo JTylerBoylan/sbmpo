@@ -25,15 +25,16 @@ namespace sbmpo_models {
         {1.0, 0.5, 0.5}
     };
 
-    class SBMPOBookModel : public sbmpo::Model {
+    class SBMPOBookModel : public Model {
 
         // Evaluate a node with a control
         bool next_state(State &state2, const State &state1, const Control& control, const float time_span) {
             
             // Update state
-            state2[0] = state1[0] + cosf(state1[2]) * control[0] * time_span;
-            state2[1] = state1[1] + sinf(state1[2]) * control[0] * time_span;
+            state2 = state1;
             state2[2] = state1[2] + control[1] * time_span;
+            state2[0] = state1[0] + cosf(state2[2]) * control[0] * time_span;
+            state2[1] = state1[1] + sinf(state2[2]) * control[0] * time_span;
 
             // Angle wrap
             if (state2[2] >= M_2PI || state2[2] < 0)

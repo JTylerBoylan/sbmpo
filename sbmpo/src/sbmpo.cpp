@@ -82,6 +82,8 @@ namespace sbmpo {
             // Update successors
             for (int suc : graph.getSuccessors(v))
                     update_vertex(graph[suc], model);
+            
+            // Update current
             update_vertex(graph[best], model);
 
             // Next iteration
@@ -110,13 +112,13 @@ namespace sbmpo {
 
         for (Control control : parameters.samples) {
             
-            // Create new state
-            State new_state = vertex.state;
 
-            // Evaluate state in model
+            // Evaluate new state
+            int n = parameters.sample_time / parameters.sample_time_increment;
             bool invalid = false;
-            for (float t = 0.0f; t < parameters.sample_time; t += parameters.sample_time_increment) {
-                if (!model.next_state(new_state, new_state, control, parameters.sample_time_increment)) {
+            State new_state;
+            for (int i = 1; i <= n; i++) {
+                if (!model.next_state(new_state, vertex.state, control, parameters.sample_time_increment * i)) {
                     invalid = true;
                     break;
                 }
