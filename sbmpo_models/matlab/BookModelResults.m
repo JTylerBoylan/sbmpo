@@ -1,4 +1,6 @@
 %% Results CSV File Parser
+clear
+close all
 
 csv_matrix = readmatrix("../results/book_model_results.csv");
 

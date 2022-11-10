@@ -83,7 +83,7 @@ namespace sbmpo_models {
 
         // Generate random obstacles
         bool init = false;
-        void randomize_obstacles(int n) {
+        std::vector<std::array<float, 3>> randomize_obstacles(int n, float min, float max) {
 
             if (!init) {
                 srand(time(NULL));
@@ -93,8 +93,8 @@ namespace sbmpo_models {
             obstacles.clear();
             for (int i = 0; i < n;) {
 
-                float x = ((rand() % int((bounds[1][0] - bounds[0][0]) * 10)) + bounds[0][0]*10) / 10.0f;
-                float y = ((rand() % int((bounds[1][1] - bounds[0][1]) * 10)) + bounds[0][1]*10) / 10.0f;
+                float x = ((rand() % int((max - min) * 10)) + min*10) / 10.0f;
+                float y = ((rand() % int((max - min) * 10)) + min*10) / 10.0f;
                 
                 // Distance buffer around origin (start state)
                 if (sqrtf(x*x + y*y) < 0.5)
@@ -109,7 +109,7 @@ namespace sbmpo_models {
                 for (std::array<float,3> ob : obstacles) {
                     float dox = ob[0] - x;
                     float doy = ob[1] - y;
-                    if (sqrtf(dox*dox + doy*doy) > 0.5) {
+                    if (sqrtf(dox*dox + doy*doy) < 0.5) {
                         lap = true;
                         break;
                     }
@@ -122,6 +122,8 @@ namespace sbmpo_models {
                 }
 
             }
+
+            return obstacles;
             
         }
 

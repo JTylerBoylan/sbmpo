@@ -9,6 +9,8 @@
 
 void print_parameters(const sbmpo::Parameters &params);
 
+void print_obstacles(std::vector<std::array<float, 3>> obstacles);
+
 void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_code);
 
 int main (int argc, char ** argv) {
@@ -18,8 +20,10 @@ int main (int argc, char ** argv) {
 
     std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
     std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
+    std::string obstacles_file = ros::package::getPath("sbmpo_models") + "/results/obstacles.csv";
 
     sbmpo_models::clearFile(result_datafile);
+    sbmpo_models::clearFile(obstacles_file);
 
     std::vector<sbmpo::Parameters> parameter_list;
     sbmpo_models::fromConfig(param_config, parameter_list);
@@ -32,17 +36,20 @@ int main (int argc, char ** argv) {
 
         for (int r = 0; r < RUNS; r++) {
 
-            clock_t cstart = std::clock();
-
             sbmpo::SBMPO planner;
             int exit_code;
 
-            book_model.randomize_obstacles(3);
+            std::vector<std::array<float, 3>> obstacles = book_model.randomize_obstacles(3, 1.0, 4.0);
+            sbmpo_models::addToData(obstacles_file, obstacles);
+            print_obstacles(obstacles);
+
+            clock_t cstart = std::clock();
+
             exit_code = planner.run(book_model, *param);
 
             clock_t cend = std::clock();
 
-            float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000 / RUNS;
+            float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000;
 
             if (VERBOSE) print_results(planner, time_ms, exit_code);
 
@@ -104,9 +111,19 @@ void print_parameters(const sbmpo::Parameters &params) {
     }
 }
 
+void print_obstacles(std::vector<std::array<float, 3>> obstacles) {
+    ROS_INFO("Obstacles:");
+    for (std::array<float, 3> obs : obstacles) {
+        std::string st;
+        for (float f : obs)
+            st += std::to_string(f) + " ";
+        ROS_INFO(" - %s", st.c_str());
+    }
+}
+
 void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_code) {
     ROS_INFO("---- Planner Results [%d] ----", seq++);
-    ROS_INFO("Computing Time: %.3f ms (%d runs)", time_ms, RUNS);
+    ROS_INFO("Computing Time: %.3f ms", time_ms);
     ROS_INFO("Number of Nodes: %d", results.size());
     ROS_INFO("Exit code: %d", exit_code);
     ROS_INFO("Path:");

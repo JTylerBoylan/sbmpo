@@ -167,7 +167,17 @@ namespace sbmpo_models {
         myFile << '\n';
 
         myFile.close();
-    }  
+    }
+
+    void addToData(const std::string& filename, std::vector<std::array<float, 3>> obstacles) {
+        std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
+        myFile << obstacles.size();
+        for (std::array<float, 3> ob : obstacles)
+            for (int o = 0; o < 3; o++)
+                myFile << "," << ob[o];
+        myFile << '\n';
+        myFile.close();
+    }
 
 }
 
