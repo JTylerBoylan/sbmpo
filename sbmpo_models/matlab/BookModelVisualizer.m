@@ -1,5 +1,8 @@
 %% SBMPO Results Visualizer
+clear
+close all
 
+plans = sbmpo_results("../results/book_model_results.csv");
 obstacles_csv = readmatrix("../results/obstacles.csv");
 
 % Set obstacles
