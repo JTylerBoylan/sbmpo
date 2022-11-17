@@ -1,5 +1,5 @@
 %% SBMPO Results Visualizer
-
+close all
 obstacles_csv = readmatrix("../results/obstacles.csv");
 
 % Set obstacles
