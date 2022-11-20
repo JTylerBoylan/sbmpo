@@ -83,4 +83,4 @@ for r = 1:runs
 
 end
     
- writecell(Configuration, '../config/book_model_verify.csv', 'Delimiter', ',')
+ writecell(Configuration, '../config/book_model.csv', 'Delimiter', ',')
