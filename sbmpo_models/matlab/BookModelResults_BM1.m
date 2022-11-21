@@ -18,18 +18,18 @@ for p = 1:size
     num_samples(p) = NumberOfSamples(p);
     time_ms(p) = plan.time_ms;
     num_nodes(p) = plan.buffer_size;
-    for n = 1:length(plan.nodes)
-       if plan.nodes(n).id == plan.path(end)
-           cost(p) = plan.nodes(n).g;
-       end
-    end
+    cost(p) = plan.cost;
 
 end
+
+[num_samples, sortIdx] = sort(num_samples,'ascend');
+time_ms = time_ms(sortIdx);
+num_nodes = num_nodes(sortIdx);
+cost = cost(sortIdx);
 
 figure
 hold on
 grid on
-plot(num_samples,time_ms)
-plot(num_samples,num_nodes)
-title("Number of Nodes vs. Number of Samples")
+plot(num_samples,cost)
+title("Number of Nodes vs. Cost")
 
