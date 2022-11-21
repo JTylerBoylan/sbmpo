@@ -17,7 +17,8 @@ function plans = sbmpo_results(results_file)
            plans(p).exit_code = plan_data(i + 2);
            plans(p).cost = plan_data(i + 3);
            plans(p).buffer_size = plan_data(i + 4);
-           i = i + 4;
+           plans(p).success_rate = plan_data(i + 5);
+           i = i + 5;
        end
 
        if (bitand(save_type,0b10))

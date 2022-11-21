@@ -54,6 +54,4 @@ for p = 1:length(plans)
         py(n) = node.state(2);
     end
     plot (px, py, '-g', 'LineWidth', 3)
-
-    saveas(gcf, strcat('figures/book_model_result', int2str(p) ,'.png'));
 end

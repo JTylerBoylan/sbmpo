@@ -40,6 +40,7 @@ int main (int argc, char ** argv) {
         double time_ms = 0.0;
         double cost = 0.0;
         double buffer_size = 0.0;
+        int val = 0;
         for (int r = 0; r < RUNS; r++) {
 
             obstacles = book_model.randomize_obstacles(3, 1.0, 4.0);
@@ -50,9 +51,12 @@ int main (int argc, char ** argv) {
 
             clock_t cend = std::clock();
 
-            time_ms += double(cend - cstart) / double(CLOCKS_PER_SEC * RUNS) * 1000.0;
-            cost += planner.cost() / RUNS;
-            buffer_size += planner.size() / RUNS;
+            if (!exit_code) {
+                time_ms += double(cend - cstart) / double(CLOCKS_PER_SEC) * 1000.0;
+                cost += planner.cost();
+                buffer_size += planner.size();
+                val++;
+            }
 
         }
 
@@ -60,9 +64,9 @@ int main (int argc, char ** argv) {
 
         if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
 
-        sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code, 
+        sbmpo_models::addToData(result_datafile, planner, time_ms / RUNS, exit_code, 
             sbmpo_models::SaveOptions::STATS,
-            cost, buffer_size
+            cost / RUNS, buffer_size / RUNS, float(val) / RUNS
         );
 
     }

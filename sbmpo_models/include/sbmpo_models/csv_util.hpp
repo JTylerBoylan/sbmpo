@@ -99,7 +99,7 @@ namespace sbmpo_models {
     void addToData(const std::string& filename, SBMPO &results, 
             const float time_ms, const int exit_code,
             const int options = (STATS | PATH | BUFFER),
-            float cost = 0.0f, float buffer_size = 0.0f) {
+            float cost = 0.0f, float buffer_size = 0.0f, float success_rate = 0.0f) {
 
         if (!cost)
             cost = results.cost();
@@ -119,6 +119,8 @@ namespace sbmpo_models {
             myFile << cost;
             myFile << ",";
             myFile << buffer_size;
+            myFile << ",";
+            myFile << success_rate;
         }
         
 
