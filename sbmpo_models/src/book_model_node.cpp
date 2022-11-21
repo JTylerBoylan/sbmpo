@@ -5,7 +5,7 @@
 #include <ctime>
 
 #define VERBOSE true
-#define RUNS 100
+#define RUNS 1000
 
 void print_parameters(const sbmpo::Parameters &params);
 
