@@ -61,7 +61,8 @@ int main (int argc, char ** argv) {
         if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
 
         sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code, 
-            sbmpo_models::SaveOptions::STATS
+            sbmpo_models::SaveOptions::STATS,
+            cost, buffer_size
         );
 
     }

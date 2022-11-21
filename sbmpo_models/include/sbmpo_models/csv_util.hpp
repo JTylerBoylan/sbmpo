@@ -132,46 +132,47 @@ namespace sbmpo_models {
         }
 
         if (options & (PATH | BUFFER)) {
+            
             myFile << ",";
             myFile << results.graph[0].state.size();
             myFile << ",";
             myFile << results.graph[0].control.size();
-        }
 
-        for (int b = 0; b < results.size(); b++) {
+            for (int b = 0; b < results.size(); b++) {
 
-            std::vector<int> path = results.path();
-            if (!(options & BUFFER) && (options & PATH) && !std::count(path.begin(), path.end(), b))
-                continue;
+                std::vector<int> path = results.path();
+                if (!(options & BUFFER) && (options & PATH) && !std::count(path.begin(), path.end(), b))
+                    continue;
 
-            const sbmpo::Vertex& vertex = results.graph[b];
+                const sbmpo::Vertex& vertex = results.graph[b];
 
-            if (!(options & STATE_ONLY)) {
-                myFile << ",";
-                myFile << vertex.idx;
-                myFile << ",";
-                myFile << vertex.gen;
-
-                myFile << ",";
-                myFile << vertex.f;
-                myFile << ",";
-                myFile << vertex.g;
-                myFile << ",";
-                myFile << vertex.rhs;
-            }
-
-            for (float s : vertex.state) {
-                myFile << ",";
-                myFile << s;
-            }
-
-            if (!(options & STATE_ONLY)) {
-                for (int c = 0; c < results.graph[0].control.size(); c++) {
+                if (!(options & STATE_ONLY)) {
                     myFile << ",";
-                    myFile << (c < vertex.control.size()) ? vertex.control[c] : 0;
-                }
-            }
+                    myFile << vertex.idx;
+                    myFile << ",";
+                    myFile << vertex.gen;
 
+                    myFile << ",";
+                    myFile << vertex.f;
+                    myFile << ",";
+                    myFile << vertex.g;
+                    myFile << ",";
+                    myFile << vertex.rhs;
+                }
+
+                for (float s : vertex.state) {
+                    myFile << ",";
+                    myFile << s;
+                }
+
+                if (!(options & STATE_ONLY)) {
+                    for (int c = 0; c < results.graph[0].control.size(); c++) {
+                        myFile << ",";
+                        myFile << (c < vertex.control.size()) ? vertex.control[c] : 0;
+                    }
+                }
+
+            }
         }
         
         myFile << '\n';
