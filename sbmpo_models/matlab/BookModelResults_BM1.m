@@ -18,7 +18,11 @@ for p = 1:size
     num_samples(p) = NumberOfSamples(p);
     time_ms(p) = plan.time_ms;
     num_nodes(p) = plan.buffer_size;
-    cost(p) = plan.nodes(plan.path(end)).g;
+    for n = 1:length(plan.nodes)
+       if plan.nodes(n).id == plan.path(end)
+           cost(p) = plan.nodes(n).g;
+       end
+    end
 
 end
 
