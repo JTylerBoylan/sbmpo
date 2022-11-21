@@ -9,8 +9,8 @@ clc
 % Set total number of runs
 runs = 12;
 
-MaxIterations = 10000;
-MaxGenerations = 100;
+MaxIterations = 30000;
+MaxGenerations = 150;
 SampleHorizonTime = 0.3;
 SampleHorizonTimeIncrement = 0.1;
 GoalThreshold = 0.3;
@@ -22,7 +22,7 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 0];
-GridResolution = [0.01, 0.01];
+GridResolution = [0.025, 0.025];
 
 RotationControls = {
         [0 -0.785398 0.785398 -0.589049 0.589049 -0.392699 0.392699 -0.196350 0.196350];
@@ -57,6 +57,7 @@ LinearControls = {
 V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
 
 Configuration = cell(runs,1);
+NumberOfSamples = zeros(1,runs);
 for r = 1:runs
 
     LinearControl = cell2mat(V(LinearControls, r));
@@ -64,8 +65,8 @@ for r = 1:runs
     
     SizeLinear = length(LinearControl);
     SizeRotation = length(RotationControl);
-    NumberOfSamples = SizeRotation * SizeLinear;
-    Samples = zeros(1, NumberOfSamples*V(NumberOfControls,r));
+    NumberOfSamples(r) = SizeRotation * SizeLinear;
+    Samples = zeros(1, NumberOfSamples(r)*V(NumberOfControls,r));
 
     for v = 1:SizeLinear
         for u = 1:SizeRotation
@@ -79,7 +80,7 @@ for r = 1:runs
             V(NumberOfStates,r) V(NumberOfControls,r) V(NumberOfGriddedStates,r) ...
             V(InitialState,r) V(GoalState,r) V(InitialControl,r) ...
             V(GridActiveStates,r) V(GridResolution,r)...
-            NumberOfSamples Samples]};
+            NumberOfSamples(r) Samples]};
 
 end
     

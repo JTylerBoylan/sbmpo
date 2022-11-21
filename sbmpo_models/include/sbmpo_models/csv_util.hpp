@@ -131,7 +131,8 @@ namespace sbmpo_models {
 
         for (int b = 0; b < results.size(); b++) {
 
-            if (!(options & BUFFER) && (options & PATH) && !std::count(results.path().begin(), results.path().end(), b))
+            std::vector<int> path = results.path();
+            if (!(options & BUFFER) && (options & PATH) && !std::count(path.begin(), path.end(), b))
                 continue;
 
             const sbmpo::Vertex& vertex = results.graph[b];

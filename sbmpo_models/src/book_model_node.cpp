@@ -5,7 +5,7 @@
 #include <ctime>
 
 #define VERBOSE true
-#define RUNS 5
+#define RUNS 10
 
 void print_parameters(const sbmpo::Parameters &params);
 
@@ -34,14 +34,13 @@ int main (int argc, char ** argv) {
 
         if (VERBOSE) print_parameters(*param);
 
+        sbmpo::SBMPO planner;
+        std::vector<std::array<float, 3>> obstacles;
+        int exit_code;
+        double time_ms = 0.0f;
         for (int r = 0; r < RUNS; r++) {
 
-            sbmpo::SBMPO planner;
-            int exit_code;
-
-            std::vector<std::array<float, 3>> obstacles = book_model.randomize_obstacles(3, 1.0, 4.0);
-            sbmpo_models::addToData(obstacles_file, obstacles);
-            print_obstacles(obstacles);
+            obstacles = book_model.randomize_obstacles(3, 1.0, 4.0);
 
             clock_t cstart = std::clock();
 
@@ -49,15 +48,21 @@ int main (int argc, char ** argv) {
 
             clock_t cend = std::clock();
 
-            float time_ms = (cend - cstart) / double(CLOCKS_PER_SEC) * 1000;
-
-            if (VERBOSE) print_results(planner, time_ms, exit_code);
-
-            if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
-
-            sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code);
+            time_ms += double(cend - cstart) / double(CLOCKS_PER_SEC * RUNS) * 1000.0;
 
         }
+
+        sbmpo_models::addToData(obstacles_file, obstacles);
+        if (VERBOSE) print_obstacles(obstacles);
+
+        if (VERBOSE) print_results(planner, time_ms, exit_code);
+
+        if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
+
+        sbmpo_models::addToData(result_datafile, planner, time_ms, exit_code, 
+            sbmpo_models::SaveOptions::STATS |
+            sbmpo_models::SaveOptions::PATH
+        );
 
     }
 
