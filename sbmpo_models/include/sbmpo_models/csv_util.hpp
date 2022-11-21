@@ -97,7 +97,14 @@ namespace sbmpo_models {
     // Add to results file
     enum SaveOptions {STATS = 0b1, PATH = 0b10, BUFFER = 0b100, STATE_ONLY = 0b1000};
     void addToData(const std::string& filename, SBMPO &results, 
-            const float time_ms, const int exit_code, const int options = (STATS | PATH | BUFFER)) {
+            const float time_ms, const int exit_code,
+            const int options = (STATS | PATH | BUFFER),
+            float cost = 0.0f, float buffer_size = 0.0f) {
+
+        if (!cost)
+            cost = results.cost();
+        if (!buffer_size)
+            buffer_size = results.size();
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
 
@@ -108,6 +115,10 @@ namespace sbmpo_models {
             myFile << time_ms;
             myFile << ",";
             myFile << exit_code;
+            myFile << ",";
+            myFile << cost;
+            myFile << ",";
+            myFile << buffer_size;
         }
         
 
@@ -125,8 +136,6 @@ namespace sbmpo_models {
             myFile << results.graph[0].state.size();
             myFile << ",";
             myFile << results.graph[0].control.size();
-            myFile << ",";
-            myFile << results.size();
         }
 
         for (int b = 0; b < results.size(); b++) {
