@@ -39,9 +39,13 @@ namespace sbmpo {
 
         private:
 
+            std::vector<int> path_;
+
             const void generate_children(const Vertex vertex, Model &model);
 
             const void update_vertex(Vertex &vertex, Model &model);
+
+            const bool generate_path();
         
     };
 

@@ -30,6 +30,9 @@ namespace sbmpo {
         goal.g = INFINITY;
         goal.rhs = INFINITY;
 
+        // Reset path
+        best = 0;
+        path_.clear();
     }
 
     int SBMPO::run(Model &model, const Parameters &params) {
@@ -63,7 +66,7 @@ namespace sbmpo {
 
             // Check if we are at the goal
             if (model.is_goal(v.state, goal.state, parameters.goal_threshold))
-                return GOAL_REACHED;
+                return generate_path() ? GOAL_REACHED : INVALID_PATH;
 
             // Check if max generations is reached
             if (v.gen > parameters.max_generations)
@@ -93,26 +96,13 @@ namespace sbmpo {
     } 
 
     std::vector<int> SBMPO::path() {
-        std::vector<int> path;
-        int i = best;
-        while (graph.getPredecessors(graph[i]).size() > 0) {
-            path.push_back(i);
-            i = *graph.getPredecessors(graph[i]).begin();
-            for (int pred : graph.getPredecessors(graph[i])) {
-                if (graph[pred].g < graph[i].g)
-                    i = pred;
-            }
-        }
-        path.push_back(0);
-        std::reverse(path.begin(), path.end());
-        return path;
+        return path_;
     }
 
     const void SBMPO::generate_children(const Vertex vertex, Model &model) {
 
         for (Control control : parameters.samples) {
             
-
             // Evaluate new state
             int n = parameters.sample_time / parameters.sample_time_increment;
             bool invalid = false;
@@ -152,17 +142,34 @@ namespace sbmpo {
     }
 
     const void SBMPO::update_vertex(Vertex &vertex, Model &model) {
-        if (vertex.idx != 0) {
-            vertex.rhs = INFINITY;
-            for (int pred : graph.getPredecessors(vertex))
-                vertex.rhs = std::min(vertex.rhs, graph[pred].g + 
-                    model.cost(vertex.state, graph[pred].state, vertex.control, parameters.sample_time));
-        }
+        if (vertex.idx == 0)
+            return;
+        vertex.rhs = INFINITY;
+        for (int pred : graph.getPredecessors(vertex))
+            vertex.rhs = std::min(vertex.rhs, graph[pred].g + 
+                model.cost(vertex.state, graph[pred].state, vertex.control, parameters.sample_time));
         queue.remove(vertex.idx);
         if (vertex.g != vertex.rhs) {
             vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, goal.state);
             queue.insert(vertex.idx);
         }
+    }
+
+    const bool SBMPO::generate_path() {
+        int i = best;
+        while (graph.getPredecessors(graph[i]).size() > 0) {
+            if (std::count(path_.begin(), path_.end(), i))
+                return false;
+            path_.push_back(i);
+            i = *graph.getPredecessors(graph[i]).begin();
+            for (int pred : graph.getPredecessors(graph[i])) {
+                if (graph[pred].g < graph[i].g)
+                    i = pred;
+            }
+        }
+        path_.push_back(0);
+        std::reverse(path_.begin(), path_.end());
+        return true;
     }
 
 }
