@@ -6,6 +6,7 @@
 
 #define VERBOSE true
 #define RUNS 50
+#define NUM_OBSTACLES 0
 
 void print_parameters(const sbmpo::Parameters &params);
 
@@ -43,7 +44,7 @@ int main (int argc, char ** argv) {
         int val = 0;
         for (int r = 0; r < RUNS; r++) {
 
-            obstacles = book_model.randomize_obstacles(3, 1.0, 4.0);
+            obstacles = book_model.randomize_obstacles(NUM_OBSTACLES, 1.0, 4.0);
 
             clock_t cstart = std::clock();
 
@@ -139,11 +140,11 @@ void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_co
     ROS_INFO("Path:");
     for (int idx : results.path()) {
         sbmpo::Vertex v = results.graph[idx];
-        ROS_INFO("  (%d) [@%d] x: %.3f, y: %.3f, w: %.3f, v: %.3f, u: %.3f, g: %.3f, f: %.3f",
+        ROS_INFO("  (%d) [@%d] x: %.3f, y: %.3f, w: %.3f, v: %.3f, u: %.3f, g: %.3f, rhs: %.3f, f: %.3f",
             v.gen, v.idx,
             v.state[0], v.state[1], v.state[2],
             v.control[0], v.control[1],
-            v.g, v.f);
+            v.g, v.rhs, v.f);
     }
     ROS_INFO("--------");
 }
