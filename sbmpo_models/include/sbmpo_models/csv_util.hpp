@@ -138,7 +138,7 @@ namespace sbmpo_models {
             myFile << ",";
             myFile << results.graph[0].state.size();
             myFile << ",";
-            /*8myFile << results.graph[0].control.size();*/
+            /*myFile << results.graph[0].control.size();*/
 
             for (int b = 0; b < results.size(); b++) {
 

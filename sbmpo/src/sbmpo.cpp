@@ -119,7 +119,7 @@ namespace sbmpo {
                 grid.insert(new_state, vertex2);
             } else {
             // Else add edge from vertex to graph
-                if (u != vertex.idx)
+                if (u != vertex.idx && u != 0)
                     graph.add_edge(vertex.idx, u, control);
             }
         }
