@@ -19,8 +19,6 @@ namespace sbmpo {
 
             ImplicitGrid grid;
 
-            Vertex start, goal;
-
             int best;
 
             SBMPO();

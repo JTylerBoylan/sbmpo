@@ -20,36 +20,55 @@ namespace sbmpo {
         int idx, gen;
         float f, g, rhs;
         State state;
+    };
+
+    struct Edge {
+        int idx;
+        int vertex1, vertex2;
         Control control;
     };
 
     struct Graph {
 
-        std::vector<Vertex> buffer;
+        std::vector<Vertex> vertices;
+        std::vector<Edge> edges;
         std::map<int, std::set<int>> link_back;
         std::map<int, std::set<int>> link_forward;
 
         Graph() {}
 
         Graph(int size) {
-            buffer.reserve(size);
+            vertices.reserve(size);
         }
 
         Vertex &operator[](int i) {
-            return buffer[i];
+            return vertices[i];
         }
 
         const size_t size(){
-            return buffer.size();
+            return vertices.size();
         }
 
-        const void insert(Vertex &vertex) {
-            buffer.push_back(vertex);
+        const int add_vertex(const State &state) {
+            Vertex vertex;
+            vertex.idx = vertices.size();
+            vertex.state = state;
+            vertex.rhs = INFINITY;
+            vertex.g = INFINITY;
+            vertices.push_back(vertex);
+            return vertex.idx;
         }
 
-        const void add_edge(const Vertex &v1, const Vertex &v2) {
-                link_forward[v1.idx].insert(v2.idx);
-                link_back[v2.idx].insert(v1.idx);
+        const int add_edge(const int vertex1, const int vertex2, const Control &control) {
+            Edge edge;
+            edge.idx = edges.size();
+            edge.vertex1 = vertex1;
+            edge.vertex2 = vertex2;
+            edge.control = control;
+            edges.push_back(edge);
+            link_forward[vertex1].insert(edge.idx);
+            link_back[vertex2].insert(edge.idx);
+            return edge.idx;
         };
 
         const std::set<int> getPredecessors(const Vertex &v) {

@@ -138,7 +138,7 @@ namespace sbmpo_models {
             myFile << ",";
             myFile << results.graph[0].state.size();
             myFile << ",";
-            myFile << results.graph[0].control.size();
+            /*8myFile << results.graph[0].control.size();*/
 
             for (int b = 0; b < results.size(); b++) {
 
@@ -168,10 +168,10 @@ namespace sbmpo_models {
                 }
 
                 if (!(options & STATE_ONLY)) {
-                    for (int c = 0; c < results.graph[0].control.size(); c++) {
+                    /*for (int c = 0; c < results.graph[0].control.size(); c++) {
                         myFile << ",";
                         myFile << (c < vertex.control.size()) ? vertex.control[c] : 0;
-                    }
+                    }*/
                 }
 
             }

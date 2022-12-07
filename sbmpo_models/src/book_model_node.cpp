@@ -138,12 +138,12 @@ void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_co
     ROS_INFO("Number of Nodes: %d", results.size());
     ROS_INFO("Exit code: %d", exit_code);
     ROS_INFO("Path:");
+    int c = 0;
     for (int idx : results.path()) {
         sbmpo::Vertex v = results.graph[idx];
-        ROS_INFO("  (%d) [@%d] x: %.3f, y: %.3f, w: %.3f, v: %.3f, u: %.3f, g: %.3f, rhs: %.3f, f: %.3f",
-            v.gen, v.idx,
+        ROS_INFO("  (%d) [@%d] x: %.3f, y: %.3f, w: %.3f, g: %.3f, rhs: %.3f, f: %.3f",
+            ++c, v.idx,
             v.state[0], v.state[1], v.state[2],
-            v.control[0], v.control[1],
             v.g, v.rhs, v.f);
     }
     ROS_INFO("--------");
