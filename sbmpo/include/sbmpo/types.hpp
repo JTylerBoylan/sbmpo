@@ -53,8 +53,8 @@ namespace sbmpo {
             Vertex vertex;
             vertex.idx = vertices.size();
             vertex.state = state;
-            vertex.rhs = INFINITY;
-            vertex.g = INFINITY;
+            vertex.rhs = std::numeric_limits<float>::infinity();
+            vertex.g = std::numeric_limits<float>::infinity();
             vertices.push_back(vertex);
             return vertex.idx;
         }

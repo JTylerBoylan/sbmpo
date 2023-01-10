@@ -23,9 +23,6 @@ namespace sbmpo {
 
     int SBMPO::run(Model &model, const Parameters &params) {
 
-        // Start clock
-        std::clock_t cstart = std::clock();
-
         // Initialize
         initialize(params);
 
@@ -63,7 +60,7 @@ namespace sbmpo {
             if (v.g > v.rhs) {
                 graph[best].g = v.rhs;
             } else {
-                graph[best].g = INFINITY;
+                graph[best].g = std::numeric_limits<float>::infinity();
                 update_vertex(graph[best], model);
             }
 
@@ -128,7 +125,7 @@ namespace sbmpo {
     const void SBMPO::update_vertex(Vertex &vertex, Model &model) {
         if (vertex.idx == 0)
             return;
-        vertex.rhs = INFINITY;
+        vertex.rhs = std::numeric_limits<float>::infinity();
         for (int pred : graph.getPredecessors(vertex)) {
             Edge edge = graph.edges[pred];
             Vertex vertex_back = graph[edge.vertex1];
