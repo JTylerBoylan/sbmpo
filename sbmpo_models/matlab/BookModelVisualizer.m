@@ -1,36 +1,38 @@
 %% SBMPO Results Visualizer
 
-plans = sbmpo_results("../results/book_model_results.csv");
-obstacles_csv = readmatrix("../results/obstacles.csv");
-
-% Set goal
-goal = [GoalState(1:2), 0.3];
+stats = sbmpo_stats("../results/book_model/stats.csv");
+plans = sbmpo_results("../results/book_model/results.csv");
+obstacles = sbmpo_obstacles("../results/book_model/obstacles.csv");
 
 % Convert path states to points and plot
 for p = 1:length(plans)
 
+    start_x = InitialState(p,1);
+    start_y = InitialState(p,2);
+
+    goal_x = GoalState(p,1);
+    goal_y = GoalState(p,2);
+    goal_r = GoalThreshold(p);
+
     figure
     hold on
     grid on
-    axis([-2.5 7.5 -2.5 7.5])
+    axis([start_x-2.5 goal_x+2.5 start_y-2.5 goal_y+2.5])
 
     title(strcat("Results ", int2str(p)))
     xlabel("X (m)")
     ylabel("Y (m)")
 
     % Plot obstacles
-    if (~isempty(obstacles_csv))
-        obsc = obstacles_csv(p,:);
-        obstacles = reshape(obsc(2:end), [obsc(1) 3])';
-        obs = [obstacles(:,1:2)-obstacles(:,3) obstacles(:,3).*2 obstacles(:,3).*2];
-        for o = 1:length(obstacles)
-            rectangle('Position',obs(o, :), 'Curvature', [1,1], 'FaceColor', 'k')
-        end
+    for o = 1:length(obstacles.x)
+        obs = [obstacles.x(o)-obstacles.r(o) obstacles.y(o)-obstacles.r(o) ...
+            obstacles.r(o)*2 obstacles.r(o)*2];
+        rectangle('Position', obs, 'Curvature', [1,1], 'FaceColor', 'k')
     end
 
     % Plot goal
-    gol = [goal(1:2)-goal(3) goal(3)*2 goal(3)*2];
-    rectangle('Position', gol, 'Curvature', [1,1], 'FaceColor', 'b')
+    goal = [goal_x-goal_r goal_y-goal_r goal_r*2 goal_r*2];
+    rectangle('Position', goal, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot all nodes
     bx = zeros(1, plans(p).buffer_size);

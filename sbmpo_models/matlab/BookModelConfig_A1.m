@@ -1,4 +1,4 @@
-%% Book Model Configuration - Simple Run
+%% Book Model Configuration - Grid Rresolution vs Horizon Time Benchmark
 
 clear
 close all
@@ -11,7 +11,7 @@ runs = 1;
 
 MaxIterations = 30000;
 MaxGenerations = 300;
-SampleHorizonTime = 1;
+SampleHorizonTime = 2.0;
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
 GoalThreshold = 0.3;
 
@@ -22,10 +22,10 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 0];
-GridResolution = [0.05, 0.05];
+GridResolution = [0.001, 0.001];
 
 RotationControls = {
-        [0 -0.785398 0.785398];
+        [0 0.39927 -0.39927];
       };
   
 LinearControls = {
@@ -64,4 +64,4 @@ for r = 1:runs
 
 end
     
- writecell(Configuration, '../config/book_model.csv', 'Delimiter', ',')
+ writecell(Configuration, '../config/book_model_config.csv', 'Delimiter', ',')

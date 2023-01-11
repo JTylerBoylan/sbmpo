@@ -15,7 +15,7 @@ namespace sbmpo_models {
     using namespace sbmpo;
 
     // Read from config
-    void fromConfig(const std::string& filename, std::vector<Parameters>& parameters) {
+    void readParametersFromFile(const std::string& filename, std::vector<Parameters>& parameters) {
 
         std::ifstream myFile(filename);
         if(!myFile.is_open()) 
@@ -118,12 +118,16 @@ namespace sbmpo_models {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
-        // Add plan path
         myFile << results.path().size();
         for (int idx : results.path()) {
             myFile << ",";
             myFile << idx;
         }
+
+        myFile << ",";
+        myFile << results.size();
+        myFile << ",";
+        myFile << results.graph[0].state.size();
 
         for (int b = 0; b < results.size(); b++) {
 

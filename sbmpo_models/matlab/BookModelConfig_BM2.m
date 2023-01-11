@@ -1,4 +1,4 @@
-%% Book Model Configuration - Linear Control Benchmark
+%% Book Model Configuration - Grid Rresolution vs Horizon Time Benchmark
 
 clear
 close all
@@ -7,12 +7,12 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 7;
+runs = 2500;
 
 MaxIterations = 30000;
 MaxGenerations = 300;
-SampleHorizonTime = 0.3;
-SampleHorizonTimeIncrement = 0.1;
+SampleHorizonTime = repmat([0.1:0.1:5.0]',[50 1]);
+SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
 GoalThreshold = 0.3;
 
 NumberOfStates = 3;
@@ -22,23 +22,14 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 0];
-GridResolution = [0.025, 0.025];
+GridResolution = [0.01:0.01:0.5; 0.01:0.01:0.5]';
 
 RotationControls = {
-        %[0 -0.392699 0.392699];
-        %[0 -0.392699 0.392699 -0.196350 0.196350];
-        %[0 -0.589049 0.589049 -0.392699 0.392699 -0.196350 0.196350];
-        [0 -0.785398 0.785398 -0.589049 0.589049 -0.392699 0.392699 -0.196350 0.196350];
+        [0 -0.785398 0.785398];
       };
   
 LinearControls = {
         [0.1 0.3 0.5];
-        [0.1 0.3];
-        [0.1 0.5];
-        [0.3 0.5];
-        [0.1];
-        [0.3];
-        [0.5];
       };
 
 %% Configurration

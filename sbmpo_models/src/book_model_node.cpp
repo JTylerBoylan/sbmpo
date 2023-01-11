@@ -41,7 +41,7 @@ int main (int argc, char ** argv) {
     sbmpo_models::clearFile(obstaclesSaveFile);
 
     std::vector<sbmpo::Parameters> parameterList;
-    sbmpo_models::fromConfig(paramsConfigFile, parameterList);
+    sbmpo_models::readParametersFromFile(paramsConfigFile, parameterList);
 
     sbmpo_models::SBMPOBookModel bookModel;
 
@@ -97,6 +97,7 @@ int main (int argc, char ** argv) {
 
 }
 
+int seq = 0;
 void print_parameters(const sbmpo::Parameters &params) {
     ROS_INFO("---- Planner Parameters [%d] ----", seq);
     ROS_INFO("Max iterations: %d", params.max_iterations);
@@ -140,7 +141,6 @@ void print_parameters(const sbmpo::Parameters &params) {
     }
 }
 
-int seq = 0;
 void print_results(sbmpo::SBMPO &results) {
     ROS_INFO("---- Planner Path [%d] ----", seq++);
     int c = 0;
