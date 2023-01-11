@@ -94,95 +94,67 @@ namespace sbmpo_models {
         myFile.close();
     }
 
-    // Add to results file
-    enum SaveOptions {STATS = 0b1, PATH = 0b10, BUFFER = 0b100, STATE_ONLY = 0b1000};
-    void addToData(const std::string& filename, SBMPO &results, 
-            const float time_ms, const int exit_code,
-            const int options = (STATS | PATH | BUFFER),
-            float cost = 0.0f, float buffer_size = 0.0f, float success_rate = 0.0f) {
-
-        if (!cost)
-            cost = results.cost();
-        if (!buffer_size)
-            buffer_size = results.size();
+    // Add stats to data
+    void appendStatsToFile(const std::string& filename, 
+            const float time_ms, const int exit_code, const float cost, const int buffer_size, const float success_rate) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
 
-        myFile << options;
+        myFile << time_ms;
+        myFile << ",";
+        myFile << exit_code;
+        myFile << ",";
+        myFile << cost;
+        myFile << ",";
+        myFile << buffer_size;
+        myFile << ",";
+        myFile << success_rate;
+        myFile << "\n";
 
-        if (options & STATS) {
+    }
+
+    // Add to results file
+    void appendResultsToFile(const std::string& filename, SBMPO &results) {
+
+        std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
+
+        // Add plan path
+        myFile << results.path().size();
+        for (int idx : results.path()) {
             myFile << ",";
-            myFile << time_ms;
-            myFile << ",";
-            myFile << exit_code;
-            myFile << ",";
-            myFile << cost;
-            myFile << ",";
-            myFile << buffer_size;
-            myFile << ",";
-            myFile << success_rate;
+            myFile << idx;
         }
-        
 
-        if (options & PATH) {
+        for (int b = 0; b < results.size(); b++) {
+
+            const sbmpo::Vertex& vertex = results.graph[b];
+
             myFile << ",";
-            myFile << results.path().size();
-            for (int idx : results.path()) {
-                myFile << ",";
-                myFile << idx;
-            }
-        }
+            myFile << vertex.idx;
+            myFile << ",";
+            myFile << vertex.gen;
 
-        if (options & (PATH | BUFFER)) {
+            myFile << ",";
+            myFile << vertex.f;
+            myFile << ",";
+            myFile << vertex.g;
+            myFile << ",";
+            myFile << vertex.rhs;
             
-            myFile << ",";
-            myFile << results.graph[0].state.size();
-            myFile << ",";
-            /*myFile << results.graph[0].control.size();*/
-
-            for (int b = 0; b < results.size(); b++) {
-
-                std::vector<int> path = results.path();
-                if (!(options & BUFFER) && (options & PATH) && !std::count(path.begin(), path.end(), b))
-                    continue;
-
-                const sbmpo::Vertex& vertex = results.graph[b];
-
-                if (!(options & STATE_ONLY)) {
-                    myFile << ",";
-                    myFile << vertex.idx;
-                    myFile << ",";
-                    myFile << vertex.gen;
-
-                    myFile << ",";
-                    myFile << vertex.f;
-                    myFile << ",";
-                    myFile << vertex.g;
-                    myFile << ",";
-                    myFile << vertex.rhs;
-                }
-
-                for (float s : vertex.state) {
-                    myFile << ",";
-                    myFile << s;
-                }
-
-                if (!(options & STATE_ONLY)) {
-                    /*for (int c = 0; c < results.graph[0].control.size(); c++) {
-                        myFile << ",";
-                        myFile << (c < vertex.control.size()) ? vertex.control[c] : 0;
-                    }*/
-                }
-
+            for (float s : vertex.state) {
+                myFile << ",";
+                myFile << s;
             }
+
         }
         
         myFile << '\n';
 
         myFile.close();
     }
+    
 
-    void addToData(const std::string& filename, std::vector<std::array<float, 3>> obstacles) {
+    void appendObstaclesToFile(const std::string& filename, std::vector<std::array<float, 3>> obstacles) {
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
         myFile << obstacles.size();
         for (std::array<float, 3> ob : obstacles)

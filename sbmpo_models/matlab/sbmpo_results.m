@@ -30,8 +30,8 @@ function plans = sbmpo_results(results_file)
 
        if(bitand(save_type,0b110))
            plans(p).num_states = plan_data(i+1);
-           plans(p).num_controls = plan_data(i+2);
-           i = i+2;
+           %plans(p).num_controls = plan_data(i+2);
+           i = i+1;
            
            N = plans(p).buffer_size;
            if (bitand(save_type,0b10) && ~bitand(save_type,0b100))
@@ -50,8 +50,8 @@ function plans = sbmpo_results(results_file)
                 plans(p).nodes(n).state = plan_data(i+1:i+plans(p).num_states);
                 i = i+plans(p).num_states;
 
-                plans(p).nodes(n).control = plan_data(i+1:i+plans(p).num_controls);
-                i = i+plans(p).num_controls;
+                %plans(p).nodes(n).control = plan_data(i+1:i+plans(p).num_controls);
+                %i = i+plans(p).num_controls;
            end
        end
 

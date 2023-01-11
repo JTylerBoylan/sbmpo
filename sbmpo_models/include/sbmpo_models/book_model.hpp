@@ -13,7 +13,7 @@ namespace sbmpo_models {
 
     using namespace sbmpo;
 
-    #define BODY_RADIUS 0.20f
+    const float BODY_RADIUS = 0.20f;
 
     const float bounds[2][2] = {
         {-1.0, -1.0},

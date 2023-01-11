@@ -4,81 +4,99 @@
 #include <sbmpo/sbmpo.hpp>
 #include <ctime>
 
-#define VERBOSE true
-#define RUNS 15
-#define NUM_OBSTACLES 3
+bool verbose = true;
+int runsPerParam = 1;
+int numberOfObstacles = 0;
+
+std::string paramsConfigFile = ros::package::getPath("sbmpo_models") + "/config/book_model_config.csv";
+std::string resultsSaveFile = ros::package::getPath("sbmpo_models") + "/results/book_model/results.csv";
+std::string statsSaveFile = ros::package::getPath("sbmpo_models") + "/results/book_model/stats.csv";
+std::string obstaclesSaveFile = ros::package::getPath("sbmpo_models") + "/results/book_model/obstacles.csv";
+
+float obstacleMinXY = 1.0f;
+float obstacleMaxXY = 4.0f;
 
 void print_parameters(const sbmpo::Parameters &params);
-
-void print_obstacles(std::vector<std::array<float, 3>> obstacles);
-
-void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_code);
+void print_results(sbmpo::SBMPO &results);
+void print_stats(const float timeMs, const int exitCode, const float cost, const int bufferSize, const float successRate);
+void print_obstacles(const std::vector<std::array<float, 3>> obstacles);
 
 int main (int argc, char ** argv) {
 
     ros::init(argc, argv, "planner_node");
     ros::NodeHandle node("~");
 
-    std::string param_config = ros::package::getPath("sbmpo_models") + "/config/book_model.csv";
-    std::string result_datafile = ros::package::getPath("sbmpo_models") + "/results/book_model_results.csv";
-    std::string obstacles_file = ros::package::getPath("sbmpo_models") + "/results/obstacles.csv";
+    node.getParam("verbose", verbose);
+    node.getParam("runs", runsPerParam);
+    node.getParam("num_obstacles", numberOfObstacles);
+    node.getParam("config_file_path", paramsConfigFile);
+    node.getParam("results_file_path", resultsSaveFile);
+    node.getParam("stats_file_path", statsSaveFile);
+    node.getParam("obstacles_file_path", obstaclesSaveFile);
+    node.getParam("obstacle_min_bound", obstacleMinXY);
+    node.getParam("obstacle_max_bound", obstacleMaxXY);
 
-    sbmpo_models::clearFile(result_datafile);
-    sbmpo_models::clearFile(obstacles_file);
+    sbmpo_models::clearFile(resultsSaveFile);
+    sbmpo_models::clearFile(statsSaveFile);
+    sbmpo_models::clearFile(obstaclesSaveFile);
 
-    std::vector<sbmpo::Parameters> parameter_list;
-    sbmpo_models::fromConfig(param_config, parameter_list);
+    std::vector<sbmpo::Parameters> parameterList;
+    sbmpo_models::fromConfig(paramsConfigFile, parameterList);
 
-    sbmpo_models::SBMPOBookModel book_model;
+    sbmpo_models::SBMPOBookModel bookModel;
 
-    for (auto param = parameter_list.begin(); param != parameter_list.end(); ++param) {
+    for (auto param = parameterList.begin(); param != parameterList.end(); ++param) {
 
-        if (VERBOSE) print_parameters(*param);
+        if (verbose) print_parameters(*param);
 
-        sbmpo::SBMPO planner;
+        sbmpo::SBMPO sbmpoPlanner;
         std::vector<std::array<float, 3>> obstacles;
-        int exit_code;
-        double time_ms = 0.0;
+
+        int exitCode;
+        double timeMs = 0.0;
         double cost = 0.0;
-        double buffer_size = 0.0;
-        int val = 0;
-        for (int r = 0; r < RUNS; r++) {
+        int bufferSize = 0;
+        int successCount = 0;
 
-            obstacles = book_model.randomize_obstacles(NUM_OBSTACLES, 1.0, 4.0);
+        for (int r = 0; r < runsPerParam; r++) {
 
-            clock_t cstart = std::clock();
+            obstacles = bookModel.randomize_obstacles(numberOfObstacles, obstacleMinXY, obstacleMaxXY);
 
-            exit_code = planner.run(book_model, *param);
+            clock_t clockStart = std::clock();
 
-            clock_t cend = std::clock();
+            exitCode = sbmpoPlanner.run(bookModel, *param);
 
-            if (!exit_code) {
-                time_ms += double(cend - cstart) / double(CLOCKS_PER_SEC) * 1000.0;
-                cost += planner.cost();
-                buffer_size += planner.size();
-                val++;
-            }
+            clock_t clockEnd = std::clock();
+
+            timeMs += double(clockEnd - clockStart) / double(CLOCKS_PER_SEC) * 1000.0;
+            cost += sbmpoPlanner.cost();
+            bufferSize += sbmpoPlanner.size();
+            successCount++;
 
         }
 
-        if (VERBOSE) print_results(planner, time_ms, exit_code);
+        float timeMsAvg = timeMs / runsPerParam;
+        float costAvg = cost / runsPerParam;
+        float bufferSizeAvg = double(bufferSize) / runsPerParam;
+        float successRate = double(successCount) / runsPerParam;
 
-        if (VERBOSE) ROS_INFO("Writing results to file %s ...", result_datafile.c_str());
+        if (verbose) print_stats(timeMsAvg, exitCode, costAvg, bufferSizeAvg, successRate);
+        if (verbose) print_results(sbmpoPlanner);
+        if (verbose) ROS_INFO("Writing results to file %s ...", resultsSaveFile.c_str());
 
-        sbmpo_models::addToData(result_datafile, planner, time_ms / val, exit_code, 
-            sbmpo_models::SaveOptions::STATS,
-            cost / val, buffer_size / val, float(val) / RUNS
-        );
+
+        sbmpo_models::appendStatsToFile(statsSaveFile, timeMsAvg, exitCode, costAvg, bufferSizeAvg, successRate);
+        sbmpo_models::appendResultsToFile(resultsSaveFile, sbmpoPlanner);
+        sbmpo_models::appendObstaclesToFile(obstaclesSaveFile, obstacles);
 
     }
 
-    if (VERBOSE) ROS_INFO("Finished.");
+    if (verbose) ROS_INFO("Finished.");
 
     return 0;
 
 }
 
-int seq = 0;
 void print_parameters(const sbmpo::Parameters &params) {
     ROS_INFO("---- Planner Parameters [%d] ----", seq);
     ROS_INFO("Max iterations: %d", params.max_iterations);
@@ -122,22 +140,9 @@ void print_parameters(const sbmpo::Parameters &params) {
     }
 }
 
-void print_obstacles(std::vector<std::array<float, 3>> obstacles) {
-    ROS_INFO("Obstacles:");
-    for (std::array<float, 3> obs : obstacles) {
-        std::string st;
-        for (float f : obs)
-            st += std::to_string(f) + " ";
-        ROS_INFO(" - %s", st.c_str());
-    }
-}
-
-void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_code) {
-    ROS_INFO("---- Planner Results [%d] ----", seq++);
-    ROS_INFO("Computing Time: %.3f ms", time_ms);
-    ROS_INFO("Number of Nodes: %d", results.size());
-    ROS_INFO("Exit code: %d", exit_code);
-    ROS_INFO("Path:");
+int seq = 0;
+void print_results(sbmpo::SBMPO &results) {
+    ROS_INFO("---- Planner Path [%d] ----", seq++);
     int c = 0;
     for (int idx : results.path()) {
         sbmpo::Vertex v = results.graph[idx];
@@ -149,3 +154,22 @@ void print_results(sbmpo::SBMPO &results, const float time_ms, const int exit_co
     ROS_INFO("--------");
 }
 
+void print_stats(const float timeMs, const int exitCode, const float cost, const int bufferSize, const float successRate) {
+    ROS_INFO("---- Planner Stats ----");
+    ROS_INFO("  Time: %.2f ms", timeMs);
+    ROS_INFO("  Exit Code: %d", exitCode);
+    ROS_INFO("  Cost: %.2f", cost);
+    ROS_INFO("  Buffer Size: %d", bufferSize);
+    ROS_INFO("  Success Rate: %.1f%%", successRate * 100);
+    ROS_INFO("--------");
+}
+
+void print_obstacles(const std::vector<std::array<float, 3>> obstacles) {
+    ROS_INFO("Obstacles:");
+    for (std::array<float, 3> obs : obstacles) {
+        std::string st;
+        for (float f : obs)
+            st += std::to_string(f) + " ";
+        ROS_INFO(" - %s", st.c_str());
+    }
+}

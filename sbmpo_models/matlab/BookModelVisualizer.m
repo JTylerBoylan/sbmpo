@@ -3,13 +3,8 @@
 plans = sbmpo_results("../results/book_model_results.csv");
 obstacles_csv = readmatrix("../results/obstacles.csv");
 
-% Set obstacles
-obstacles = [3.1, 1.2, 0.5;
-             3.5, 3.7, 0.5;
-             1.0, 0.5, 0.5];
-
 % Set goal
-goal = [5, 5, 0.3];
+goal = [GoalState(1:2), 0.3];
 
 % Convert path states to points and plot
 for p = 1:length(plans)
@@ -24,11 +19,13 @@ for p = 1:length(plans)
     ylabel("Y (m)")
 
     % Plot obstacles
-    obsc = obstacles_csv(p,:);
-    obstacles = reshape(obsc(2:end), [obsc(1) 3])';
-    obs = [obstacles(:,1:2)-obstacles(:,3) obstacles(:,3).*2 obstacles(:,3).*2];
-    for o = 1:length(obstacles)
-        rectangle('Position',obs(o, :), 'Curvature', [1,1], 'FaceColor', 'k')
+    if (~isempty(obstacles_csv))
+        obsc = obstacles_csv(p,:);
+        obstacles = reshape(obsc(2:end), [obsc(1) 3])';
+        obs = [obstacles(:,1:2)-obstacles(:,3) obstacles(:,3).*2 obstacles(:,3).*2];
+        for o = 1:length(obstacles)
+            rectangle('Position',obs(o, :), 'Curvature', [1,1], 'FaceColor', 'k')
+        end
     end
 
     % Plot goal
