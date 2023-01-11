@@ -36,7 +36,7 @@ grid on
 contourf(X,Y,time_ms)
 title("Computation Time (ms)")
 ylabel("Grid Resolution")
-xlabel("Sampling Horizon")
+xlabel("Sampling Horizon Time")
 
 subplot(2,2,2)
 hold on
@@ -44,7 +44,7 @@ grid on
 contourf(X,Y,cost)
 title("Cost (m)")
 ylabel("Grid Resolution")
-xlabel("Sampling Horizon")
+xlabel("Sampling Horizon Time")
 
 subplot(2,2,3)
 hold on
@@ -52,7 +52,7 @@ grid on
 contourf(X,Y, num_iters)
 title("Iterations")
 ylabel("Grid Resolution")
-xlabel("Sampling Horizon")
+xlabel("Sampling Horizon Time")
 
 subplot(2,2,4)
 hold on
@@ -60,6 +60,6 @@ grid on
 contourf(X,Y,success_rate)
 title("Success Rate (%)")
 ylabel("Grid Resolution")
-xlabel("Sampling Horizon")
+xlabel("Sampling Horizon Time")
 
 saveas(gcf, "figures/benchmark2.fig");

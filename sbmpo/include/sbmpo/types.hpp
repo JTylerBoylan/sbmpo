@@ -10,7 +10,7 @@
 
 namespace sbmpo {
 
-    #define INVALID_INDEX -1
+    const int INVALID_INDEX = -1;
 
     typedef std::vector<float> State;
     typedef std::vector<float> Control;
