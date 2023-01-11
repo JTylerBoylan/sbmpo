@@ -71,7 +71,7 @@ int main (int argc, char ** argv) {
             timeMs += double(clockEnd - clockStart) / double(CLOCKS_PER_SEC) * 1000.0;
             cost += sbmpoPlanner.cost();
             bufferSize += sbmpoPlanner.size();
-            successCount++;
+            if (!exitCode) successCount++;
 
         }
 

@@ -1,24 +1,23 @@
 %% Book Model Results - Rotation Control Benchmark
 close all
 
-shape = [50 50];
+shape = [40 46];
 
-plans = sbmpo_results("../results/book_model_results.csv");
-obstacles_csv = readmatrix("../results/obstacles.csv");
+stats = sbmpo_stats("../results/book_model/stats.csv");
 
-size = length(plans);
+size = length(stats);
 time_ms = zeros(1, size);
 num_iters = zeros(1, size);
 cost = zeros(1, size);
-exit_code = zeros(1, size);
+success_rate = zeros(1, size);
 
 for p = 1:size
     
-    plan = plans(p);
-    time_ms(p) = plan.time_ms;
-    num_iters(p) = plan.buffer_size / NumberOfSamples(p);
-    cost(p) = plan.cost;
-    exit_code(p) = plan.exit_code;
+    stat = stats(p);
+    time_ms(p) = stat.time_ms;
+    num_iters(p) = stat.buffer_size / NumberOfSamples(p);
+    cost(p) = stat.cost;
+    success_rate(p) = stat.success_rate;
 
 end
 
@@ -28,14 +27,14 @@ Y = repmat(GridResolution(:,1)', [shape(1) 1]);
 time_ms = reshape(time_ms, shape);
 num_iters = reshape(num_iters, shape);
 cost = reshape(cost, shape);
-exit_code = reshape(exit_code, shape);
+success_rate = reshape(success_rate, shape);
 
 figure
 subplot(2,2,1)
 hold on
 grid on
-contourf(X,Y,log(time_ms))
-title("Log. Computation Time (ms)")
+contourf(X,Y,time_ms)
+title("Computation Time (ms)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon")
 
@@ -50,15 +49,17 @@ xlabel("Sampling Horizon")
 subplot(2,2,3)
 hold on
 grid on
-contourf(X,Y,log(num_iters))
-title("Log. Iterations")
+contourf(X,Y, num_iters)
+title("Iterations")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon")
 
 subplot(2,2,4)
 hold on
 grid on
-contourf(X,Y,exit_code)
-title("Exit Code")
+contourf(X,Y,success_rate)
+title("Success Rate (%)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon")
+
+saveas(gcf, "figures/benchmark2.fig");

@@ -7,11 +7,11 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 2500;
+runs = 1840;
 
 MaxIterations = 30000;
 MaxGenerations = 300;
-SampleHorizonTime = repmat([0.1:0.1:5.0]',[50 1]);
+SampleHorizonTime = repmat((0.1:0.1:4.0)',[46 1]);
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
 GoalThreshold = 0.3;
 
@@ -22,14 +22,14 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 0];
-GridResolution = [0.01:0.01:0.5; 0.01:0.01:0.5]';
+GridResolution = [0.05:0.01:0.5; 0.05:0.01:0.5]';
 
 RotationControls = {
-        [0 -0.785398 0.785398];
+        [0 -0.3927 0.3927];
       };
   
 LinearControls = {
-        [0.1 0.3 0.5];
+        [0.3 0.5];
       };
 
 %% Configurration
@@ -64,4 +64,4 @@ for r = 1:runs
 
 end
     
- writecell(Configuration, '../config/book_model.csv', 'Delimiter', ',')
+ writecell(Configuration, '../config/book_model_config.csv', 'Delimiter', ',')
