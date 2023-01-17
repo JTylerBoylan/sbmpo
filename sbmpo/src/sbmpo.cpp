@@ -93,9 +93,9 @@ namespace sbmpo {
             // Evaluate new state
             int n = parameters.sample_time / parameters.sample_time_increment;
             bool invalid = false;
-            State new_state;
+            State new_state = vertex.state;
             for (int i = 1; i <= n; i++) {
-                if (!model.next_state(new_state, vertex.state, control, parameters.sample_time_increment * i)) {
+                if (!model.next_state(new_state, new_state, control, parameters.sample_time_increment)) {
                     invalid = true;
                     break;
                 }
