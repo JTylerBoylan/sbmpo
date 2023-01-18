@@ -11,25 +11,25 @@ runs = 1;
 
 MaxIterations = 30000;
 MaxGenerations = 300;
-SampleHorizonTime = 2.0;
-SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
+SampleHorizonTime = 0.5;
+SampleHorizonTimeIncrement = SampleHorizonTime ./ 5;
 GoalThreshold = 0.3;
 
 NumberOfStates = 3;
 NumberOfControls = 2;
-NumberOfGriddedStates = 2;
+NumberOfGriddedStates = 3;
 InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
-GridActiveStates = [1, 1, 0];
-GridResolution = [0.25, 0.25];
+GridActiveStates = [1, 1, 1];
+GridResolution = [0.25, 0.25, 0.1963];
 
 RotationControls = {
-        [0 0.39927 -0.39927];
+        [0 0.3927 -0.3927 0.1963 -0.1963];
       };
   
 LinearControls = {
-        [0.3 0.5];
+        [0.25 0.5 1.0];
       };
 
 %% Configurration

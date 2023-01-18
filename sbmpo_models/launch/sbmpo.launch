@@ -2,7 +2,7 @@
 
     <node pkg="sbmpo_models" type="book_model" name="book_model" output="screen">
         <param name="num_obstacles" value="3"/>
-        <param name="runs" value="15"/>
+        <param name="runs" value="5"/>
     </node>
 
 </launch>

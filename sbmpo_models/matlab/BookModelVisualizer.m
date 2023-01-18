@@ -17,9 +17,8 @@ for p = 1:length(plans)
     figure
     hold on
     grid on
-    grid minor
-    set(gca, 'xtick', 0:GridResolution(p,1):7.5)
-    set(gca, 'ytick', 0:GridResolution(p,1):7.5)
+    set(gca, 'xtick', -2.5:GridResolution(p,1):7.5)
+    set(gca, 'ytick', -2.5:GridResolution(p,1):7.5)
     axis([start_x-2.5 goal_x+2.5 start_y-2.5 goal_y+2.5])
 
     title(strcat("Results ", int2str(p)))
@@ -56,4 +55,5 @@ for p = 1:length(plans)
         py(n) = node.state(2);
     end
     plot (px, py, '-g', 'LineWidth', 3)
+    plot (px, py, 'ob', 'MarkerSize', 5)
 end
