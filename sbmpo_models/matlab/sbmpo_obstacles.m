@@ -10,6 +10,7 @@ function obstacles = sbmpo_obstacles(obstacles_file)
        obs_data = csv_matrix(p,:);
 
        num_obs =  obs_data(1);
+       obstacles(p).n = num_obs;
        obstacles(p).x = zeros(1, num_obs);
        obstacles(p).y = zeros(1, num_obs);
        obstacles(p).r = zeros(1, num_obs);

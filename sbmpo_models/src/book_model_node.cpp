@@ -43,13 +43,12 @@ int main (int argc, char ** argv) {
     std::vector<sbmpo::Parameters> parameterList;
     sbmpo_models::readParametersFromFile(paramsConfigFile, parameterList);
 
-    sbmpo_models::SBMPOBookModel bookModel;
-
     for (auto param = parameterList.begin(); param != parameterList.end(); ++param) {
 
         if (verbose) print_parameters(*param);
 
         sbmpo::SBMPO sbmpoPlanner;
+        sbmpo_models::SBMPOBookModel bookModel(sbmpoPlanner);
         std::vector<std::array<float, 3>> obstacles;
 
         int exitCode;

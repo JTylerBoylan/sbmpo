@@ -17,6 +17,9 @@ for p = 1:length(plans)
     figure
     hold on
     grid on
+    grid minor
+    set(gca, 'xtick', 0:GridResolution(p,1):7.5)
+    set(gca, 'ytick', 0:GridResolution(p,1):7.5)
     axis([start_x-2.5 goal_x+2.5 start_y-2.5 goal_y+2.5])
 
     title(strcat("Results ", int2str(p)))
@@ -24,7 +27,7 @@ for p = 1:length(plans)
     ylabel("Y (m)")
 
     % Plot obstacles
-    for o = 1:length(obstacles.x)
+    for o = 1:obstacles.n
         obs = [obstacles.x(o)-obstacles.r(o) obstacles.y(o)-obstacles.r(o) ...
             obstacles.r(o)*2 obstacles.r(o)*2];
         rectangle('Position', obs, 'Curvature', [1,1], 'FaceColor', 'k')

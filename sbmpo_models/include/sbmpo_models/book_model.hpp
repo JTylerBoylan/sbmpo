@@ -16,15 +16,19 @@ namespace sbmpo_models {
     const float BODY_RADIUS = 0.20f;
 
     const float bounds[2][2] = {
-        {-1.0, -1.0},
-        {6.0, 6.0}  
+        {-5.0, -5.0},
+        {10.0, 10.0}  
     };
-
-    std::vector<std::array<float,3>> obstacles;
 
     class SBMPOBookModel : public Model {
 
         public:
+
+        std::vector<std::array<float,3>> obstacles;
+        SBMPO &planner;
+
+        SBMPOBookModel(SBMPO &sbmpo)
+        : planner(sbmpo) {}
 
         // Evaluate a node with a control
         bool next_state(State &state2, const State &state1, const Control& control, const float time_span) {
@@ -78,7 +82,8 @@ namespace sbmpo_models {
 
         // Determine if state is goal
         bool is_goal(const State& state, const State& goal, const float goal_threshold) {
-            return heuristic(state, goal) <= goal_threshold;
+            return heuristic(state, goal) <= goal_threshold
+            || planner.grid.to_key(state) == planner.grid.to_key(goal);
         }
 
         // Generate random obstacles

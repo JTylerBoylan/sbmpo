@@ -33,7 +33,7 @@ namespace sbmpo {
 
             inline int size() { return graph.size(); }
 
-            inline float cost() { return graph[best].rhs; }
+            inline float cost() { return graph[best].f; }
 
         private:
 

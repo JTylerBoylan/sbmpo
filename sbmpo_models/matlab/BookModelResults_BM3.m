@@ -1,7 +1,7 @@
 %% Book Model Results - Rotation Control Benchmark
 close all
 
-shape = [40 40];
+shape = [length(HorizonTime) length(GridResolutionXY)];
 
 stats = sbmpo_stats("../results/book_model/stats.csv");
 

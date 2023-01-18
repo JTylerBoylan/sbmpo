@@ -6,12 +6,12 @@ clc
 
 %% Parameters
 
-% Set total number of runs
-runs = 1840;
+GridResolutionXY = 0.05:0.01:0.5;
+HorizonTime = 0.1:0.1:4.0;
 
 MaxIterations = 30000;
 MaxGenerations = 300;
-SampleHorizonTime = repmat((0.1:0.1:4.0)',[46 1]);
+SampleHorizonTime = repmat(HorizonTime',[length(GridResolutionXY) 1]);
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
 GoalThreshold = 0.3;
 
@@ -22,17 +22,20 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 0];
-GridResolution = [0.05:0.01:0.5; 0.05:0.01:0.5]';
+GridResolution = [GridResolutionXY; GridResolutionXY]';
 
 RotationControls = {
-        [0 -0.3927 0.3927];
+        [0 -0.3927 0.3927 -0.1963 0.1963];
       };
   
 LinearControls = {
-        [0.3 0.5];
+        [0.25 0.5 1.0];
       };
 
 %% Configurration
+
+% Set total number of runs
+runs = length(GridResolutionXY)*length(HorizonTime);
   
 V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
 
