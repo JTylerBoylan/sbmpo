@@ -33,10 +33,11 @@ figure
 subplot(2,2,1)
 hold on
 grid on
-contourf(X,Y,time_ms)
-title("Computation Time (ms)")
+contourf(X,Y,log10(time_ms))
+title("Log. Computation Time (ms)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
+colorbar
 
 subplot(2,2,2)
 hold on
@@ -45,21 +46,26 @@ contourf(X,Y,cost)
 title("Cost (m)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
+colorbar
 
 subplot(2,2,3)
 hold on
 grid on
-contourf(X,Y, num_iters)
-title("Iterations")
+contourf(X,Y, log10(num_iters))
+title("Log. Iterations")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
+colorbar
 
 subplot(2,2,4)
 hold on
 grid on
-contourf(X,Y,success_rate)
+contourf(X,Y,success_rate .* 100)
 title("Success Rate (%)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
+colorbar
 
 saveas(gcf, "figures/benchmark2.fig");
+
+time_per_iter = time_ms ./ num_iters;
