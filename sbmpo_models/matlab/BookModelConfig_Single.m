@@ -22,14 +22,14 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 1];
-GridResolution = [0.25, 0.25, 0.1963];
+GridResolution = [0.2, 0.2, 0.09817];
 
 RotationControls = {
-        [0 0.3927 -0.3927 0.1963 -0.1963];
+        [0 -0.3927 0.3927 -0.1963 0.1963];
       };
   
 LinearControls = {
-        [0.25 0.5 1.0];
+        [0.5 1.0];
       };
 
 %% Configurration

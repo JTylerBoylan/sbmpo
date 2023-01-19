@@ -16,9 +16,6 @@ for p = 1:length(plans)
 
     figure
     hold on
-    grid on
-    set(gca, 'xtick', -2.5:GridResolution(p,1):7.5)
-    set(gca, 'ytick', -2.5:GridResolution(p,1):7.5)
     axis([start_x-2.5 goal_x+2.5 start_y-2.5 goal_y+2.5])
 
     title(strcat("Results ", int2str(p)))

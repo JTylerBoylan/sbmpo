@@ -29,6 +29,13 @@ num_iters = reshape(num_iters, shape);
 cost = reshape(cost, shape);
 success_rate = reshape(success_rate, shape);
 
+success_filter = success_rate < 0.100;
+cost_filter = cost > 7.20 | cost < 7.15;
+
+cost(success_filter | cost_filter) = NaN;
+time_ms(success_filter | cost_filter) = NaN;
+num_iters(success_filter | cost_filter) = NaN;
+
 figure
 subplot(2,2,1)
 hold on
@@ -38,17 +45,15 @@ title("Log. Computation Time (ms)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-plot([X(1) Y(end)],[X(1) Y(end)],'--r','LineWidth', 2)
 
 subplot(2,2,2)
 hold on
 grid on
 contourf(X,Y,cost)
-title("Cost (m)")
+title("Cost")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-plot([X(1) Y(end)],[X(1) Y(end)],'--r','LineWidth', 2)
 
 subplot(2,2,3)
 hold on
@@ -58,7 +63,6 @@ title("Log. Iterations")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-plot([X(1) Y(end)],[X(1) Y(end)],'--r','LineWidth', 2)
 
 subplot(2,2,4)
 hold on
@@ -68,8 +72,7 @@ title("Success Rate (%)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-plot([X(1) Y(end)],[X(1) Y(end)],'--r','LineWidth', 2)
 
-saveas(gcf, "figures/benchmark4.fig");
+saveas(gcf, "figures/HTvsGR.fig");
 
 time_per_iter = time_ms ./ num_iters;

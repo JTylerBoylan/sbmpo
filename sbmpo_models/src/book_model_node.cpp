@@ -68,7 +68,7 @@ int main (int argc, char ** argv) {
             clock_t clockEnd = std::clock();
 
             timeMs += double(clockEnd - clockStart) / double(CLOCKS_PER_SEC) * 1000.0;
-            cost += sbmpoPlanner.cost();
+            cost += exitCode ? 0 : sbmpoPlanner.cost();
             bufferSize += sbmpoPlanner.size();
             if (!exitCode) successCount++;
 

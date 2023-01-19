@@ -6,30 +6,31 @@ clc
 
 %% Parameters
 
-GridResolutionXY = 0.05:0.01:0.5;
-HorizonTime = 0.1:0.1:4.0;
+GridResolutionXY = linspace(0.025, 0.25, 50);
+HorizonTime = linspace(0.1, 0.50, 50);
+GridResolutionTheta = 0.04909 * ones(1,length(GridResolutionXY));
 
 MaxIterations = 30000;
 MaxGenerations = 300;
 SampleHorizonTime = repmat(HorizonTime',[length(GridResolutionXY) 1]);
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 2;
-GoalThreshold = 0.3;
+GoalThreshold = 0.25;
 
 NumberOfStates = 3;
 NumberOfControls = 2;
-NumberOfGriddedStates = 2;
+NumberOfGriddedStates = 3;
 InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
-GridActiveStates = [1, 1, 0];
-GridResolution = [GridResolutionXY; GridResolutionXY]';
+GridActiveStates = [1, 1, 1];
+GridResolution = [GridResolutionXY; GridResolutionXY; GridResolutionTheta]';
 
 RotationControls = {
-        [0 -0.3927 0.3927 -0.1963 0.1963];
+        [0 -0.3927 0.3927];
       };
   
 LinearControls = {
-        [0.25 0.5 1.0];
+       [0.5];
       };
 
 %% Configurration
