@@ -30,7 +30,7 @@ cost = reshape(cost, shape);
 success_rate = reshape(success_rate, shape);
 
 success_filter = success_rate < 0.100;
-cost_filter = cost > 7.20 | cost < 7.15;
+cost_filter = cost > 7.5 | cost < 6.0;
 
 cost(success_filter | cost_filter) = NaN;
 time_ms(success_filter | cost_filter) = NaN;
@@ -54,6 +54,7 @@ title("Cost")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
+plot(X(2:end,1), 0.5.*X(2:end,1)./sqrt(2), '--r', 'LineWidth',3)
 
 subplot(2,2,3)
 hold on

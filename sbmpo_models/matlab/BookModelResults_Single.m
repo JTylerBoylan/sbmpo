@@ -7,30 +7,27 @@ obstacles = sbmpo_obstacles("../results/book_model/obstacles.csv");
 % Convert path states to points and plot
 for p = 1:length(plans)
 
-    start_x = InitialState(p,1);
-    start_y = InitialState(p,2);
-
-    goal_x = GoalState(p,1);
-    goal_y = GoalState(p,2);
-    goal_r = GoalThreshold(p);
+    start = V(InitialState, p);
+    goal = V(GoalState, p);
+    goal_r = V(GoalThreshold, p);
 
     figure
     hold on
-    axis([start_x-2.5 goal_x+2.5 start_y-2.5 goal_y+2.5])
+    axis([start(1)-2.5 goal(1)+2.5 start(2)-2.5 goal(2)+2.5])
 
     title(strcat("Results ", int2str(p)))
     xlabel("X (m)")
     ylabel("Y (m)")
 
     % Plot obstacles
-    for o = 1:obstacles.n
-        obs = [obstacles.x(o)-obstacles.r(o) obstacles.y(o)-obstacles.r(o) ...
-            obstacles.r(o)*2 obstacles.r(o)*2];
+    for o = 1:obstacles(p).n
+        obs = [obstacles(p).x(o)-obstacles(p).r(o) obstacles(p).y(o)-obstacles(p).r(o) ...
+            obstacles(p).r(o)*2 obstacles(p).r(o)*2];
         rectangle('Position', obs, 'Curvature', [1,1], 'FaceColor', 'k')
     end
 
     % Plot goal
-    goal = [goal_x-goal_r goal_y-goal_r goal_r*2 goal_r*2];
+    goal = [goal(1)-goal_r goal(2)-goal_r goal_r*2 goal_r*2];
     rectangle('Position', goal, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot all nodes

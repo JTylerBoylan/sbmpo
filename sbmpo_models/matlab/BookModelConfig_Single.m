@@ -7,13 +7,13 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 1;
+runs = 5;
 
-MaxIterations = 30000;
-MaxGenerations = 300;
+MaxIterations = 10000;
+MaxGenerations = 100;
 SampleHorizonTime = 0.5;
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 5;
-GoalThreshold = 0.3;
+GoalThreshold = 0.25;
 
 NumberOfStates = 3;
 NumberOfControls = 2;
@@ -22,7 +22,7 @@ InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
 InitialControl = [0, 0];
 GridActiveStates = [1, 1, 1];
-GridResolution = [0.2, 0.2, 0.09817];
+GridResolution = [0.3536, 0.3536, 0.0982];
 
 RotationControls = {
         [0 -0.3927 0.3927 -0.1963 0.1963];

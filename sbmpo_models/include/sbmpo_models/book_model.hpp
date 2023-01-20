@@ -82,8 +82,7 @@ namespace sbmpo_models {
 
         // Determine if state is goal
         bool is_goal(const State& state, const State& goal, const float goal_threshold) {
-            return heuristic(state, goal) <= goal_threshold
-            || planner.grid.to_key(state) == planner.grid.to_key(goal);
+            return heuristic(state, goal) <= goal_threshold;
         }
 
         // Generate random obstacles
