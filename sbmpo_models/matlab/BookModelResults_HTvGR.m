@@ -30,23 +30,25 @@ cost = reshape(cost, shape);
 success_rate = reshape(success_rate, shape);
 
 success_filter = success_rate < 0.100;
-cost_filter = cost > 7.5 | cost < 6.0;
+cost_filter = cost > 100.0 | cost < 1;
 
 cost(success_filter | cost_filter) = NaN;
 time_ms(success_filter | cost_filter) = NaN;
 num_iters(success_filter | cost_filter) = NaN;
 
 figure
-subplot(2,2,1)
 hold on
 grid on
-contourf(X,Y,log10(time_ms))
-title("Log. Computation Time (ms)")
+contourf(X,Y,time_ms)
+title("Computation Time (ms)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
+%plot([0.3 0.7], 0.5.*[0.3 0.7]./sqrt(2), '-r', 'LineWidth',3)
+%plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
+%saveas(gcf, 'figures/time_050_01768.fig')
 
-subplot(2,2,2)
+figure
 hold on
 grid on
 contourf(X,Y,cost)
@@ -54,18 +56,23 @@ title("Cost")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-plot(X(2:end,1), 0.5.*X(2:end,1)./sqrt(2), '--r', 'LineWidth',3)
+%plot([0.3 0.7], 0.5.*[0.3 0.7]./sqrt(2), '-r', 'LineWidth',3)
+%plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
+%saveas(gcf, 'figures/cost_050_01768.fig')
 
-subplot(2,2,3)
+figure
 hold on
 grid on
-contourf(X,Y, log10(num_iters))
-title("Log. Iterations")
+contourf(X,Y, num_iters)
+title("Iterations")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
+%plot([0.3 0.7], 0.5.*[0.3 0.7]./sqrt(2), '-r', 'LineWidth',3)
+%plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
+%saveas(gcf, 'figures/iter_050_01768.fig')
 
-subplot(2,2,4)
+figure
 hold on
 grid on
 contourf(X,Y,success_rate .* 100)
@@ -73,7 +80,7 @@ title("Success Rate (%)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
 colorbar
-
-saveas(gcf, "figures/HTvsGR.fig");
+%plot([0.3 0.7], 0.5.*[0.3 0.7]./sqrt(2), '-r', 'LineWidth',3)
+%plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
 
 time_per_iter = time_ms ./ num_iters;
