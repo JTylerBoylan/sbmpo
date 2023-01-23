@@ -30,7 +30,7 @@ cost = reshape(cost, shape);
 success_rate = reshape(success_rate, shape);
 
 success_filter = success_rate < 0.100;
-cost_filter = cost > 100.0 | cost < 1;
+cost_filter = cost > 8.0 | cost < 7.07;
 
 cost(success_filter | cost_filter) = NaN;
 time_ms(success_filter | cost_filter) = NaN;

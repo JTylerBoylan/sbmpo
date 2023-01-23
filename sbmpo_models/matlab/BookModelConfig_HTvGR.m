@@ -7,7 +7,7 @@ clc
 %% Parameters
 
 GridResolutionXY = linspace(0.1, 0.25, 40);
-HorizonTime = linspace(0.25, 1.0, 40);
+HorizonTime = linspace(0.25, 1.5, 40);
 GridResolutionTheta = 0.0982 * ones(1,length(GridResolutionXY));
 
 MaxIterations = 30000;
@@ -26,11 +26,11 @@ GridActiveStates = [1, 1, 1];
 GridResolution = [GridResolutionXY; GridResolutionXY; GridResolutionTheta]';
 
 RotationControls = {
-        [0 -0.3927 0.3927 -0.1963 0.1963];
+        [0 -0.1963 0.1963 -0.2618 0.2618 -0.3927 0.3927 -0.5236 0.5236 -0.7854 0.7854];
       };
   
 LinearControls = {
-       [0.5 1.0];
+       [0.25 0.5 0.75 1.0];
       };
 
 %% Configurration
