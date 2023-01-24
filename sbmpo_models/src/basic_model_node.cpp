@@ -46,7 +46,7 @@ int main (int argc, char ** argv) {
     sbmpo::SBMPO sbmpoPlanner;
     sbmpo_models::SBMPOBasicModel basicModel(sbmpoPlanner);
 
-    /*
+    
     std::vector<std::array<float, 3>> obstacles = {
         {0,0,0.5},
         {2,2,0.5},
@@ -60,9 +60,9 @@ int main (int argc, char ** argv) {
         {-2,1.4,0.5},
         {0,-5,0.5}
     };
-    */
+    
 
-    std::vector<std::array<float, 3>> obstacles = { {0,0,5} };
+    //std::vector<std::array<float, 3>> obstacles = { {0,0,5} };
 
     basicModel.set_obstacles(obstacles);
 
