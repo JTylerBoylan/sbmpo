@@ -6,7 +6,7 @@ clc
 
 %% Parameters
 
-omega_bar = pi / 5;
+omega_bar = pi / 2;
 
 % Set total number of runs
 runs = 4;

@@ -28,17 +28,14 @@ cost = cost(rm_empty) ./ num_runs;
 success_rate = success_rate(rm_empty) ./ num_runs;
 
 figure
+subplot(3,1,1)
 plot(num_samples, time_ms)
-title("Time")
+ylabel("Time (ms)")
 
-figure
+subplot(3,1,2)
 plot(num_samples, buffer_size)
-title("Buffer Size")
+ylabel("Number of Nodes")
 
-figure
+subplot(3,1,3)
 plot(num_samples, cost)
-title("Cost")
-
-figure
-plot(num_samples, success_rate)
-title("Success Rate")
+ylabel("Cost")
