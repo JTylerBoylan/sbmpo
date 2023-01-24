@@ -6,37 +6,30 @@ clc
 
 %% Parameters
 
-omega_bar = pi / 2;
-
 % Set total number of runs
-runs = 4;
+runs = 1;
 
 MaxIterations = 10000;
 MaxGenerations = 100;
-SampleHorizonTime = 2.5;
+SampleHorizonTime = 0.25;
 SampleHorizonTimeIncrement = SampleHorizonTime ./ 5;
 GoalThreshold = 0.25;
 
-NumberOfStates = 3;
+NumberOfStates = 2;
 NumberOfControls = 2;
-NumberOfGriddedStates = 3;
-InitialState = [0, 0, 1.5707];
-GoalState = [5, 5, 0];
+NumberOfGriddedStates = 2;
+InitialState = [-7.5, -2.5];
+GoalState = [7.5, 7.5];
 InitialControl = [0, 0];
-GridActiveStates = [1, 1, 1];
-GridResolution = [0.125, 0.125, 0.1963];
+GridActiveStates = [1, 1];
+GridResolution = [0.125, 0.125];
 
-RotationControls = {
-        [0, +omega_bar, -omega_bar];
-        [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2];
-        [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2,...
-            +omega_bar/4, -omega_bar/4];
-        [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2,...
-            +omega_bar/4, -omega_bar/4, +omega_bar*3/4, -omega_bar*3/4];
+XControls = {
+        [0 -1.0 1.0];
       };
   
-LinearControls = {
-        [0.1 0.3 0.5]
+YControls = {
+        [0 -1.0 1.0];
       };
 
 %% Configurration
@@ -47,18 +40,18 @@ Configuration = cell(runs,1);
 NumberOfSamples = zeros(1,runs);
 for r = 1:runs
 
-    LinearControl = cell2mat(V(LinearControls, r));
-    RotationControl = cell2mat(V(RotationControls, r));
+    XControl = cell2mat(V(XControls, r));
+    YControl = cell2mat(V(YControls, r));
     
-    SizeLinear = length(LinearControl);
-    SizeRotation = length(RotationControl);
+    SizeLinear = length(XControl);
+    SizeRotation = length(YControl);
     NumberOfSamples(r) = SizeRotation * SizeLinear;
     Samples = zeros(1, NumberOfSamples(r)*V(NumberOfControls,r));
 
     for v = 1:SizeLinear
         for u = 1:SizeRotation
-            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 1) = LinearControl(v);
-            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 2) = RotationControl(u);
+            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 1) = XControl(v);
+            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 2) = YControl(u);
         end
     end 
 
@@ -71,4 +64,4 @@ for r = 1:runs
 
 end
     
- writecell(Configuration, '../config/book_model_config.csv', 'Delimiter', ',')
+ writecell(Configuration, '../config/basic_model_config.csv', 'Delimiter', ',')
