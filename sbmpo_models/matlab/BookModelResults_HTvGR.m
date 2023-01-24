@@ -72,13 +72,17 @@ colorbar
 %plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
 %saveas(gcf, 'figures/iter_050_01768.fig')
 
-figure
-hold on
-grid on
+figure1 = figure('Color',[1 1 1]);
+axes1 = axes('Parent', figure1);
+hold(axes1,'on');
 contourf(X,Y,success_rate .* 100)
 title("Success Rate (%)")
 ylabel("Grid Resolution")
 xlabel("Sampling Horizon Time")
+box(axes1,'on')
+grid(axes1,'on')
+hold(axes1,'off')
+set(axes1, 'FontSize', 64)
 colorbar
 %plot([0.3 0.7], 0.5.*[0.3 0.7]./sqrt(2), '-r', 'LineWidth',3)
 %plot([0.5 0.5], [0.1 0.25], '--k', 'LineWidth', 3)
