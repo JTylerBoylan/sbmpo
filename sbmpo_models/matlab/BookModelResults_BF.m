@@ -27,15 +27,28 @@ buffer_size = buffer_size(rm_empty) ./ num_runs;
 cost = cost(rm_empty) ./ num_runs;
 success_rate = success_rate(rm_empty) ./ num_runs;
 
-figure
-subplot(3,1,1)
-plot(num_samples, time_ms)
+figure1 = figure('Color', [1 1 1]);
+subplot1 = subplot(3,1,1);
+hold on
+grid on
+plot(num_samples, time_ms, '-b', 'LineWidth', 3)
+plot(num_samples, time_ms, 'or', 'MarkerFaceColor', 'r', 'MarkerSize', 10)
 ylabel("Time (ms)")
+set(subplot1,'XTick',[9 15 21 27]);
 
-subplot(3,1,2)
-plot(num_samples, buffer_size)
+subplot2 = subplot(3,1,2);
+hold on
+grid on
+plot(num_samples, buffer_size, '-b', 'LineWidth', 3)
+plot(num_samples, buffer_size, 'or', 'MarkerFaceColor', 'r', 'MarkerSize', 10)
 ylabel("Number of Nodes")
+set(subplot2,'XTick',[9 15 21 27]);
 
-subplot(3,1,3)
-plot(num_samples, cost)
-ylabel("Cost")
+subplot3 = subplot(3,1,3);
+hold on
+grid on
+plot(num_samples, cost, '-b', 'LineWidth', 3)
+plot(num_samples, cost, 'or', 'MarkerFaceColor', 'r', 'MarkerSize', 10)
+xlabel("Branchout Factor")
+ylabel("Cost (m)")
+set(subplot3,'XTick',[9 15 21 27]);
