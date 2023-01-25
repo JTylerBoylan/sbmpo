@@ -20,6 +20,10 @@ namespace sbmpo_models {
         {10.0, 10.0}  
     };
 
+    const float MAX_VELOCITY = 1.0f;
+    const float MAX_ROTATION = 0.3927f;
+    const float MAX_CENTRIFUGAL = 1.0f;
+
     class SBMPOCarModel : public Model {
 
         public:
@@ -35,13 +39,12 @@ namespace sbmpo_models {
             
             // Update state
             state2 = state1;
+            state2[0] = state1[0] + cosf(state1[2]) * state1[3] * time_span;
+            state2[1] = state1[1] + sinf(state1[2]) * state1[3] * time_span;
+            state2[2] = state1[2] + state2[4] * time_span;
             state2[3] = control[0] * time_span;
             state2[4] = control[1] * time_span;
-
-            state2[2] = state1[2] + state2[4] * time_span;
-            state2[0] = state1[0] + cosf(state2[2]) * state2[3] * time_span;
-            state2[1] = state1[1] + sinf(state2[2]) * state2[3] * time_span;
-
+            
             // Angle wrap
             if (state2[2] >= M_2PI || state2[2] < 0)
                 state2[2] += state2[2] >= M_2PI ? -M_2PI : M_2PI;
@@ -58,7 +61,7 @@ namespace sbmpo_models {
         float heuristic(const State& state, const State &goal) {
             const float dx = goal[0] - state[0];
             const float dy = goal[1] - state[1];
-            return sqrtf(dx*dx + dy*dy);
+            return sqrtf(dx*dx + dy*dy) / MAX_VELOCITY;
         }
 
         // Determine if node is valid
@@ -69,6 +72,15 @@ namespace sbmpo_models {
                 state[1] - bounds[0][1] < BODY_RADIUS ||
                 bounds[1][0] - state[0] < BODY_RADIUS ||
                 bounds[1][1] - state[1] < BODY_RADIUS)
+                return false;
+
+            // Speed Limits
+            if (state[3] > MAX_VELOCITY || 
+                state[4] > MAX_ROTATION)
+                return false;
+
+            // Centrifugal limit
+            if (state[3]*state[4] > MAX_CENTRIFUGAL)
                 return false;
 
             // Obstacle collision check
