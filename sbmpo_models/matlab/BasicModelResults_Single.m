@@ -4,8 +4,8 @@ stats = sbmpo_stats("../results/basic_model/stats.csv");
 plans = sbmpo_results("../results/basic_model/results.csv");
 obstacles = sbmpo_obstacles("../results/basic_model/obstacles.csv");
 
-%rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
-rrt_results = readmatrix('docs/result_large.txt','Delimiter',' ');
+rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
+%rrt_results = readmatrix('docs/result_large.txt','Delimiter',' ');
 
 % Convert path states to points and plot
 for p = 1:length(plans)
