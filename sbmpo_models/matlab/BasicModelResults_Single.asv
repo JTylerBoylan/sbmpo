@@ -4,7 +4,7 @@ stats = sbmpo_stats("../results/basic_model/stats.csv");
 plans = sbmpo_results("../results/basic_model/results.csv");
 obstacles = sbmpo_obstacles("../results/basic_model/obstacles.csv");
 
-rr = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
+rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
 
 % Convert path states to points and plot
 for p = 1:length(plans)
@@ -13,11 +13,12 @@ for p = 1:length(plans)
     goal = V(GoalState, p);
     goal_r = V(GoalThreshold, p);
 
-    figure
+    figure('Color', [1 1 1])
     hold on
-    axis([start(1)-2.5 goal(1)+2.5 start(2)-2.5 goal(2)+2.5])
+    grid on
+    axis([start(1)-2.5 goal(1)+2.5 start(2)-5.0 goal(2)+2.5])
 
-    title(strcat("Results ", int2str(p)))
+    %title(strcat("Results ", int2str(p)))
     xlabel("X (m)")
     ylabel("Y (m)")
 
@@ -33,14 +34,14 @@ for p = 1:length(plans)
     rectangle('Position', goal, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot all nodes
-    bx = zeros(1, plans(p).buffer_size);
-    by = zeros(1, plans(p).buffer_size);
-    for b = 1:plans(p).buffer_size
-        node = plans(p).nodes(b);
-        bx(b) = node.state(1);
-        by(b) = node.state(2);
-    end
-    plot (bx, by, 'xk', 'MarkerSize', 2)
+%     bx = zeros(1, plans(p).buffer_size);
+%     by = zeros(1, plans(p).buffer_size);
+%     for b = 1:plans(p).buffer_size
+%         node = plans(p).nodes(b);
+%         bx(b) = node.state(1);
+%         by(b) = node.state(2);
+%     end
+%     plot (bx, by, 'xk', 'MarkerSize', 2)
 
     % Plot path
     px = zeros(1, plans(p).path_size);
@@ -50,6 +51,13 @@ for p = 1:length(plans)
         px(n) = node.state(1);
         py(n) = node.state(2);
     end
-    plot (px, py, '-g', 'LineWidth', 3)
-    plot (px, py, 'ob', 'MarkerSize', 5)
+    plot (px, py, '-g', 'LineWidth', 5, 'DisplayName', 'SBMPO')
+    %plot (px, py, 'ob', 'MarkerSize', 5)
+
+    rrt_x = rrt_results(:,1);
+    rrt_y = rrt_results(:,2);
+    plot(rrt_x, rrt_y, 'LineWidth', 5, 'DisplayName', 'RRT')
+    
+    legend('')
+
 end
