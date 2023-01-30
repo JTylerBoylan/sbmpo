@@ -168,6 +168,54 @@ namespace sbmpo_models {
         myFile.close();
     }
 
+    void readObstaclesFromFile(const std::string& filename, std::vector<std::vector<std::array<float,3>>> obstaclesList) {
+
+        std::ifstream myFile(filename);
+        if(!myFile.is_open()) 
+            throw std::runtime_error("Could not open file");
+
+        std::string line, value;
+        while (std::getline(myFile, line)) {
+
+            std::vector<std::array<float,3>> obstacles;
+            std::stringstream ss(line);
+
+            std::getline(ss, value, ',');
+            int num_obstacles = std::stoi(value);
+
+            for (int obs = 0; obs < num_obstacles; obs++) {
+
+                float x,y,r;
+
+                std::getline(ss, value, ',');
+                x = std::stof(value);
+                std::getline(ss, value, ',');
+                y = std::stof(value);
+                std::getline(ss, value, ',');
+                r = std::stof(value);
+
+                obstacles.push_back({x, y, r});
+            }
+
+            obstaclesList.push_back(obstacles);
+        }
+    }
+
+    void readComputationTimeFromFile(const std::string& filename, std::vector<float> timeList) {
+
+        std::ifstream myFile(filename);
+        if(!myFile.is_open()) 
+            throw std::runtime_error("Could not open file");
+
+        std::string line, value;
+        while (std::getline(myFile, line)) {
+            std::stringstream ss(line);
+            std::getline(ss, value, ',');
+            float time = std::stof(value);
+            timeList.push_back(time);
+        }
+    }
+
 }
 
 
