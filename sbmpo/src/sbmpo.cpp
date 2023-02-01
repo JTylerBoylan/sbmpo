@@ -152,7 +152,7 @@ namespace sbmpo {
         int min_edge = edge.idx;
         int min_vertex = edge.vertex1;
         for (int pred : predecessors) {
-          edge = graph.edges[pred];
+          edge = graph.edge(pred);
           if (graph.vertex(edge.vertex1).g < graph.vertex(min_vertex).g) {
             min_vertex = edge.vertex1;
             min_edge = edge.idx;
@@ -160,7 +160,7 @@ namespace sbmpo {
         }
 
         edge_path_.push_back(min_edge);
-        cost_ += graph.edges[min_edge].cost;
+        cost_ += graph.edge(min_edge).cost;
         current_vertex = min_vertex;
       }
 
