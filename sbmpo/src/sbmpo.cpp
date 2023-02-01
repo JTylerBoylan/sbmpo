@@ -26,8 +26,7 @@ namespace sbmpo {
         initialize(params);
 
         // Insert start into graph
-        int stidx = graph.add_vertex(params.initial_state);
-        Vertex &start_vertex = graph.vertex(stidx);
+        Vertex &start_vertex  = graph.add_vertex(params.initial_state);
         start_vertex.rhs = 0;
         start_vertex.gen = 0;
         // Insert start into implicit grid
@@ -99,12 +98,11 @@ namespace sbmpo {
 
             if (u == INVALID_INDEX) {
             // If grid space is empty, create new vertex
-                int vertex2 = graph.add_vertex(new_state);
-                Vertex &new_vertex = graph.vertex(vertex2);
+                Vertex &new_vertex = graph.add_vertex(new_state);
                 new_vertex.gen = vertex.gen + 1;
                 float cost = model.cost(new_vertex.state, vertex.state, control, parameters.sample_time);
-                int edge = graph.add_edge(vertex.idx, vertex2, control, cost);
-                grid.insert(new_state, vertex2);
+                graph.add_edge(vertex.idx, new_vertex.idx, control, cost);
+                grid.insert(new_state, new_vertex.idx);
             } else {
             // Else add edge from vertex to graph
                 if (u == vertex.idx || u == 0) 
@@ -120,7 +118,7 @@ namespace sbmpo {
             return;
         vertex.rhs = std::numeric_limits<float>::infinity();
         for (int pred : graph.getPredecessors(vertex)) {
-            Edge edge = graph.edges[pred];
+            Edge edge = graph.edge(pred);
             Vertex vertex_back = graph.vertex(edge.vertex1);
             vertex.rhs = std::min(vertex.rhs, vertex_back.g + edge.cost);
         }

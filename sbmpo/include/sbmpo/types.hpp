@@ -54,17 +54,17 @@ namespace sbmpo {
             return vertices.size();
         }
 
-        int add_vertex(const State &state) {
+        Vertex &add_vertex(const State &state) {
             Vertex vertex;
             vertex.idx = vertices.size();
             vertex.state = state;
             vertex.rhs = std::numeric_limits<float>::infinity();
             vertex.g = std::numeric_limits<float>::infinity();
             vertices.push_back(vertex);
-            return vertex.idx;
+            return vertices.back();
         }
 
-        int add_edge(const int vertex1, const int vertex2, const Control &control, const float cost) {
+        Edge &add_edge(const int vertex1, const int vertex2, const Control &control, const float cost) {
             Edge edge;
             edge.idx = edges.size();
             edge.cost = cost;
@@ -74,7 +74,7 @@ namespace sbmpo {
             edges.push_back(edge);
             link_forward[vertex1].insert(edge.idx);
             link_back[vertex2].insert(edge.idx);
-            return edge.idx;
+            return edges.back();
         };
 
         std::set<int> getPredecessors(const Vertex &v) {
