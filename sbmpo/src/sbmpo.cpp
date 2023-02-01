@@ -46,34 +46,34 @@ namespace sbmpo {
 
             // Get next best vertex
             best = queue.pop();
-            Vertex &v = graph.vertex(best);
+            Vertex &current_vertex = graph.vertex(best);
 
             // Check if we are at the goal
-            if (model.is_goal(v.state, parameters.goal_state, parameters.goal_threshold))
+            if (model.is_goal(current_vertex.state, parameters.goal_state, parameters.goal_threshold))
                 return generate_path() ? GOAL_REACHED : INVALID_PATH;
 
             // Check if max generations is reached
-            if (v.gen > parameters.max_generations)
+            if (current_vertex.gen > parameters.max_generations)
                 return GENERATION_LIMIT;
 
-            if (v.g > v.rhs) {
-                v.g = v.rhs;
+            if (current_vertex.g > current_vertex.rhs) {
+                current_vertex.g = current_vertex.rhs;
             } else {
-                v.g = std::numeric_limits<float>::infinity();
-                update_vertex(v, model);
+                current_vertex.g = std::numeric_limits<float>::infinity();
+                update_vertex(current_vertex, model);
             }
 
             // Generate children
-            generate_children(v, model);
+            generate_children(current_vertex, model);
 
             // Update successors
-            for (int suc : graph.getSuccessors(v)) {
+            for (int suc : graph.getSuccessors(current_vertex)) {
                 Edge edge = graph.edge(suc);
                 update_vertex(graph.vertex(edge.vertex2), model);
             }
             
             // Update current
-            update_vertex(v, model);
+            update_vertex(current_vertex, model);
 
             // Next iteration
         }
