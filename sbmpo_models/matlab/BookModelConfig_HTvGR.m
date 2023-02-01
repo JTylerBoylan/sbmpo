@@ -6,8 +6,8 @@ clc
 
 %% Parameters
 
-GridResolutionXY = linspace(0.05, 0.50, 30);
-HorizonTime = linspace(0.1, 1.5, 30);
+GridResolutionXY = linspace(0.1, 0.25, 30);
+HorizonTime = linspace(0.25, 1.0, 30);
 GridResolutionTheta = 0.1963 * ones(1,length(GridResolutionXY));
 
 MaxIterations = 30000;
