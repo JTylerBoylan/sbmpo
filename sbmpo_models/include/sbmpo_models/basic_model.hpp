@@ -31,14 +31,12 @@ namespace sbmpo_models {
         : planner(sbmpo) {}
 
         // Evaluate a node with a control
-        bool next_state(State &state2, const State &state1, const Control& control, const float time_span) {
+        void next_state(State &state, const Control& control, const float time_span) {
             
             // Update state
-            state2 = state1;
-            state2[0] = state2[0] + control[0] * time_span;
-            state2[1] = state2[1] + control[1] * time_span;
+            state[0] += control[0] * time_span;
+            state[1] += control[1] * time_span;
 
-            return is_valid(state2);
         }
 
         // Get the cost of a control

@@ -24,6 +24,7 @@ namespace sbmpo {
 
     struct Edge {
         int idx;
+        float cost;
         int vertex1, vertex2;
         Control control;
     };
@@ -41,15 +42,19 @@ namespace sbmpo {
             vertices.reserve(size);
         }
 
-        Vertex &operator[](int i) {
+        Vertex &vertex(int i) {
             return vertices[i];
         }
 
-        const size_t size(){
+        Edge &edge(int i) {
+            return edges[i];
+        }
+
+        size_t size(){
             return vertices.size();
         }
 
-        const int add_vertex(const State &state) {
+        int add_vertex(const State &state) {
             Vertex vertex;
             vertex.idx = vertices.size();
             vertex.state = state;
@@ -59,9 +64,10 @@ namespace sbmpo {
             return vertex.idx;
         }
 
-        const int add_edge(const int vertex1, const int vertex2, const Control &control) {
+        int add_edge(const int vertex1, const int vertex2, const Control &control, const float cost) {
             Edge edge;
             edge.idx = edges.size();
+            edge.cost = cost;
             edge.vertex1 = vertex1;
             edge.vertex2 = vertex2;
             edge.control = control;
@@ -71,11 +77,11 @@ namespace sbmpo {
             return edge.idx;
         };
 
-        const std::set<int> getPredecessors(const Vertex &v) {
+        std::set<int> getPredecessors(const Vertex &v) {
             return link_back[v.idx];
         }
 
-        const std::set<int> getSuccessors(const Vertex &v) {
+        std::set<int> getSuccessors(const Vertex &v) {
             return link_forward[v.idx];
         }
     };
@@ -93,7 +99,7 @@ namespace sbmpo {
             resolution = _res;
         }
 
-        const GridKey to_key(const State &state) {
+        GridKey to_key(const State &state) {
             GridKey key;
             for (int i = 0; i < state.size(); i++)
                 if (states[i])
@@ -101,12 +107,12 @@ namespace sbmpo {
             return key;
         }
 
-        const void insert(const State &state, const int idx) {
+        void insert(const State &state, const int idx) {
             GridKey key = to_key(state);
             grid[key] = idx;
         };
 
-        const int find(const State &state) {
+        int find(const State &state) {
             GridKey key = to_key(state);
             if (!grid.count(key))
                 grid[key] = INVALID_INDEX;
@@ -119,10 +125,9 @@ namespace sbmpo {
 
     struct Parameters {
         int max_iterations, max_generations;
-        float sample_time, sample_time_increment;
+        float sample_time;
         float goal_threshold;
         State initial_state, goal_state;
-        Control initial_control;
         std::vector<bool> grid_states;
         std::vector<float> grid_resolution;
         std::vector<Control> samples;

@@ -59,8 +59,8 @@ namespace my_namespace {
     // Constructor
     my_custom_model() {}
     
-    // Evaluate state and control in the model (return true if the state is valid)
-    bool next_state(State& state2, const State& state1, const Control& control, const float time_span) {}
+    // Evaluate state and control in the model
+    void next_state(State& state, const Control& control, const float time_span) {}
     
     // Determine the cost between two states with a given control
     float cost(const State& state2, const State& state1, const Control& control, const float time_span) {}
@@ -70,6 +70,9 @@ namespace my_namespace {
     
     // Determine if a state is within the goal threshold
     bool is_goal(const State& state, const State& goal, const float goal_threshold) {}
+
+    // Determine if a state statifies all constraints
+    bool is_valid(const State& state) {}
   
   };
 
@@ -82,11 +85,9 @@ These parameters include:
 - `max_iterations`: Maximum branchout iterations (`int`)
 - `max_generations`: Maximum branchout generations (`int`)
 - `sample_time`: Time period per branchout (`float`)
-- `sample_time_increment`: Time resolution for state validation (`float`)
 - `goal_threshold`: Goal threshold value (`float`)
 - `initial_state`: Initial state (`std::vector<float>`)
 - `goal_state`: Goal state (`std::vector<float>`)
-- `initial_control`: Initial control (`std::vector<float>`)
 - `grid_states`: Boolean vector corresponding to whether the respective state is gridded (`std::vector<bool>`)
 - `grid_resolution`: Grid resolutions for gridded states only (`std::vector<float>`)
 - `samples`: List of controls to be sampled in a branchout (`std::vector<std::vector<float>>`)
@@ -111,8 +112,10 @@ The results of the run is stored in the `sbmpo::SMBPO` class.
 Here are some of the functions you can use:
 | Type | Function | Description |
 | ---- | -------- | ----------- |
-| `std::vector<int>` | `path()` | Returns the best path found as a list of indices |
+| `std::vector<int>` | `vertex_path()` | Returns the best path found as a list of vertex indices |
+| `std::vector<int>` | `edge_path()` | Returns the best path found as a list of edge indices |
 | `sbmpo::Vertex` | `vertex(int i)` | Converts an index to its corresponding vertex |
+| `sbmpo::Edge` | `edge(int i)` | Converts an index to its corresponding edge |
 | `int` | `size()` | Get the number of vertices generated |
 | `float` | `cost()` | Get the cost of the best path |
 
@@ -140,7 +143,7 @@ int main(int argc, char ** argv) {
   std::cout << "Path cost: " << planner.cost() << std::endl;
   
   std::cout << "Path:" << std::endl;
-  for (int v : planner.path()) {
+  for (int v : planner.vertex_path()) {
     Vertex vertex = planner.vertex(v);
     std::cout << "  - (" << v << "): [ ";
     for (float s : vertex.state) {

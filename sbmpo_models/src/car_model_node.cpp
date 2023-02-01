@@ -103,18 +103,12 @@ void print_parameters(const sbmpo::Parameters &params) {
     ROS_INFO("Max iterations: %d", params.max_iterations);
     ROS_INFO("Max generations: %d", params.max_generations);
     ROS_INFO("Sample Time: %.2f", params.sample_time);
-    ROS_INFO("Sample Time Increment: %.2f", params.sample_time_increment);
     ROS_INFO("Goal Threshold: %.2f", params.goal_threshold);
 
     std::string st;
     for (float f : params.initial_state)
         st += std::to_string(f) + " ";
     ROS_INFO("Initial State: %s", st.c_str());
-    st.clear();
-
-    for (float f : params.initial_control)
-        st += std::to_string(f) + " ";
-    ROS_INFO("Initial Control: %s", st.c_str());
     st.clear();
 
     for (float f : params.goal_state)
@@ -144,8 +138,8 @@ void print_parameters(const sbmpo::Parameters &params) {
 void print_results(sbmpo::SBMPO &results) {
     ROS_INFO("---- Planner Path [%d] ----", seq++);
     int c = 0;
-    for (int idx : results.path()) {
-        sbmpo::Vertex v = results.graph[idx];
+    for (int idx : results.vertex_path()) {
+        sbmpo::Vertex v = results.graph.vertex(idx);
         ROS_INFO("  (%d) [@%d] x: %.3f, y: %.3f, w: %.3f, g: %.3f, rhs: %.3f, f: %.3f",
             ++c, v.idx,
             v.state[0], v.state[1], v.state[2],

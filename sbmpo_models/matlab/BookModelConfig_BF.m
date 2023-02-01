@@ -14,7 +14,6 @@ runs = 4;
 MaxIterations = 10000;
 MaxGenerations = 100;
 SampleHorizonTime = 2.5;
-SampleHorizonTimeIncrement = SampleHorizonTime ./ 5;
 GoalThreshold = 0.25;
 
 NumberOfStates = 3;
@@ -22,7 +21,6 @@ NumberOfControls = 2;
 NumberOfGriddedStates = 3;
 InitialState = [0, 0, 1.5707];
 GoalState = [5, 5, 0];
-InitialControl = [0, 0];
 GridActiveStates = [1, 1, 1];
 GridResolution = [0.125, 0.125, 0.1963];
 
@@ -62,10 +60,10 @@ for r = 1:runs
         end
     end 
 
-    Configuration(r) = {[V(MaxIterations,r) V(MaxGenerations,r) V(SampleHorizonTime,r)...
-            V(SampleHorizonTimeIncrement,r)  V(GoalThreshold,r) ...
+    Configuration(r) = {[V(MaxIterations,r) V(MaxGenerations,r)...
+            V(SampleHorizonTime,r)  V(GoalThreshold,r) ...
             V(NumberOfStates,r) V(NumberOfControls,r) V(NumberOfGriddedStates,r) ...
-            V(InitialState,r) V(GoalState,r) V(InitialControl,r) ...
+            V(InitialState,r) V(GoalState,r) ...
             V(GridActiveStates,r) V(GridResolution,r)...
             NumberOfSamples(r) Samples]};
 

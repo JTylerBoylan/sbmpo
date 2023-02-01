@@ -34,8 +34,6 @@ namespace sbmpo_models {
             std::getline(ss, value, ',');
             param.sample_time = std::stof(value);
             std::getline(ss, value, ',');
-            param.sample_time_increment = std::stof(value);
-            std::getline(ss, value, ',');
             param.goal_threshold = std::stof(value);
 
             std::getline(ss, value, ',');
@@ -53,11 +51,6 @@ namespace sbmpo_models {
             for (int s = 0; s < num_states; s++) {
                 std::getline(ss, value, ',');
                 param.goal_state.push_back(std::stof(value));
-            }
-
-            for (int c = 0; c < num_controls; c++) {
-                std::getline(ss, value, ',');
-                param.initial_control.push_back(std::stof(value));
             }
 
             for (int s = 0; s < num_states; s++) {
@@ -118,8 +111,8 @@ namespace sbmpo_models {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
-        myFile << results.path().size();
-        for (int idx : results.path()) {
+        myFile << results.vertex_path().size();
+        for (int idx : results.vertex_path()) {
             myFile << ",";
             myFile << idx;
         }
@@ -127,11 +120,11 @@ namespace sbmpo_models {
         myFile << ",";
         myFile << results.size();
         myFile << ",";
-        myFile << results.graph[0].state.size();
+        myFile << results.graph.vertex(0).state.size();
 
         for (int b = 0; b < results.size(); b++) {
 
-            const sbmpo::Vertex& vertex = results.graph[b];
+            const sbmpo::Vertex& vertex = results.graph.vertex(b);
 
             myFile << ",";
             myFile << vertex.idx;

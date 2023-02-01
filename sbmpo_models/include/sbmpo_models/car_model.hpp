@@ -20,6 +20,8 @@ namespace sbmpo_models {
         {10.0, 10.0}  
     };
 
+    const int INTEGRATION_SIZE = 5;
+
     const float MAX_VELOCITY = 1.0f;
     const float MAX_ROTATION = 0.3927f;
     const float MAX_CENTRIFUGAL = 1.0f;
@@ -35,21 +37,24 @@ namespace sbmpo_models {
         : planner(sbmpo) {}
 
         // Evaluate a node with a control
-        bool next_state(State &state2, const State &state1, const Control& control, const float time_span) {
+        void next_state(State &state, const Control& control, const float time_span) {
             
             // Update state
-            state2 = state1;
-            state2[0] = state1[0] + cosf(state1[2]) * state1[3] * time_span;
-            state2[1] = state1[1] + sinf(state1[2]) * state1[3] * time_span;
-            state2[2] = state1[2] + state2[4] * time_span;
-            state2[3] = control[0] * time_span;
-            state2[4] = control[1] * time_span;
+            float time_increment = time_span / INTEGRATION_SIZE;
+            for (int i = 0; i < INTEGRATION_SIZE; i++) {
+                state[0] += cosf(state[2]) * state[3] * time_increment;
+                state[1] += sinf(state[2]) * state[3] * time_increment;
+                state[2] += state[4] * time_increment;
+                state[3] += control[0] * time_increment;
+                state[4] += control[1] * time_increment;
+                if (is_valid(state))
+                    return;
+            }
             
             // Angle wrap
-            if (state2[2] >= M_2PI || state2[2] < 0)
-                state2[2] += state2[2] >= M_2PI ? -M_2PI : M_2PI;
+            if (state[2] >= M_2PI || state[2] < 0)
+                state[2] += state[2] >= M_2PI ? -M_2PI : M_2PI;
 
-            return is_valid(state2);
         }
 
         // Get the cost of a control

@@ -27,23 +27,29 @@ namespace sbmpo {
 
             int run(Model &model, const Parameters &parameters);
 
-            std::vector<int> path();
+            int size() { return graph.size(); }
+
+            float cost() { return cost_; }
+
+            std::vector<int> vertex_path() { return vertex_path_; }
+
+            std::vector<int> edge_path() {return edge_path_; }
             
-            inline Vertex vertex(int i) { return graph[i]; }
+            Vertex &vertex(int i) { return graph.vertex(i); }
 
-            inline int size() { return graph.size(); }
-
-            inline float cost() { return graph[best].f; }
+            Edge &edge(int i) { return graph.edge(i); }
 
         private:
 
-            std::vector<int> path_;
+            std::vector<int> vertex_path_;
+            std::vector<int> edge_path_;
+            float cost_;
 
-            const void generate_children(const Vertex vertex, Model &model);
+            void generate_children(const Vertex vertex, Model &model);
 
-            const void update_vertex(Vertex &vertex, Model &model);
+            void update_vertex(Vertex &vertex, Model &model);
 
-            const bool generate_path();
+            bool generate_path();
         
     };
 
