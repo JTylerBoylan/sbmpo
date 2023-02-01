@@ -68,7 +68,7 @@ namespace sbmpo {
 
             // Update successors
             for (int suc : graph.getSuccessors(v)) {
-                Edge edge = graph.edges[suc];
+                Edge edge = graph.edge(suc);
                 update_vertex(graph.vertex(edge.vertex2), model);
             }
             
