@@ -138,9 +138,9 @@ namespace sbmpo {
 
       int current_vertex = best;
       while (true) {
-        if (std::count(vertex_path_.begin(), vertex_path_.end(), current_vertex)) {
+
+        if (std::count(vertex_path_.begin(), vertex_path_.end(), current_vertex))
           return false;
-        }
 
         vertex_path_.push_back(current_vertex);
         Vertex v = graph.vertex(current_vertex);
@@ -150,10 +150,11 @@ namespace sbmpo {
           break;
         }
 
-        int min_vertex = INT_MAX;
-        int min_edge = INT_MAX;
+        Edge edge = graph.edge(*(predecessors.begin()));
+        int min_edge = edge.idx;
+        int min_vertex = edge.vertex1;
         for (int pred : predecessors) {
-          Edge edge = graph.edges[pred];
+          edge = graph.edges[pred];
           if (graph.vertex(edge.vertex1).g < graph.vertex(min_vertex).g) {
             min_vertex = edge.vertex1;
             min_edge = edge.idx;
