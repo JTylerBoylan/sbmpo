@@ -130,43 +130,49 @@ namespace sbmpo {
     }
 
     bool SBMPO::generate_path() {
-      vertex_path_.clear();
-      edge_path_.clear();
-      cost_ = 0.0f;
+        state_path_.clear();
+        control_path_.clear();
+        vertex_path_.clear();
+        edge_path_.clear();
+        cost_ = 0.0f;
 
-      int current_vertex = best;
-      while (true) {
+        int current_vertex = best;
+        while (true) {
 
-        if (std::count(vertex_path_.begin(), vertex_path_.end(), current_vertex))
-          return false;
+            if (std::count(vertex_path_.begin(), vertex_path_.end(), current_vertex))
+                return false;
 
-        vertex_path_.push_back(current_vertex);
-        Vertex v = graph.vertex(current_vertex);
-        std::set<int> predecessors = graph.getPredecessors(v);
+            vertex_path_.push_back(current_vertex);
+            Vertex v = graph.vertex(current_vertex);
+            state_path_.push_back(v.state);
+            std::set<int> predecessors = graph.getPredecessors(v);
 
-        if (predecessors.empty()) {
-          break;
+            if (predecessors.empty())
+                break;
+
+            Edge edge = graph.edge(*(predecessors.begin()));
+            int min_edge = edge.idx;
+            int min_vertex = edge.vertex1;
+            for (int pred : predecessors) {
+                edge = graph.edge(pred);
+                if (graph.vertex(edge.vertex1).g < graph.vertex(min_vertex).g) {
+                    min_vertex = edge.vertex1;
+                    min_edge = edge.idx;
+                }
+            }
+
+            edge_path_.push_back(min_edge);
+            Edge e = graph.edge(min_edge);
+            control_path_.push_back(e.control);
+            cost_ += e.cost;
+            current_vertex = min_vertex;
         }
 
-        Edge edge = graph.edge(*(predecessors.begin()));
-        int min_edge = edge.idx;
-        int min_vertex = edge.vertex1;
-        for (int pred : predecessors) {
-          edge = graph.edge(pred);
-          if (graph.vertex(edge.vertex1).g < graph.vertex(min_vertex).g) {
-            min_vertex = edge.vertex1;
-            min_edge = edge.idx;
-          }
-        }
-
-        edge_path_.push_back(min_edge);
-        cost_ += graph.edge(min_edge).cost;
-        current_vertex = min_vertex;
-      }
-
-      std::reverse(vertex_path_.begin(), vertex_path_.end());
-      std::reverse(edge_path_.begin(), edge_path_.end());
-      return true;
+        std::reverse(state_path_.begin(), state_path_.end());
+        std::reverse(control_path_.begin(), control_path_.end());
+        std::reverse(vertex_path_.begin(), vertex_path_.end());
+        std::reverse(edge_path_.begin(), edge_path_.end());
+        return true;
     }
 
 

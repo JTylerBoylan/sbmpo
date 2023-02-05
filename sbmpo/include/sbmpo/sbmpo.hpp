@@ -31,6 +31,10 @@ namespace sbmpo {
 
             float cost() { return cost_; }
 
+            std::vector<State> state_path() { return state_path_; }
+
+            std::vector<Control> control_path() { return control_path_; }
+
             std::vector<int> vertex_path() { return vertex_path_; }
 
             std::vector<int> edge_path() {return edge_path_; }
@@ -41,6 +45,8 @@ namespace sbmpo {
 
         private:
 
+            std::vector<State> state_path_;
+            std::vector<Control> control_path_;
             std::vector<int> vertex_path_;
             std::vector<int> edge_path_;
             float cost_;
