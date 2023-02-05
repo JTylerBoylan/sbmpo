@@ -1,3 +1,0 @@
-1) MATLAB CSV Configurer (w checker)
-2) Verify results 
-3) Thermal Model

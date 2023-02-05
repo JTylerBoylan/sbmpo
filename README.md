@@ -58,6 +58,9 @@ namespace my_namespace {
  
     // Constructor
     my_custom_model() {}
+
+    // Return the initial state of the model
+    State initial_state() {}
     
     // Evaluate state and control in the model
     void next_state(State& state, const Control& control, const float time_span) {}
@@ -65,11 +68,11 @@ namespace my_namespace {
     // Determine the cost between two states with a given control
     float cost(const State& state2, const State& state1, const Control& control, const float time_span) {}
     
-    // Determine the heuristic of a state with respect to the goal
-    float heuristic(const State& state, const State& goal) {}
+    // Determine the heuristic of a state
+    float heuristic(const State& state) {}
     
-    // Determine if a state is within the goal threshold
-    bool is_goal(const State& state, const State& goal, const float goal_threshold) {}
+    // Determine if a state is the goal
+    bool is_goal(const State& state) {}
 
     // Determine if a state statifies all constraints
     bool is_valid(const State& state) {}
@@ -85,9 +88,6 @@ These parameters include:
 - `max_iterations`: Maximum branchout iterations (`int`)
 - `max_generations`: Maximum branchout generations (`int`)
 - `sample_time`: Time period per branchout (`float`)
-- `goal_threshold`: Goal threshold value (`float`)
-- `initial_state`: Initial state (`std::vector<float>`)
-- `goal_state`: Goal state (`std::vector<float>`)
 - `grid_states`: Boolean vector corresponding to whether the respective state is gridded (`std::vector<bool>`)
 - `grid_resolution`: Grid resolutions for gridded states only (`std::vector<float>`)
 - `samples`: List of controls to be sampled in a branchout (`std::vector<std::vector<float>>`)
@@ -112,6 +112,8 @@ The results of the run is stored in the `sbmpo::SMBPO` class.
 Here are some of the functions you can use:
 | Type | Function | Description |
 | ---- | -------- | ----------- |
+| `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
+| `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
 | `std::vector<int>` | `vertex_path()` | Returns the best path found as a list of vertex indices |
 | `std::vector<int>` | `edge_path()` | Returns the best path found as a list of edge indices |
 | `sbmpo::Vertex` | `vertex(int i)` | Converts an index to its corresponding vertex |
