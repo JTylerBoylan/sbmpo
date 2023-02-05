@@ -9,6 +9,13 @@ namespace sbmpo {
         // Copy parameters
         parameters = params;
 
+        // Reset results
+        state_path_.clear();
+        control_path_.clear();
+        vertex_path_.clear();
+        edge_path_.clear();
+        cost_ = 0.0f;
+
         int max_size = params.max_iterations*params.samples.size();
 
         // Create new graph, queue, and grid
@@ -130,11 +137,6 @@ namespace sbmpo {
     }
 
     bool SBMPO::generate_path() {
-        state_path_.clear();
-        control_path_.clear();
-        vertex_path_.clear();
-        edge_path_.clear();
-        cost_ = 0.0f;
 
         int current_vertex = best;
         while (true) {

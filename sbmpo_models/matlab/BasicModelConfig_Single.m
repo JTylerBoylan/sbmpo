@@ -7,7 +7,7 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 1;
+runs = 10;
 
 MaxIterations = 10000;
 MaxGenerations = 100;
@@ -17,8 +17,8 @@ GoalThreshold = 0.25;
 NumberOfStates = 2;
 NumberOfControls = 2;
 NumberOfGriddedStates = 2;
-InitialState = [-7.5, -2.5];
-GoalState = [7.5, 7.5];
+InitialState = [-3.0, -3.0];
+GoalState = [3.0, 3.0];
 GridActiveStates = [1, 1];
 GridResolution = [0.125, 0.125];
 

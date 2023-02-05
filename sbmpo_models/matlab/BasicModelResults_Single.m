@@ -1,10 +1,11 @@
 %% SBMPO Results Visualizer
+close all
 
 stats = sbmpo_stats("../results/basic_model/stats.csv");
 plans = sbmpo_results("../results/basic_model/results.csv");
 obstacles = sbmpo_obstacles("../results/basic_model/obstacles.csv");
 
-rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
+%rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
 %rrt_results = readmatrix('docs/result_large.txt','Delimiter',' ');
 
 % Convert path states to points and plot
@@ -17,7 +18,7 @@ for p = 1:length(plans)
     figure('Color', [1 1 1])
     hold on
     grid on
-    axis([start(1)-2.5 goal(1)+2.5 start(2)-5.0 goal(2)+2.5])
+    axis([-5 5 -5 5])
 
     %title(strcat("Results ", int2str(p)))
     xlabel("X (m)")
@@ -55,10 +56,12 @@ for p = 1:length(plans)
     plot (px, py, '-g', 'LineWidth', 5, 'DisplayName', 'SBMPO')
     %plot (px, py, 'ob', 'MarkerSize', 5)
 
-    rrt_x = rrt_results(:,1);
-    rrt_y = rrt_results(:,2);
-    plot(rrt_x, rrt_y, 'LineWidth', 5, 'DisplayName', 'RRT')
+    %rrt_x = rrt_results(:,1);
+    %rrt_y = rrt_results(:,2);
+    %plot(rrt_x, rrt_y, 'LineWidth', 5, 'DisplayName', 'RRT')
     
     legend('Location','northwest')
+    
+    saveas(gcf, strcat("figures/rrt_obstacle_comp/result", int2str(p), ".png"))
 
 end

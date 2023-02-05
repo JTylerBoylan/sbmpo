@@ -6,15 +6,15 @@
 
 bool verbose = true;
 int runsPerParam = 1;
-int numberOfObstacles = 0;
+int obstacleMinN = 15, obstacleMaxN = 25;
+float obstacleMinX = -2.5, obstacleMaxX = 2.5;
+float obstacleMinY = -2.5, obstacleMaxY = 2.5;
+float obstacleMinR = 0.25, obstacleMaxR = 0.5;
 
 std::string paramsConfigFile = ros::package::getPath("sbmpo_models") + "/config/basic_model_config.csv";
 std::string resultsSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/results.csv";
 std::string statsSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/stats.csv";
 std::string obstaclesSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/obstacles.csv";
-
-float obstacleMinXY = 1.0f;
-float obstacleMaxXY = 4.0f;
 
 void print_parameters(const sbmpo::Parameters &params);
 void print_results(sbmpo::SBMPO &results);
@@ -30,13 +30,20 @@ int main (int argc, char ** argv) {
 
     node.getParam("verbose", verbose);
     node.getParam("runs", runsPerParam);
-    node.getParam("num_obstacles", numberOfObstacles);
+
+    node.getParam("obstacles_min_num", obstacleMinN);
+    node.getParam("obstacles_max_num", obstacleMaxN);
+    node.getParam("obstacles_min_x", obstacleMinX);
+    node.getParam("obstacles_max_x", obstacleMaxX);
+    node.getParam("obstacles_min_y", obstacleMinY);
+    node.getParam("obstacles_max_y", obstacleMaxY);
+    node.getParam("obstacles_min_r", obstacleMinR);
+    node.getParam("obstacles_max_r", obstacleMaxR);
+
     node.getParam("config_file_path", paramsConfigFile);
     node.getParam("results_file_path", resultsSaveFile);
     node.getParam("stats_file_path", statsSaveFile);
     node.getParam("obstacles_file_path", obstaclesSaveFile);
-    node.getParam("obstacle_min_bound", obstacleMinXY);
-    node.getParam("obstacle_max_bound", obstacleMaxXY);
 
     sbmpo_models::clearFile(resultsSaveFile);
     sbmpo_models::clearFile(statsSaveFile);
@@ -48,6 +55,7 @@ int main (int argc, char ** argv) {
     sbmpo::SBMPO sbmpoPlanner;
     sbmpo_models::SBMPOBasicModel basicModel;
 
+    /*
     std::vector<std::array<float, 3>> obstacles = {
         {0,0,0.5},
         {2,2,0.5},
@@ -61,11 +69,11 @@ int main (int argc, char ** argv) {
         {-2,1.4,0.5},
         {0,-5,0.5}
     };
+    */
     
-
     //std::vector<std::array<float, 3>> obstacles = { {0,0,5} };
 
-    basicModel.set_obstacles(obstacles);
+    //basicModel.set_obstacles(obstacles);
 
     for (auto param = parameterList.begin(); param != parameterList.end(); ++param) {
 
@@ -77,9 +85,13 @@ int main (int argc, char ** argv) {
         int bufferSize = 0;
         int successCount = 0;
 
-        for (int r = 0; r < runsPerParam; r++) {
+        std::vector<std::array<float,3>>  obstacles = basicModel.randomize_obstacles(
+                                                        obstacleMinN, obstacleMaxN, 
+                                                        obstacleMinX, obstacleMaxX, 
+                                                        obstacleMinY, obstacleMaxY, 
+                                                        obstacleMinR ,obstacleMaxR);
 
-            //obstacles = basicModel.randomize_obstacles(numberOfObstacles, obstacleMinXY, obstacleMaxXY);
+        for (int r = 0; r < runsPerParam; r++) {
 
             clock_t clockStart = std::clock();
 
@@ -101,6 +113,7 @@ int main (int argc, char ** argv) {
 
         if (verbose) print_stats(timeMsAvg, exitCode, costAvg, bufferSizeAvg, successRate);
         if (verbose) print_results(sbmpoPlanner);
+        if (verbose) print_obstacles(obstacles);
         if (verbose) ROS_INFO("Writing results to file %s ...", resultsSaveFile.c_str());
 
 

@@ -2,7 +2,7 @@ function obstacles = sbmpo_obstacles(obstacles_file)
 %SBMPO_STATS Convert stats CSV to MATLAB data
 %   Input: File path
 
-    csv_matrix = readmatrix(obstacles_file);
+    csv_matrix = readmatrix(obstacles_file, "NumHeaderLines", 0);
 
     obstacles = struct;
     for p = 1:size(csv_matrix, 1)

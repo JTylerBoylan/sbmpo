@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="sbmpo_models" type="basic_model" name="basic_model" output="screen">
-        <param name="runs" value="1"/>
+        <param name="runs" value="100"/>
     </node>
 
 </launch>

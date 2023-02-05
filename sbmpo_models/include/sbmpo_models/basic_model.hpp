@@ -16,12 +16,12 @@ namespace sbmpo_models {
     const float BODY_RADIUS = 0.20f;
 
     const float BOUNDS[2][2] = {
-        {-10.0, -10.0},
-        {10.0, 10.0}  
+        {-5.0, -5.0},
+        {5.0, 5.0}  
     };
 
-    const State START_STATE = {-7.5,-2.5};
-    const State GOAL_STATE = {7.5,7.5};
+    const State START_STATE = {-3.0,-3.0};
+    const State GOAL_STATE = {3.0,3.0};
 
     const float GOAL_THRESHOLD = 0.25f;
 
@@ -102,11 +102,11 @@ namespace sbmpo_models {
                 float r = float(rand() % int((max_r - min_r) * dec)) / dec + min_r;
                 
                 // Distance buffer around origin (start state)
-                if (sqrtf(x*x + y*y) < 0.5)
+                if (sqrtf(x*x + y*y) < BODY_RADIUS + r)
                     continue;
 
                 // Distance buffer around goal
-                if (sqrtf((5.0f-x)*(5.0f-x) + (5.0f-y)*(5.0f-y)) < 0.5)
+                if (sqrtf((GOAL_STATE[0]-x)*(GOAL_STATE[0]-x) + (GOAL_STATE[1]-y)*(GOAL_STATE[1]-y)) < GOAL_THRESHOLD)
                     continue;
 
                 // Check for overlap
@@ -114,7 +114,7 @@ namespace sbmpo_models {
                 for (std::array<float,3> ob : obstacles) {
                     float dox = ob[0] - x;
                     float doy = ob[1] - y;
-                    if (sqrtf(dox*dox + doy*doy) < 0.5) {
+                    if (sqrtf(dox*dox + doy*doy) < r + ob[2]) {
                         lap = true;
                         break;
                     }
@@ -122,7 +122,7 @@ namespace sbmpo_models {
 
                 // Add obstacle
                 if (!lap) {
-                    obstacles.push_back({x, y, 0.5f});
+                    obstacles.push_back({x, y, r});
                     i++;
                 }
 
