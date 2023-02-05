@@ -26,7 +26,7 @@ namespace sbmpo {
         initialize(params);
 
         // Insert start into graph
-        Vertex &start_vertex  = graph.add_vertex(params.initial_state);
+        Vertex &start_vertex  = graph.add_vertex(model.initial_state());
         start_vertex.rhs = 0;
         start_vertex.gen = 0;
         // Insert start into implicit grid
@@ -35,7 +35,7 @@ namespace sbmpo {
         queue.insert(0);
 
         // Calculate heuristic for start node
-        start_vertex.f = model.heuristic(start_vertex.state, start_vertex.state);
+        start_vertex.f = model.heuristic(start_vertex.state);
 
         // Begin iterations
         for (int i = 0; i < parameters.max_iterations; i++) {
@@ -49,7 +49,7 @@ namespace sbmpo {
             Vertex &current_vertex = graph.vertex(best);
 
             // Check if we are at the goal
-            if (model.is_goal(current_vertex.state, parameters.goal_state, parameters.goal_threshold))
+            if (model.is_goal(current_vertex.state))
                 return generate_path() ? GOAL_REACHED : INVALID_PATH;
 
             // Check if max generations is reached
@@ -124,7 +124,7 @@ namespace sbmpo {
         }
         queue.remove(vertex.idx);
         if (vertex.g != vertex.rhs) {
-            vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state, parameters.goal_state);
+            vertex.f = std::min(vertex.g, vertex.rhs) + model.heuristic(vertex.state);
             queue.insert(vertex.idx);
         }
     }

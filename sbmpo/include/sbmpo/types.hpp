@@ -126,8 +126,6 @@ namespace sbmpo {
     struct Parameters {
         int max_iterations, max_generations;
         float sample_time;
-        float goal_threshold;
-        State initial_state, goal_state;
         std::vector<bool> grid_states;
         std::vector<float> grid_resolution;
         std::vector<Control> samples;

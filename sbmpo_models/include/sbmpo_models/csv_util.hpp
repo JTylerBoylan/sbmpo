@@ -33,8 +33,6 @@ namespace sbmpo_models {
             param.max_generations = std::stof(value);
             std::getline(ss, value, ',');
             param.sample_time = std::stof(value);
-            std::getline(ss, value, ',');
-            param.goal_threshold = std::stof(value);
 
             std::getline(ss, value, ',');
             int num_states = std::stof(value);
@@ -42,16 +40,6 @@ namespace sbmpo_models {
             int num_controls = std::stof(value);
             std::getline(ss, value, ',');
             int num_active = std::stof(value);
-            
-            for (int s = 0; s < num_states; s++) {
-                std::getline(ss, value, ',');
-                param.initial_state.push_back(std::stof(value));
-            }
-
-            for (int s = 0; s < num_states; s++) {
-                std::getline(ss, value, ',');
-                param.goal_state.push_back(std::stof(value));
-            }
 
             for (int s = 0; s < num_states; s++) {
                 std::getline(ss, value, ',');

@@ -26,6 +26,8 @@ int main (int argc, char ** argv) {
     ros::init(argc, argv, "planner_node");
     ros::NodeHandle node("~");
 
+    srand(time(NULL));
+
     node.getParam("verbose", verbose);
     node.getParam("runs", runsPerParam);
     node.getParam("num_obstacles", numberOfObstacles);
@@ -44,10 +46,8 @@ int main (int argc, char ** argv) {
     sbmpo_models::readParametersFromFile(paramsConfigFile, parameterList);
 
     sbmpo::SBMPO sbmpoPlanner;
-    sbmpo_models::SBMPOBasicModel basicModel(sbmpoPlanner);
+    sbmpo_models::SBMPOBasicModel basicModel;
 
-    
-    
     std::vector<std::array<float, 3>> obstacles = {
         {0,0,0.5},
         {2,2,0.5},
@@ -122,18 +122,8 @@ void print_parameters(const sbmpo::Parameters &params) {
     ROS_INFO("Max iterations: %d", params.max_iterations);
     ROS_INFO("Max generations: %d", params.max_generations);
     ROS_INFO("Sample Time: %.2f", params.sample_time);;
-    ROS_INFO("Goal Threshold: %.2f", params.goal_threshold);
 
     std::string st;
-    for (float f : params.initial_state)
-        st += std::to_string(f) + " ";
-    ROS_INFO("Initial State: %s", st.c_str());
-    st.clear();
-
-    for (float f : params.goal_state)
-        st += std::to_string(f) + " ";
-    ROS_INFO("Goal State: %s", st.c_str());
-    st.clear();
 
     for (float f : params.grid_states)
         st += std::to_string(f) + " ";
