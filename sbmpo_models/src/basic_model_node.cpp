@@ -74,7 +74,11 @@ int main (int argc, char ** argv) {
     //std::vector<std::array<float, 3>> obstacles = { {0,0,5} };
 
     //basicModel.set_obstacles(obstacles);
+    
+    std::vector<std::vector<std::array<float,3>>> obstaclesList;
+    sbmpo_models::readObstaclesFromFile(obstaclesSaveFile, obstaclesList);
 
+    int par = 0;
     for (auto param = parameterList.begin(); param != parameterList.end(); ++param) {
 
         if (verbose) print_parameters(*param);
@@ -85,12 +89,17 @@ int main (int argc, char ** argv) {
         int bufferSize = 0;
         int successCount = 0;
 
+        /*
         std::vector<std::array<float,3>>  obstacles = basicModel.randomize_obstacles(
                                                         obstacleMinN, obstacleMaxN, 
                                                         obstacleMinX, obstacleMaxX, 
                                                         obstacleMinY, obstacleMaxY, 
                                                         obstacleMinR ,obstacleMaxR);
-
+        */
+        
+        std::vector<std::array<float,3>> obstacles = obstaclesList[par++];
+        basicModel.set_obstacles(obstacles);
+        
         for (int r = 0; r < runsPerParam; r++) {
 
             clock_t clockStart = std::clock();
