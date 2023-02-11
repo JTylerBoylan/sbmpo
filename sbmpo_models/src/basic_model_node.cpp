@@ -47,7 +47,7 @@ int main (int argc, char ** argv) {
 
     sbmpo_models::clearFile(resultsSaveFile);
     sbmpo_models::clearFile(statsSaveFile);
-    sbmpo_models::clearFile(obstaclesSaveFile);
+    //sbmpo_models::clearFile(obstaclesSaveFile);
 
     std::vector<sbmpo::Parameters> parameterList;
     sbmpo_models::readParametersFromFile(paramsConfigFile, parameterList);
@@ -128,7 +128,7 @@ int main (int argc, char ** argv) {
 
         sbmpo_models::appendStatsToFile(statsSaveFile, timeMsAvg, exitCode, costAvg, bufferSizeAvg, successRate);
         sbmpo_models::appendResultsToFile(resultsSaveFile, sbmpoPlanner);
-        sbmpo_models::appendObstaclesToFile(obstaclesSaveFile, obstacles);
+        //sbmpo_models::appendObstaclesToFile(obstaclesSaveFile, obstacles);
 
     }
 
