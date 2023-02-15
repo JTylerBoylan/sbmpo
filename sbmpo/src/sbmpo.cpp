@@ -2,35 +2,19 @@
 
 namespace sbmpo {
 
-    SBMPO::SBMPO() {}
+    SBMPORun SBMPO::run(Model &model, const Parameters &params) {
 
-    void SBMPO::initialize(const Parameters &params) {
+        // Start timer
+        using namespace std::chrono;
+        high_resolution_clock::time_point clock_start = high_resolution_clock::now();
 
-        // Copy parameters
-        parameters = params;
-
-        // Reset results
-        state_path_.clear();
-        control_path_.clear();
-        vertex_path_.clear();
-        edge_path_.clear();
-        cost_ = 0.0f;
-
-        int max_size = params.max_iterations*params.samples.size();
-
-        // Create new graph, queue, and grid
-        graph = Graph(max_size);
-        queue = Queue(&graph, max_size);
-        grid = ImplicitGrid(params.grid_states, params.grid_resolution);
-
-        // Reset best
-        best = 0;
-    }
-
-    int SBMPO::run(Model &model, const Parameters &params) {
-
-        // Initialize
-        initialize(params);
+        // Initialize run
+        SBMPORun sbmpo_run(params);
+        int &best = sbmpo_run.best;
+        Graph &graph = sbmpo_run.graph;
+        Queue &queue = sbmpo_run.queue;
+        ImplicitGrid &grid = sbmpo_run.grid;
+        ExitCode &exit_code = sbmpo_run.results.exit_code;
 
         // Insert start into graph
         Vertex &start_vertex  = graph.add_vertex(model.initial_state());
@@ -45,56 +29,70 @@ namespace sbmpo {
         start_vertex.f = model.heuristic(start_vertex.state);
 
         // Begin iterations
-        for (int i = 0; i < parameters.max_iterations; i++) {
+        for (int i = 0; i < params.max_iterations; i++) {
 
             // Check if queue is empty
-            if (queue.empty())
-                return NO_NODES_LEFT;
+            if (queue.empty()) {
+                exit_code = NO_NODES_LEFT;
+                break;
+            }
 
             // Get next best vertex
             best = queue.pop();
             Vertex &current_vertex = graph.vertex(best);
 
             // Check if we are at the goal
-            if (model.is_goal(current_vertex.state))
-                return generate_path() ? GOAL_REACHED : INVALID_PATH;
+            if (model.is_goal(current_vertex.state)) {
+                exit_code = generate_path(best, sbmpo_run.results, graph) ? GOAL_REACHED : INVALID_PATH;
+                break;
+            }
 
             // Check if max generations is reached
-            if (current_vertex.gen > parameters.max_generations)
-                return GENERATION_LIMIT;
+            if (current_vertex.gen > params.max_generations) {
+                exit_code = GENERATION_LIMIT;
+                break;
+            }
 
             if (current_vertex.g > current_vertex.rhs) {
                 current_vertex.g = current_vertex.rhs;
             } else {
                 current_vertex.g = std::numeric_limits<float>::infinity();
-                update_vertex(current_vertex, model);
+                update_vertex(model, current_vertex, graph, queue);
             }
 
             // Generate children
-            generate_children(current_vertex, model);
+            generate_children(model, current_vertex, params.samples, params.sample_time, graph, grid);
 
             // Update successors
             for (int suc : graph.getSuccessors(current_vertex)) {
                 Edge edge = graph.edge(suc);
-                update_vertex(graph.vertex(edge.vertex2), model);
+                update_vertex(model, graph.vertex(edge.vertex2), graph, queue);
             }
             
             // Update current
-            update_vertex(current_vertex, model);
+            update_vertex(model, current_vertex, graph, queue);
 
             // Next iteration
         }
 
-        return ITERATION_LIMIT;
+        exit_code = ITERATION_LIMIT;
+
+        // End timer
+        high_resolution_clock::time_point clock_end = high_resolution_clock::now();
+        duration<double> time_span = duration_cast<duration<double>>(clock_end - clock_start);
+        sbmpo_run.results.time_us = long(time_span.count() * 1E6);
+
+        // Finish
+        return sbmpo_run;
     }
 
-    void SBMPO::generate_children(const Vertex vertex, Model &model) {
+    void SBMPO::generate_children(Model &model, const Vertex &vertex, const std::vector<Control> samples, const float sample_time, Graph &graph, ImplicitGrid &grid) {
 
-        for (Control control : parameters.samples) {
+        for (Control control : samples) {
             
             // Evaluate new state
             State new_state = vertex.state;
-            model.next_state(new_state, control, parameters.sample_time);
+            model.next_state(new_state, control, sample_time);
 
             // Skip if not valid state
             if (!model.is_valid(new_state))
@@ -107,20 +105,20 @@ namespace sbmpo {
             // If grid space is empty, create new vertex
                 Vertex &new_vertex = graph.add_vertex(new_state);
                 new_vertex.gen = vertex.gen + 1;
-                float cost = model.cost(new_vertex.state, vertex.state, control, parameters.sample_time);
+                float cost = model.cost(new_vertex.state, vertex.state, control, sample_time);
                 graph.add_edge(vertex.idx, new_vertex.idx, control, cost);
                 grid.insert(new_state, new_vertex.idx);
             } else {
             // Else add edge from vertex to graph
                 if (u == vertex.idx || u == 0) 
                     continue;
-                float cost = model.cost(graph.vertex(u).state, vertex.state, control, parameters.sample_time);
+                float cost = model.cost(graph.vertex(u).state, vertex.state, control, sample_time);
                 graph.add_edge(vertex.idx, u, control, cost);
             }
         }
     }
 
-    void SBMPO::update_vertex(Vertex &vertex, Model &model) {
+    void SBMPO::update_vertex(Model &model, Vertex &vertex, Graph &graph, Queue &queue) {
         if (vertex.idx == 0)
             return;
         vertex.rhs = std::numeric_limits<float>::infinity();
@@ -136,17 +134,18 @@ namespace sbmpo {
         }
     }
 
-    bool SBMPO::generate_path() {
+    bool SBMPO::generate_path(int best, SBMPOResults &results, Graph &graph) {
 
+        results.cost = 0.0;
         int current_vertex = best;
         while (true) {
 
-            if (std::count(vertex_path_.begin(), vertex_path_.end(), current_vertex))
+            if (std::count(results.vertex_index_path.begin(), results.vertex_index_path.end(), current_vertex))
                 return false;
 
-            vertex_path_.push_back(current_vertex);
+            results.vertex_index_path.push_back(current_vertex);
             Vertex v = graph.vertex(current_vertex);
-            state_path_.push_back(v.state);
+            results.state_path.push_back(v.state);
             std::set<int> predecessors = graph.getPredecessors(v);
 
             if (predecessors.empty())
@@ -163,17 +162,17 @@ namespace sbmpo {
                 }
             }
 
-            edge_path_.push_back(min_edge);
+            results.edge_index_path.push_back(min_edge);
             Edge e = graph.edge(min_edge);
-            control_path_.push_back(e.control);
-            cost_ += e.cost;
+            results.control_path.push_back(e.control);
+            results.cost += e.cost;
             current_vertex = min_vertex;
         }
 
-        std::reverse(state_path_.begin(), state_path_.end());
-        std::reverse(control_path_.begin(), control_path_.end());
-        std::reverse(vertex_path_.begin(), vertex_path_.end());
-        std::reverse(edge_path_.begin(), edge_path_.end());
+        std::reverse(results.state_path.begin(), results.state_path.end());
+        std::reverse(results.control_path.begin(), results.control_path.end());
+        std::reverse(results.vertex_index_path.begin(), results.vertex_index_path.end());
+        std::reverse(results.edge_index_path.begin(), results.edge_index_path.end());
         return true;
     }
 

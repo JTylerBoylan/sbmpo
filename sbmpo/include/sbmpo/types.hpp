@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <limits>
 #include <cmath>
+#include <chrono>
 
 namespace sbmpo {
 
@@ -121,6 +122,95 @@ namespace sbmpo {
 
     };
 
+    struct Queue {
+
+        std::vector<int> heap;
+        Graph * graph;
+
+        Queue() : graph(NULL) {}
+
+        Queue(Graph * grph, int size) : graph(grph) {
+            heap.reserve(size);
+        }
+
+        bool compare (int a, int b) {
+            return graph->vertices[a].f < graph->vertices[b].f;
+        }
+
+        void swap(int *a, int *b) {
+            int temp = *b;
+            *b = *a;
+            *a = temp;
+        }
+
+        void heapify(int i) {
+
+            int size = heap.size();
+            
+            int min = i;
+            int l = 2 * i + 1;
+            int r = 2 * i + 2;
+            if (l < size && compare(heap[l], heap[min]))
+                min = l;
+            if (r < size && compare(heap[r], heap[min]))
+                min = r;
+
+            if (min != i) {
+                swap(&heap[i], &heap[min]);
+                heapify(min);
+            }
+        }
+
+        void insert(int idx) {
+            int size = heap.size();
+            if (size == 0) {
+                heap.push_back(idx);
+            } else {
+                heap.push_back(idx);
+                for (int i = size / 2 - 1; i >= 0; i--) {
+                    heapify(i);
+                }
+            }
+        }
+
+        void remove(int idx) {
+
+            int size = heap.size();
+
+            int i;
+            bool found = false;
+            for (i = 0; i < size; i++) {
+                if (idx == heap[i]) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+                return;
+            
+            swap(&heap[i], &heap[size - 1]);
+
+            heap.pop_back();
+            for (int i = size / 2 - 1; i >= 0; i--) {
+                heapify(i);
+            }
+        }
+
+        int pop() {
+            int top = heap[0];
+            heap[0] = heap[heap.size() - 1];
+            heap.pop_back();
+            heapify(0);
+            return top;
+        }
+
+        bool empty() {
+            return heap.size() == 0;
+        }
+
+    };
+
     enum ExitCode {GOAL_REACHED, ITERATION_LIMIT, GENERATION_LIMIT, NO_NODES_LEFT, INVALID_PATH};
 
     struct Parameters {
@@ -129,6 +219,49 @@ namespace sbmpo {
         std::vector<bool> grid_states;
         std::vector<float> grid_resolution;
         std::vector<Control> samples;
+    };
+
+    struct SBMPOResults {
+        ExitCode exit_code;
+        time_t time_us;
+        double cost;
+        std::vector<State> state_path;
+        std::vector<Control> control_path;
+        std::vector<int> vertex_index_path;
+        std::vector<int> edge_index_path;
+    };
+
+    struct SBMPORun {
+
+        Graph graph;
+        Queue queue;
+        ImplicitGrid grid;
+        int best;
+        SBMPOResults results;
+
+        SBMPORun() {}
+
+        SBMPORun(Parameters params) {
+            int max_size = params.max_iterations*params.samples.size();
+            graph = Graph(max_size);
+            queue = Queue(&graph, max_size);
+            grid = ImplicitGrid(params.grid_states, params.grid_resolution);
+            best = 0;
+        }
+
+        time_t time_us() { return results.time_us; }
+
+        double cost() { return results.cost; }
+
+        size_t size() { return graph.size(); }
+
+        ExitCode exit_code() { return results.exit_code; }
+
+        std::vector<State> state_path() { return results.state_path; }
+
+        std::vector<Control> control_path() { return results.control_path; }
+
+
     };
 
 }

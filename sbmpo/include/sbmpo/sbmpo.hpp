@@ -2,7 +2,6 @@
 #define SBMPO_HPP
 
 #include <sbmpo/model.hpp>
-#include <sbmpo/queue.hpp>
 #include <ctime>
 
 namespace sbmpo {
@@ -11,51 +10,17 @@ namespace sbmpo {
 
         public:
 
-            Parameters parameters;
-
-            Graph graph;
-
-            Queue queue;
-
-            ImplicitGrid grid;
-
-            int best;
-
-            SBMPO();
-
-            void initialize(const Parameters &parameters);
-
-            int run(Model &model, const Parameters &parameters);
-
-            int size() { return graph.size(); }
-
-            float cost() { return cost_; }
-
-            std::vector<State> state_path() { return state_path_; }
-
-            std::vector<Control> control_path() { return control_path_; }
-
-            std::vector<int> vertex_path() { return vertex_path_; }
-
-            std::vector<int> edge_path() {return edge_path_; }
-            
-            Vertex &vertex(int i) { return graph.vertex(i); }
-
-            Edge &edge(int i) { return graph.edge(i); }
+            static SBMPORun run(Model &model, const Parameters &parameters);
 
         private:
 
-            std::vector<State> state_path_;
-            std::vector<Control> control_path_;
-            std::vector<int> vertex_path_;
-            std::vector<int> edge_path_;
-            float cost_;
+            SBMPO() {}
 
-            void generate_children(const Vertex vertex, Model &model);
+            static void generate_children(Model &model, const Vertex &vertex, const std::vector<Control> samples, const float sample_time, Graph &graph, ImplicitGrid &grid);
 
-            void update_vertex(Vertex &vertex, Model &model);
+            static void update_vertex(Model &model, Vertex &vertex, Graph &graph, Queue &queue);
 
-            bool generate_path();
+            static bool generate_path(int best, SBMPOResults &results, Graph &graph);
         
     };
 

@@ -95,12 +95,12 @@ namespace sbmpo_models {
     }
 
     // Add to results file
-    void appendResultsToFile(const std::string& filename, SBMPO &results) {
+    void appendResultsToFile(const std::string& filename, SBMPORun &results) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
-        myFile << results.vertex_path().size();
-        for (int idx : results.vertex_path()) {
+        myFile << results.results.vertex_index_path.size();
+        for (int idx : results.results.vertex_index_path) {
             myFile << ",";
             myFile << idx;
         }
@@ -149,7 +149,7 @@ namespace sbmpo_models {
         myFile.close();
     }
 
-    void readObstaclesFromFile(const std::string& filename, std::vector<std::vector<std::array<float,3>>> obstaclesList) {
+    void readObstaclesFromFile(const std::string& filename, std::vector<std::vector<std::array<float,3>>> &obstaclesList) {
 
         std::ifstream myFile(filename);
         if(!myFile.is_open()) 
