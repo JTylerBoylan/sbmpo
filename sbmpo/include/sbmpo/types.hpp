@@ -102,7 +102,7 @@ namespace sbmpo {
 
         GridKey to_key(const State &state) {
             GridKey key;
-            for (int i = 0; i < state.size(); i++)
+            for (size_t i = 0; i < state.size(); i++)
                 if (states[i])
                     key.push_back(floor(state[i]/resolution[i]));
             return key;
