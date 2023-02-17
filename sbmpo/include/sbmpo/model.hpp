@@ -16,7 +16,7 @@ namespace sbmpo {
             virtual void next_state(State& state, const Control& control, const float time_span) = 0;
 
             // Get the cost of a control
-            virtual float cost(const State& state2, const State& state1, const Control& control, const float time_span) = 0;
+            virtual float cost(const State& state, const Control& control, const float time_span) = 0;
 
             // Get the heuristic of a state
             virtual float heuristic(const State& state) = 0;

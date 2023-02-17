@@ -57,7 +57,7 @@ namespace sbmpo_models {
         }
 
         // Get the cost of a control
-        float cost(const State& state2, const State &state1, const Control& control, const float time_span) {
+        float cost(const State &state, const Control& control, const float time_span) {
             return control[0]*time_span;
         }
 

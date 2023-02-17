@@ -29,7 +29,14 @@ namespace sbmpo {
         start_vertex.f = model.heuristic(start_vertex.state);
 
         // Begin iterations
-        for (int i = 0; i < params.max_iterations; i++) {
+        int &i = sbmpo_run.results.iterations;
+        while (true) {
+
+            // Check if iteration limit is reached
+            if (i > params.max_iterations) {
+                exit_code = ITERATION_LIMIT;
+                break;
+            }
 
             // Check if queue is empty
             if (queue.empty()) {
@@ -43,7 +50,7 @@ namespace sbmpo {
 
             // Check if we are at the goal
             if (model.is_goal(current_vertex.state)) {
-                exit_code = generate_path(best, sbmpo_run.results, graph) ? GOAL_REACHED : INVALID_PATH;
+                exit_code = GOAL_REACHED;
                 break;
             }
 
@@ -75,7 +82,9 @@ namespace sbmpo {
             // Next iteration
         }
 
-        exit_code = ITERATION_LIMIT;
+        // Valid path check
+        if (!generate_path(best, sbmpo_run.results, graph) && exit_code == GOAL_REACHED)
+            exit_code = INVALID_PATH;
 
         // End timer
         high_resolution_clock::time_point clock_end = high_resolution_clock::now();
@@ -105,14 +114,14 @@ namespace sbmpo {
             // If grid space is empty, create new vertex
                 Vertex &new_vertex = graph.add_vertex(new_state);
                 new_vertex.gen = vertex.gen + 1;
-                float cost = model.cost(new_vertex.state, vertex.state, control, sample_time);
+                float cost = model.cost(new_vertex.state, control, sample_time);
                 graph.add_edge(vertex.idx, new_vertex.idx, control, cost);
                 grid.insert(new_state, new_vertex.idx);
             } else {
             // Else add edge from vertex to graph
                 if (u == vertex.idx || u == 0) 
                     continue;
-                float cost = model.cost(graph.vertex(u).state, vertex.state, control, sample_time);
+                float cost = model.cost(graph.vertex(u).state, control, sample_time);
                 graph.add_edge(vertex.idx, u, control, cost);
             }
         }

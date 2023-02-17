@@ -225,6 +225,7 @@ namespace sbmpo {
         ExitCode exit_code;
         time_t time_us;
         double cost;
+        int iterations;
         std::vector<State> state_path;
         std::vector<Control> control_path;
         std::vector<int> vertex_index_path;
