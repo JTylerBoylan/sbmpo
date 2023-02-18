@@ -33,7 +33,7 @@ namespace sbmpo {
         while (true) {
 
             // Check if iteration limit is reached
-            if (i > params.max_iterations) {
+            if (i++ >= params.max_iterations) {
                 exit_code = ITERATION_LIMIT;
                 break;
             }

@@ -230,6 +230,12 @@ namespace sbmpo {
         std::vector<Control> control_path;
         std::vector<int> vertex_index_path;
         std::vector<int> edge_index_path;
+        SBMPOResults() {
+            exit_code = INVALID_PATH;
+            time_us = 0;
+            cost = 0.0;
+            iterations = 0;
+        }
     };
 
     struct SBMPORun {
@@ -243,11 +249,12 @@ namespace sbmpo {
         SBMPORun() {}
 
         SBMPORun(Parameters params) {
-            int max_size = params.max_iterations*params.samples.size();
+            int max_size = params.max_iterations*params.samples.size()+1;
             graph = Graph(max_size);
             queue = Queue(&graph, max_size);
             grid = ImplicitGrid(params.grid_states, params.grid_resolution);
             best = 0;
+            results.iterations = 0;
         }
 
         time_t time_us() { return results.time_us; }
