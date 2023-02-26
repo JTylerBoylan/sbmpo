@@ -37,15 +37,6 @@ cd ../
 catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
-
-## Running a sample model
-```
-rosrun sbmpo_models <model_name>
-```
-#### Sample Models
-- `book_model`
-
-
 ## Creating your own model
 ### Template
 **Abstract model class is provided in [`sbmpo/include/sbmpo/model.hpp`](https://github.com/JTylerBoylan/SBMPO/blob/main/sbmpo/include/sbmpo/model.hpp)**
@@ -63,7 +54,7 @@ namespace my_namespace {
     State initial_state() {}
     
     // Evaluate state and control in the model
-    void next_state(State& state, const Control& control, const float time_span) {}
+    State next_state(const State& state, const Control& control, const float time_span) {}
     
     // Determine the cost between two states with a given control
     float cost(const State& state2, const State& state1, const Control& control, const float time_span) {}
@@ -84,20 +75,36 @@ namespace my_namespace {
 ### Running your model
 #### Parameters
 Before you can run your model, you must set parameters for the system.  
-These parameters include:  
-- `max_iterations`: Maximum branchout iterations (`int`)
-- `max_generations`: Maximum branchout generations (`int`)
-- `sample_time`: Time period per branchout (`float`)
-- `grid_states`: Boolean vector corresponding to whether the respective state is gridded (`std::vector<bool>`)
-- `grid_resolution`: Grid resolutions for gridded states only (`std::vector<float>`)
-- `samples`: List of controls to be sampled in a branchout (`std::vector<std::vector<float>>`)
+These parameters include:
+| Name | Description | Type |
+| ---- | ----------- | ---- |
+| `max_iterations` | Maximum branchout iterations | `int` |
+| `max_generations` | Maximum branchout generations | `int` |
+| `sample_time` | Time period per branchout | `float` |
+| `grid_resolution` | Grid resolutions (0 for ungridded state) | `std::vector<float>` |
+| `samples` | List of controls to be sampled in a branchout | `std::vector<std::vector<float>>` |
 
 #### Run the model
-To run the model, simply pass your custom model class and parameters into the SBMPO run function. The run function returns an exit code corresponding to the end result of the plan.
+To run the model, simply create a SBMPO planner object with your custom model class and parameters, then execute it's `run()` function.
 ```
-sbmpo::SBMPO planner;
-int exit_code = planner.run(my_custom_model, params);
+sbmpo::SBMPO planner(my_custom_model, params);
+planner.run();
 ```
+
+#### Evaluate the results
+The results of the run is stored in the `sbmpo::SMBPO` class.  
+Here are some of the functions you can use:
+| Type | Function | Description |
+| ---- | -------- | ----------- |
+| `unsigned long` | `iterations()` | Get the number of iterations during the run |
+| `int` | `exit_code()` | Get the exit code of the run *(see below)* |
+| `time_t` | `time_us()` | Get the computation time of the run in microseconds |
+| `float` | `cost()` | Get the cost of the best path |
+| `size_t` | `size()` | Get the number of nodes on the grid |
+| `std::vector<std::shared_ptr<Node>>` | `node_path()` | Returns the best path found as a list of Node pointers |
+| `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
+| `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
+| `std::vector<std::shared_ptr<Node>>` | `all_nodes()` | Returns all nodes on the grid as a list of Node pointers |
 
 ##### Exit Codes:
 | Exit Code | Description |
@@ -106,20 +113,8 @@ int exit_code = planner.run(my_custom_model, params);
 |     1     | Iteration limit reached |
 |     2     | Generation limit reached |
 |     3     | No nodes left in queue |
-
-#### Evaluate the results
-The results of the run is stored in the `sbmpo::SMBPO` class.  
-Here are some of the functions you can use:
-| Type | Function | Description |
-| ---- | -------- | ----------- |
-| `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
-| `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
-| `std::vector<int>` | `vertex_path()` | Returns the best path found as a list of vertex indices |
-| `std::vector<int>` | `edge_path()` | Returns the best path found as a list of edge indices |
-| `sbmpo::Vertex` | `vertex(int i)` | Converts an index to its corresponding vertex |
-| `sbmpo::Edge` | `edge(int i)` | Converts an index to its corresponding edge |
-| `int` | `size()` | Get the number of vertices generated |
-| `float` | `cost()` | Get the cost of the best path |
+|     4     | Invalid path generated |
+|     5     | Unknown Error |
 
 #### Example code
 
@@ -137,19 +132,30 @@ int main(int argc, char ** argv) {
   sbmpo::Parameters params;
   /* Add in parameters here */
   
-  sbmpo::SBMPO planner;
-  int exit_code = planner.run(model, params);
+  sbmpo::SBMPO planner(model, params);
+  planner.run();
   
-  std::cout << "Planner finished with exit code: " << exit_code << std::endl;
-  std::cout << "Number of vertices: " << planner.size() << std::endl;
+  std::cout << "---- Planner Results ----" << std::endl;
+  std::cout << "Iterations: " << planner.iterations() << std::endl;
+  std::cout << "Exit code: " << planner.exit_code() << std::endl;
+  std::cout << "Computation Time: " << planner.time_us() << "us" << std::endl;
   std::cout << "Path cost: " << planner.cost() << std::endl;
+  std::cout << "Number of nodes: " << planner.size() << std::endl;
   
-  std::cout << "Path:" << std::endl;
-  for (int v : planner.vertex_path()) {
-    Vertex vertex = planner.vertex(v);
-    std::cout << "  - (" << v << "): [ ";
-    for (float s : vertex.state) {
+  std::cout << "-- State Path --" << std::endl;
+  for (sbmpo::State state : planner.state_path()) {
+    std::cout << "  - [ ";
+    for (float s : state) {
       std::cout << s << " ";
+    }
+    std::cout << "]" << std::endl;
+  }
+  
+  std::cout << "-- Control Path --" << std::endl;
+  for (sbmpo::Control control : planner.control_path()) {
+    std::cout << "  - [ ";
+    for (float c : control) {
+      std::cout << c << " ";
     }
     std::cout << "]" << std::endl;
   }
