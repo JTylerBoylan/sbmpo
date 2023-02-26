@@ -129,7 +129,7 @@ int main(int argc, char ** argv) {
 
   my_custom_model model;
 
-  sbmpo::Parameters params;
+  sbmpo::SBMPOParameters params;
   /* Add in parameters here */
   
   sbmpo::SBMPO planner(model, params);
