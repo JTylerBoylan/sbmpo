@@ -1,7 +1,7 @@
 #ifndef CSV_PARSER_HPP
 #define CSV_PARSER_HPP
 
-#include <sbmpo/types.hpp>
+#include <sbmpo/types/types.hpp>
 #include <sbmpo/sbmpo.hpp>
 #include <iostream>
 #include <fstream>
@@ -15,7 +15,7 @@ namespace sbmpo_models {
     using namespace sbmpo;
 
     // Read from config
-    void readParametersFromFile(const std::string& filename, std::vector<Parameters>& parameters) {
+    void readParametersFromFile(const std::string& filename, std::vector<SBMPOParameters>& parameters) {
 
         std::ifstream myFile(filename);
         if(!myFile.is_open()) 
@@ -24,7 +24,7 @@ namespace sbmpo_models {
         std::string line, value;
         while (std::getline(myFile, line)) {
 
-            Parameters param;
+            SBMPOParameters param;
             std::stringstream ss(line);
 
             std::getline(ss, value, ',');
@@ -38,15 +38,8 @@ namespace sbmpo_models {
             int num_states = std::stof(value);
             std::getline(ss, value, ',');
             int num_controls = std::stof(value);
-            std::getline(ss, value, ',');
-            int num_active = std::stof(value);
 
-            for (int s = 0; s < num_states; s++) {
-                std::getline(ss, value, ',');
-                param.grid_states.push_back(std::stof(value));
-            }
-
-            for (int a = 0; a < num_active; a++) {
+            for (int a = 0; a < num_states; a++) {
                 std::getline(ss, value, ',');
                 param.grid_resolution.push_back(std::stof(value));
             }
@@ -95,11 +88,11 @@ namespace sbmpo_models {
     }
 
     // Add to results file
-    void appendResultsToFile(const std::string& filename, SBMPORun &results) {
+    void appendResultsToFile(const std::string& filename, SBMPO &results) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
-        myFile << results.results.vertex_index_path.size();
+        myFile << results.state_path().size();
         for (int idx : results.results.vertex_index_path) {
             myFile << ",";
             myFile << idx;

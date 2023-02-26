@@ -40,20 +40,22 @@ namespace sbmpo_models {
         }
 
         // Evaluate a node with a control
-        void next_state(State &state, const Control& control, const float time_span) {
+        State next_state(const State &state, const Control& control, const float time_span) {
             
             // Update state
+            State next = state;
             float time_increment = time_span / INTEGRATION_SIZE;
             for (int i = 0; i < INTEGRATION_SIZE; i++) {
-                state[0] += cosf(state[2]) * control[0] * time_increment;
-                state[1] += sinf(state[2]) * control[0] * time_increment;
-                state[2] += control[1] * time_increment;
+                next[0] += cosf(next[2]) * control[0] * time_increment;
+                next[1] += sinf(next[2]) * control[0] * time_increment;
+                next[2] += control[1] * time_increment;
             }
 
             // Angle wrap
-            if (state[2] >= M_2PI || state[2] < 0)
-                state[2] += state[2] >= M_2PI ? -M_2PI : M_2PI;
+            if (next[2] >= M_2PI || next[2] < 0)
+                next[2] += next[2] >= M_2PI ? -M_2PI : M_2PI;
 
+            return next;
         }
 
         // Get the cost of a control
