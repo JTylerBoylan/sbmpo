@@ -1,4 +1,4 @@
-%% Simple Steering Configuration - Single Runs
+%% Simple Steering - Grid Resolution vs Horizon Time Config
 
 clear
 close all
@@ -6,31 +6,35 @@ clc
 
 %% Parameters
 
-% Set total number of runs
-runs = 1000;
+GridResolutionXY = linspace(0.1, 0.25, 30);
+HorizonTime = linspace(0.25, 1.0, 30);
+GridResolutionTheta = 0.1963 * ones(1,length(GridResolutionXY));
 
-MaxIterations = 10000;
-MaxGenerations = 100;
-SampleHorizonTime = 0.5;
+MaxIterations = 30000;
+MaxGenerations = 300;
+SampleHorizonTime = repmat(HorizonTime',[length(GridResolutionXY) 1]);
 GoalThreshold = 0.25;
 
 NumberOfStates = 3;
 NumberOfControls = 2;
 NumberOfGriddedStates = 3;
-InitialState = [-3, -3, 1.5707];
-GoalState = [3, 3, 0];
+InitialState = [0, 0, 1.5707];
+GoalState = [5, 5, 0];
 GridActiveStates = [1, 1, 1];
-GridResolution = [0.3536, 0.3536, 0.0982];
+GridResolution = [GridResolutionXY; GridResolutionXY; GridResolutionTheta]';
 
 RotationControls = {
-        [0 -0.3927 0.3927 -0.1963 0.1963];
+        [0 -0.3927 0.3927];
       };
   
 LinearControls = {
-        [0.5 1.0];
+       [0.5 1.0];
       };
 
-%% Configuration
+%% Configurration
+
+% Set total number of runs
+runs = length(GridResolutionXY)*length(HorizonTime);
   
 V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
 

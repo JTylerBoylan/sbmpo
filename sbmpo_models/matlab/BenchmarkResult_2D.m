@@ -5,9 +5,6 @@ stats = sbmpo_stats("../benchmarking/stats.csv");
 [paths, nodes] = sbmpo_results("../benchmarking/nodes.csv");
 obstacles = sbmpo_obstacles("../benchmarking/obstacles.csv");
 
-%rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
-%rrt_results = readmatrix('docs/result_large.txt','Delimiter',' ');
-
 % Convert path states to points and plot
 for p = 1:length(paths)
 
@@ -20,7 +17,7 @@ for p = 1:length(paths)
     grid on
     axis([-5 5 -5 5])
 
-    %title(strcat("Results ", int2str(p)))
+    title(strcat("Results ", int2str(p)))
     xlabel("X (m)")
     ylabel("Y (m)")
 
@@ -55,13 +52,7 @@ for p = 1:length(paths)
     end
     plot (px, py, '-g', 'LineWidth', 5, 'DisplayName', 'SBMPO')
     plot (px, py, 'ob', 'MarkerSize', 5, 'HandleVisibility', 'off')
-
-    %rrt_x = rrt_results(:,1);
-    %rrt_y = rrt_results(:,2);
-    %plot(rrt_x, rrt_y, 'LineWidth', 5, 'DisplayName', 'RRT')
     
     legend('Location','northwest')
-    
-    saveas(gcf, strcat("figures/rrt_obstacle_comp/result", int2str(p), ".png"))
 
 end

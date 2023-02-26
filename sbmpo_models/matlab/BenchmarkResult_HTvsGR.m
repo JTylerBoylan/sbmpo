@@ -1,4 +1,4 @@
-%% Book Model Results - Rotation Control Benchmark
+% Book Model Results - Rotation Control Benchmark
 close all
 
 shape = [length(HorizonTime) length(GridResolutionXY)];
