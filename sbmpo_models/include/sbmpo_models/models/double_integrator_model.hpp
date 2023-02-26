@@ -30,11 +30,13 @@ namespace sbmpo_models {
         }
 
         // Evaluate a node with a control
-        void next_state(State &state, const Control& control, const float time_span) {
+        State next_state(State &state, const Control& control, const float time_span) {
             
             // Update state
-            state[0] += state[1] * time_span;
-            state[1] += control[0] * time_span;
+            State next = state;
+            next[0] += state[1] * time_span;
+            next[1] += control[0] * time_span;
+            return next;
 
         }
 

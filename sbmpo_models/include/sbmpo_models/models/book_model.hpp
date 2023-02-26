@@ -2,7 +2,6 @@
 #define SBMPO_BOOK_MODEL_HPP
 
 #include <sbmpo/model.hpp>
-#include <sbmpo_models/csv_util.hpp>
 #include <math.h>
 #include <array>
 #include <random>
@@ -17,21 +16,23 @@ namespace sbmpo_models {
 
     const float BOUNDS[2][2] = {
         {-5.0, -5.0},
-        {5.0, 5.0}  
+        {10.0, 10.0}  
     };
 
-    const State START_STATE = {-3.0,-3.0};
-    const State GOAL_STATE = {3.0,3.0};
+    const State START_STATE = {0,0,M_PI_2};
+    const State GOAL_STATE = {5,5,0};
 
     const float GOAL_THRESHOLD = 0.25f;
 
-    class SBMPOBasicModel : public Model {
+    const int INTEGRATION_SIZE = 5;
+
+    class SBMPOBookModel : public Model {
 
         public:
 
         std::vector<std::array<float,3>> obstacles;
 
-        SBMPOBasicModel() {}
+        SBMPOBookModel() {}
 
         State initial_state() {
             return START_STATE;
@@ -42,15 +43,23 @@ namespace sbmpo_models {
             
             // Update state
             State next = state;
-            next[0] += control[0] * time_span;
-            next[1] += control[1] * time_span;
+            float time_increment = time_span / INTEGRATION_SIZE;
+            for (int i = 0; i < INTEGRATION_SIZE; i++) {
+                next[0] += cosf(next[2]) * control[0] * time_increment;
+                next[1] += sinf(next[2]) * control[0] * time_increment;
+                next[2] += control[1] * time_increment;
+            }
+
+            // Angle wrap
+            if (next[2] >= M_2PI || next[2] < 0)
+                next[2] += next[2] >= M_2PI ? -M_2PI : M_2PI;
+
             return next;
-            
         }
 
         // Get the cost of a control
-        float cost(const State& state, const Control& control, const float time_span) {
-            return sqrtf(control[0]*control[0] + control[1]*control[1]) * time_span;
+        float cost(const State &state, const Control& control, const float time_span) {
+            return control[0]*time_span;
         }
 
         // Get the heuristic of a state
@@ -85,10 +94,6 @@ namespace sbmpo_models {
         // Determine if state is goal
         bool is_goal(const State& state) {
             return heuristic(state) <= GOAL_THRESHOLD;
-        }
-
-        void set_obstacles(std::vector<std::array<float,3>> &obstacle_vector) {
-            obstacles = obstacle_vector;
         }
 
         // Generate random obstacles
@@ -131,7 +136,6 @@ namespace sbmpo_models {
             }
 
             return obstacles;
-            
         }
 
     };

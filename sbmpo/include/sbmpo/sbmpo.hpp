@@ -13,7 +13,7 @@ struct SBMPOParameters {
     int max_iterations, max_generations;
     float sample_time;
     std::vector<float> grid_resolution;
-    Branchouts samples;
+    std::vector<Control> samples;
 };
 
 class SBMPO {
@@ -44,6 +44,10 @@ class SBMPO {
     /// @return Cost of the plan
     float cost() { return cost_; }
 
+    /// @brief Number of nodes in plan run
+    /// @return Size of implicit grid map
+    size_t size() { return implicit_grid_->size(); }
+
     /// @brief Get the plan path in terms of Nodes
     /// @return List of Node pointers
     std::vector<std::shared_ptr<Node>> node_path() { return node_path_; }
@@ -55,6 +59,14 @@ class SBMPO {
     /// @brief Get the plan path in terms of Controls
     /// @return List of Controls
     std::vector<Control> control_path() { return control_path_; }
+
+    /// @brief Get all nodes in plan run
+    /// @return List of Node pointers
+    std::vector<std::shared_ptr<Node>> all_nodes() { return implicit_grid_->nodes(); }
+
+    ~SBMPO() {
+        delete model_;
+    }
 
     private:
 
@@ -87,10 +99,6 @@ class SBMPO {
 
     // Generate path
     bool generate_path();
-
-    ~SBMPO() {
-        delete model_;
-    }
 
 };
 

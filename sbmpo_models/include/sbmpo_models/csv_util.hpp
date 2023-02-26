@@ -1,7 +1,6 @@
 #ifndef CSV_PARSER_HPP
 #define CSV_PARSER_HPP
 
-#include <sbmpo/types/types.hpp>
 #include <sbmpo/sbmpo.hpp>
 #include <iostream>
 #include <fstream>
@@ -48,10 +47,10 @@ namespace sbmpo_models {
             int num_branchouts = std::stof(value);
 
             for (int b = 0; b < num_branchouts; b++) {
-                Control control;
+                Control control(num_controls);
                 for (int c = 0; c < num_controls; c++) {
                     std::getline(ss, value, ',');
-                    control.push_back(std::stof(value));
+                    control[c] = std::stof(value);
                 }
                 param.samples.push_back(control);
             }
@@ -70,7 +69,7 @@ namespace sbmpo_models {
 
     // Add stats to data
     void appendStatsToFile(const std::string& filename, 
-            const float time_ms, const int exit_code, const float cost, const int buffer_size, const float success_rate) {
+            const float time_ms, const int exit_code, const float cost, const float iterations, const int buffer_size, const float success_rate) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
 
@@ -80,6 +79,8 @@ namespace sbmpo_models {
         myFile << ",";
         myFile << cost;
         myFile << ",";
+        myFile << iterations;
+        myFile << ",";
         myFile << buffer_size;
         myFile << ",";
         myFile << success_rate;
@@ -88,38 +89,28 @@ namespace sbmpo_models {
     }
 
     // Add to results file
-    void appendResultsToFile(const std::string& filename, SBMPO &results) {
+    void appendNodesToFile(const std::string& filename, std::vector<std::shared_ptr<Node>> nodes) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
-        myFile << results.state_path().size();
-        for (int idx : results.results.vertex_index_path) {
-            myFile << ",";
-            myFile << idx;
-        }
+        myFile << nodes.size();
+        myFile << nodes[0]->state().size();
 
-        myFile << ",";
-        myFile << results.size();
-        myFile << ",";
-        myFile << results.graph.vertex(0).state.size();
+        for (int n = 0; n < nodes.size(); n++) {
 
-        for (int b = 0; b < results.size(); b++) {
-
-            const sbmpo::Vertex& vertex = results.graph.vertex(b);
+            const std::shared_ptr<Node> node = nodes[n];
 
             myFile << ",";
-            myFile << vertex.idx;
-            myFile << ",";
-            myFile << vertex.gen;
+            myFile << node->generation();
 
             myFile << ",";
-            myFile << vertex.f;
+            myFile << node->f();
             myFile << ",";
-            myFile << vertex.g;
+            myFile << node->g();
             myFile << ",";
-            myFile << vertex.rhs;
+            myFile << node->rhs();
             
-            for (float s : vertex.state) {
+            for (float s : node->state()) {
                 myFile << ",";
                 myFile << s;
             }
@@ -175,7 +166,7 @@ namespace sbmpo_models {
         }
     }
 
-    void readComputationTimeFromFile(const std::string& filename, std::vector<float> timeList) {
+    void readComputationTimeFromFile(const std::string& filename, std::vector<float> &timeList) {
 
         std::ifstream myFile(filename);
         if(!myFile.is_open()) 

@@ -1,7 +1,7 @@
 #ifndef SBMPO_MODEL_HPP
 #define SBMPO_MODEL_HPP
 
-#include <sbmpo/types/types.hpp>
+#include <sbmpo/types/node.hpp>
 
 namespace sbmpo {
 

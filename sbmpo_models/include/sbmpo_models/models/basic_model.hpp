@@ -2,7 +2,6 @@
 #define SBMPO_BOOK_MODEL_HPP
 
 #include <sbmpo/model.hpp>
-#include <sbmpo_models/csv_util.hpp>
 #include <math.h>
 #include <array>
 #include <random>
@@ -17,23 +16,21 @@ namespace sbmpo_models {
 
     const float BOUNDS[2][2] = {
         {-5.0, -5.0},
-        {10.0, 10.0}  
+        {5.0, 5.0}  
     };
 
-    const State START_STATE = {0,0,M_PI_2};
-    const State GOAL_STATE = {5,5,0};
+    const State START_STATE = {-3.0,-3.0};
+    const State GOAL_STATE = {3.0,3.0};
 
     const float GOAL_THRESHOLD = 0.25f;
 
-    const int INTEGRATION_SIZE = 5;
-
-    class SBMPOBookModel : public Model {
+    class SBMPOBasicModel : public Model {
 
         public:
 
         std::vector<std::array<float,3>> obstacles;
 
-        SBMPOBookModel() {}
+        SBMPOBasicModel() {}
 
         State initial_state() {
             return START_STATE;
@@ -44,23 +41,15 @@ namespace sbmpo_models {
             
             // Update state
             State next = state;
-            float time_increment = time_span / INTEGRATION_SIZE;
-            for (int i = 0; i < INTEGRATION_SIZE; i++) {
-                next[0] += cosf(next[2]) * control[0] * time_increment;
-                next[1] += sinf(next[2]) * control[0] * time_increment;
-                next[2] += control[1] * time_increment;
-            }
-
-            // Angle wrap
-            if (next[2] >= M_2PI || next[2] < 0)
-                next[2] += next[2] >= M_2PI ? -M_2PI : M_2PI;
-
+            next[0] += control[0] * time_span;
+            next[1] += control[1] * time_span;
             return next;
+            
         }
 
         // Get the cost of a control
-        float cost(const State &state, const Control& control, const float time_span) {
-            return control[0]*time_span;
+        float cost(const State& state, const Control& control, const float time_span) {
+            return sqrtf(control[0]*control[0] + control[1]*control[1]) * time_span;
         }
 
         // Get the heuristic of a state
@@ -98,26 +87,23 @@ namespace sbmpo_models {
         }
 
         // Generate random obstacles
-        bool init = false;
-        std::vector<std::array<float, 3>> randomize_obstacles(int n, float min, float max) {
-
-            if (!init) {
-                srand(time(NULL));
-                init = true;
-            }
+        const int dec = 10;
+        std::vector<std::array<float, 3>> randomize_obstacles(int min_n, int max_n, float min_x, float max_x, float min_y, float max_y, float min_r, float max_r) {
 
             obstacles.clear();
+            int n = (rand() % (max_n - min_n)) + min_n;
             for (int i = 0; i < n;) {
 
-                float x = ((rand() % int((max - min) * 10)) + min*10) / 10.0f;
-                float y = ((rand() % int((max - min) * 10)) + min*10) / 10.0f;
+                float x = float(rand() % int((max_x - min_x) * dec)) / dec + min_x;
+                float y = float(rand() % int((max_y - min_y) * dec)) / dec + min_y;
+                float r = float(rand() % int((max_r - min_r) * dec)) / dec + min_r;
                 
                 // Distance buffer around origin (start state)
-                if (sqrtf(x*x + y*y) < 0.5)
+                if (sqrtf(x*x + y*y) < BODY_RADIUS + r)
                     continue;
 
                 // Distance buffer around goal
-                if (sqrtf((5.0f-x)*(5.0f-x) + (5.0f-y)*(5.0f-y)) < 0.5)
+                if (sqrtf((GOAL_STATE[0]-x)*(GOAL_STATE[0]-x) + (GOAL_STATE[1]-y)*(GOAL_STATE[1]-y)) < GOAL_THRESHOLD)
                     continue;
 
                 // Check for overlap
@@ -125,7 +111,7 @@ namespace sbmpo_models {
                 for (std::array<float,3> ob : obstacles) {
                     float dox = ob[0] - x;
                     float doy = ob[1] - y;
-                    if (sqrtf(dox*dox + doy*doy) < 0.5) {
+                    if (sqrtf(dox*dox + doy*doy) < r + ob[2]) {
                         lap = true;
                         break;
                     }
@@ -133,14 +119,13 @@ namespace sbmpo_models {
 
                 // Add obstacle
                 if (!lap) {
-                    obstacles.push_back({x, y, 0.5f});
+                    obstacles.push_back({x, y, r});
                     i++;
                 }
 
             }
 
             return obstacles;
-            
         }
 
     };

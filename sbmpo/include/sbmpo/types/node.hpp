@@ -1,12 +1,14 @@
 #ifndef SBMPO_TYPE_NODE_HPP
 #define SBMPO_TYPE_NODE_HPP
 
-#include <sbmpo/types/types.hpp>
-
+#include <vector>
 #include <memory>
 #include <limits>
 
 namespace sbmpo {
+
+typedef std::vector<float> State;
+typedef std::vector<float> Control;
 
 class Node : std::enable_shared_from_this<Node> {
 
@@ -47,12 +49,12 @@ class Node : std::enable_shared_from_this<Node> {
     /// @return Reference to F value float
     float &f() { return fval_; }
 
-    /// @brief Get the f value of the Node
-    /// @return Reference to F value float
+    /// @brief Get the g value of the Node
+    /// @return Reference to G value float
     float &g() { return gval_; }
 
-    /// @brief Get the f value of the Node
-    /// @return Reference to F value float
+    /// @brief Get the rhs value of the Node
+    /// @return Reference to rhs value float
     float &rhs() { return rhs_; }
 
     /// @brief Get the generation of the Node

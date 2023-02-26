@@ -10,6 +10,8 @@ namespace sbmpo {
 
 class ImplicitGrid {
 
+    typedef std::vector<int> GridKey;
+
     public:
 
     /// @brief Create a new Implicit Grid
@@ -28,6 +30,19 @@ class ImplicitGrid {
         std::shared_ptr<Node> new_node = std::make_shared<Node>(state);
         node_map_[key] = new_node;
         return new_node;
+    }
+
+    /// @brief Get the number of nodes on the grid
+    /// @return Size of node map
+    size_t size() { return node_map_.size(); }
+
+    /// @brief Get all the nodes on the grid
+    /// @return Vector with all node pointers
+    std::vector<std::shared_ptr<Node>> nodes() {
+        std::vector<std::shared_ptr<Node>> node_vec;
+        for (auto it = node_map_.begin(); it != node_map_.end(); ++it)
+            node_vec.push_back(it->second);
+        return node_vec;
     }
 
     private:
