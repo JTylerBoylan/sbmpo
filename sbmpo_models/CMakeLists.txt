@@ -20,9 +20,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(book_model src/book_model_node.cpp)
-target_link_libraries(book_model ${catkin_LIBRARIES})
-
-add_executable(basic_model src/basic_model_node.cpp)
-target_link_libraries(basic_model ${catkin_LIBRARIES})
+add_executable(benchmark src/benchmarking_node.cpp)
+target_link_libraries(benchmark ${catkin_LIBRARIES})
 

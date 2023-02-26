@@ -41,33 +41,33 @@ void SBMPO::run() {
         }
 
         // Get best node
-        std::shared_ptr<Node> best_node = node_queue_->pop();
+        best_node_ = node_queue_->pop();
 
         // Goal check
-        if (model_->is_goal(best_node->state())) {
+        if (model_->is_goal(best_node_->state())) {
             exit_code_ = GOAL_REACHED;
             break;
         }
 
         // Generation check
-        if (best_node->generation() > parameters_.max_generations) {
+        if (best_node_->generation() > parameters_.max_generations) {
             exit_code_ = GENERATION_LIMIT;
             break;
         }
 
         // Update vertex if changed
-        if (best_node->g() > best_node->rhs()) {
-            best_node->g() = float(best_node->rhs());
+        if (best_node_->g() > best_node_->rhs()) {
+            best_node_->g() = float(best_node_->rhs());
         } else {
-            best_node->g() = std::numeric_limits<float>::infinity();
-            this->update_node(best_node);
+            best_node_->g() = std::numeric_limits<float>::infinity();
+            this->update_node(best_node_);
         }
 
         // Generate children from best node
-        this->generate_children(best_node);
+        this->generate_children(best_node_);
 
         // Update children
-        for (std::shared_ptr<Node> chld : best_node->children())
+        for (std::shared_ptr<Node> chld : best_node_->children())
             this->update_node(chld);
 
         // Next iteration

@@ -64,10 +64,6 @@ class SBMPO {
     /// @return List of Node pointers
     std::vector<std::shared_ptr<Node>> all_nodes() { return implicit_grid_->nodes(); }
 
-    ~SBMPO() {
-        delete model_;
-    }
-
     private:
 
     Model * model_;

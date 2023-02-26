@@ -7,7 +7,7 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 1000;
+runs = 10;
 
 MaxIterations = 10000;
 MaxGenerations = 100;
@@ -55,10 +55,10 @@ for r = 1:runs
 
     Configuration(r) = {[V(MaxIterations,r) V(MaxGenerations,r)...
             V(SampleHorizonTime,r)...
-            V(NumberOfStates,r) V(NumberOfControls,r) V(NumberOfGriddedStates,r) ...
-            V(GridActiveStates,r) V(GridResolution,r)...
+            V(NumberOfStates,r) V(NumberOfControls,r)...
+            V(GridResolution,r)...
             NumberOfSamples(r) Samples]};
 
 end
     
- writecell(Configuration, '../config/basic_model_config.csv', 'Delimiter', ',')
+ writecell(Configuration, '../benchmarking/config.csv', 'Delimiter', ',')

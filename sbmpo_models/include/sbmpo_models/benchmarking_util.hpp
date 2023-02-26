@@ -4,6 +4,12 @@
 #include <ros/ros.h>
 #include <sbmpo/sbmpo.hpp>
 
+#include <sbmpo_models/csv_util.hpp>
+#include <sbmpo_models/models/benchmarking_model.hpp>
+#include <sbmpo_models/models/grid_2D_model.hpp>
+#include <sbmpo_models/models/simple_steering_model.hpp>
+#include <sbmpo_models/models/double_integrator_model.hpp>
+
 namespace sbmpo_models {
 
 int seq = 0;

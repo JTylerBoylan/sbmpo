@@ -1,7 +1,10 @@
 <launch>
 
-    <node pkg="sbmpo_models" type="basic_model" name="basic_model" output="screen">
-        <param name="runs" value="100"/>
+    <arg name="model" value="grid_2d"/>
+
+    <rosparam command="load" file="$(find sbmpo_models)/config/$(arg model)_model.yaml"/>
+    <node pkg="sbmpo_models" type="benchmark" name="benchmark" output="screen">
+        <param name="runs" value="1"/>
     </node>
 
 </launch>

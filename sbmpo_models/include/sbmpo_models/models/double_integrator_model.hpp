@@ -1,9 +1,7 @@
 #ifndef SBMPO_DOUBLE_INTEGRATOR_MODEL_HPP
 #define SBMPO_DOUBLE_INTEGRATOR_MODEL_HPP
 
-#include <sbmpo/model.hpp>
-#include <math.h>
-#include <array>
+#include <sbmpo_models/models/benchmarking_model.hpp>
 
 #define M_2PI 6.283185307179586
 
@@ -11,26 +9,21 @@ namespace sbmpo_models {
 
     using namespace sbmpo;
 
-    const State START_STATE = {0.0,0.0};
-    const State GOAL_STATE = {10.0,0.0};
-
     const float GOAL_THRESHOLD_X = 0.05f;
     const float GOAL_THRESHOLD_V = 0.05f;
 
-    class SBMPOBasicModel : public Model {
+    class DoubleIntegratorModel : public BenchmarkingModel {
 
         public:
 
-        std::vector<std::array<float,3>> obstacles;
-
-        SBMPOBasicModel() {}
+        DoubleIntegratorModel() {}
 
         State initial_state() {
             return START_STATE;
         }
 
         // Evaluate a node with a control
-        State next_state(State &state, const Control& control, const float time_span) {
+        State next_state(const State &state, const Control& control, const float time_span) {
             
             // Update state
             State next = state;

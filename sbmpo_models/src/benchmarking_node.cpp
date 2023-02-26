@@ -1,9 +1,7 @@
 #include <ros/ros.h>
 #include <ros/package.h>
-#include <sbmpo_models/csv_util.hpp>
+
 #include <sbmpo_models/benchmarking_util.hpp>
-#include <sbmpo_models/models/basic_model.hpp>
-#include <sbmpo/sbmpo.hpp>
 #include <ctime>
 
 bool verbose = true;
@@ -13,10 +11,12 @@ float obstacleMinX = -2.5, obstacleMaxX = 2.5;
 float obstacleMinY = -2.5, obstacleMaxY = 2.5;
 float obstacleMinR = 0.25, obstacleMaxR = 0.5;
 
-std::string paramsConfigFile = ros::package::getPath("sbmpo_models") + "/config/basic_model_config.csv";
-std::string resultsSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/results.csv";
-std::string statsSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/stats.csv";
-std::string obstaclesSaveFile = ros::package::getPath("sbmpo_models") + "/results/basic_model/obstacles.csv";
+std::string paramsConfigFile = ros::package::getPath("sbmpo_models") + "/benchmarking/config.csv";
+std::string resultsSaveFile = ros::package::getPath("sbmpo_models") + "/benchmarking/nodes.csv";
+std::string statsSaveFile = ros::package::getPath("sbmpo_models") + "/benchmarking/stats.csv";
+std::string obstaclesSaveFile = ros::package::getPath("sbmpo_models") + "/benchmarking/obstacles.csv";
+
+std::string modelType = "simple_steering";
 
 int main (int argc, char ** argv) {
 
@@ -42,6 +42,23 @@ int main (int argc, char ** argv) {
     node.getParam("stats_file_path", statsSaveFile);
     node.getParam("obstacles_file_path", obstaclesSaveFile);
 
+    node.getParam("model_type", modelType);
+
+    std::shared_ptr<sbmpo_models::BenchmarkingModel> model;
+    if (modelType == "simple_steering")
+        model = std::make_shared<sbmpo_models::SimpleSteeringModel>();
+    else if (modelType == "grid_2d")
+        model = std::make_shared<sbmpo_models::Grid2DModel>();
+    else if (modelType == "double_integrator")
+        model = std::make_shared<sbmpo_models::DoubleIntegratorModel>();
+    
+    node.getParam("body_radius", model->BODY_RADIUS);
+    node.getParam("min_bounds", model->BOUNDS[0]);
+    node.getParam("max_bounds", model->BOUNDS[1]);
+    node.getParam("start_state", model->START_STATE);
+    node.getParam("goal_state", model->GOAL_STATE);
+    node.getParam("goal_threshold", model->GOAL_THRESHOLD);
+
     sbmpo_models::clearFile(resultsSaveFile);
     sbmpo_models::clearFile(statsSaveFile);
     //sbmpo_models::clearFile(obstaclesSaveFile);
@@ -49,8 +66,6 @@ int main (int argc, char ** argv) {
     std::vector<sbmpo::SBMPOParameters> parameterList;
     sbmpo_models::readParametersFromFile(paramsConfigFile, parameterList);
 
-    sbmpo_models::SBMPOBasicModel basicModel;
-    
     std::vector<std::vector<std::array<float,3>>> obstaclesList;
     sbmpo_models::readObstaclesFromFile(obstaclesSaveFile, obstaclesList);
 
@@ -75,9 +90,9 @@ int main (int argc, char ** argv) {
         */
         
         std::vector<std::array<float,3>> obstacles = obstaclesList[par++];
-        basicModel.obstacles = obstacles;
+        model->OBSTACLES = obstacles;
         
-        sbmpo::SBMPO sbmpo(basicModel, *param);
+        sbmpo::SBMPO sbmpo(*model, *param);
         for (int r = 0; r < runsPerParam; r++) {
 
             sbmpo.run();
