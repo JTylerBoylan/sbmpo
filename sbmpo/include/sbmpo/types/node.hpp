@@ -10,11 +10,22 @@ namespace sbmpo {
 typedef std::vector<float> State;
 typedef std::vector<float> Control;
 
-class Node : std::enable_shared_from_this<Node> {
+class Node {
 
     public:
 
-    /// @brief Create a new Node
+    /// @brief Link a parent node to a child node by a control
+    /// @param parent_node Parent node 
+    /// @param child_node Child node
+    /// @param control Control of linkage
+    static void link_nodes(std::shared_ptr<Node> parent_node, std::shared_ptr<Node> child_node, Control control) {
+        child_node->parents_.push_back({parent_node, control});
+        parent_node->children_.push_back(child_node);
+        if (parent_node->gen_ + 1 < child_node->gen_)
+            child_node->gen_ = parent_node->gen_ + 1;
+    }
+
+    /// @brief Node constructor
     /// @param state State of the Node
     Node(const State state) {
         this->state_ = state;
@@ -22,15 +33,6 @@ class Node : std::enable_shared_from_this<Node> {
         this->gval_ = std::numeric_limits<float>::infinity();
         this->fval_ = std::numeric_limits<float>::infinity();
         this->gen_ = 0;
-    }
-
-    /// @brief Add a Node as a parent
-    /// @param parent_node Pointer to Node to add as parent
-    void link_to(std::shared_ptr<Node> parent_node, Control control) {
-        this->parents_.push_back({parent_node, control});
-        parent_node->children_.push_back(shared_from_this());
-        if (parent_node->gen_ + 1 < this->gen_)
-            this->gen_ = parent_node->gen_ + 1;
     }
 
     /// @brief Get Node state

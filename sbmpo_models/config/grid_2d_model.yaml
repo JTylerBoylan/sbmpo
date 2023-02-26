@@ -1,7 +1,0 @@
-model_type: "grid_2d"
-body_radius: 0.25
-min_bounds: [-5 5]
-max_bound: [5 5]
-start_state: [-3 -3]
-goal_state: [3 3]
-goal_threshold: 0.5

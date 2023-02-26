@@ -1,60 +1,65 @@
 #ifndef SBMPO_DOUBLE_INTEGRATOR_MODEL_HPP
 #define SBMPO_DOUBLE_INTEGRATOR_MODEL_HPP
 
-#include <sbmpo_models/models/benchmarking_model.hpp>
+#include <sbmpo/model.hpp>
+#include <math.h>
+#include <array>
+#include <random>
 
 #define M_2PI 6.283185307179586
 
 namespace sbmpo_models {
 
-    using namespace sbmpo;
+using namespace sbmpo;
+
+class DoubleIntegratorModel : public Model {
 
     const float GOAL_THRESHOLD_X = 0.05f;
     const float GOAL_THRESHOLD_V = 0.05f;
+    const State START_STATE = {0.0f, 0.0f};
+    const State GOAL_STATE = {10.0f, 0.0f};
 
-    class DoubleIntegratorModel : public BenchmarkingModel {
+    public:
 
-        public:
+    DoubleIntegratorModel() {}
 
-        DoubleIntegratorModel() {}
+    State initial_state() {
+        return START_STATE;
+    }
 
-        State initial_state() {
-            return START_STATE;
-        }
+    // Evaluate a node with a control
+    State next_state(const State &state, const Control& control, const float time_span) {
+        
+        // Update state
+        State next = state;
+        next[0] += state[1] * time_span;
+        next[1] += control[0] * time_span;
+        return next;
 
-        // Evaluate a node with a control
-        State next_state(const State &state, const Control& control, const float time_span) {
-            
-            // Update state
-            State next = state;
-            next[0] += state[1] * time_span;
-            next[1] += control[0] * time_span;
-            return next;
+    }
 
-        }
+    // Get the cost of a control
+    float cost(const State& state, const Control& control, const float time_span) {
+        return time_span;
+    }
 
-        // Get the cost of a control
-        float cost(const State& state, const Control& control, const float time_span) {
-            return time_span;
-        }
+    // Get the heuristic of a state
+    float heuristic(const State& state) {
+        return 0;
+    }
 
-        // Get the heuristic of a state
-        float heuristic(const State& state) {
-            return 0;
-        }
+    // Determine if node is valid
+    bool is_valid(const State& state) {
+        return true;
+    }
 
-        // Determine if node is valid
-        bool is_valid(const State& state) {
-            return true;
-        }
+    // Determine if state is goal
+    bool is_goal(const State& state) {
+        return abs(GOAL_STATE[0] - state[0]) <= GOAL_THRESHOLD_X
+            && abs(GOAL_STATE[1] - state[1]) <= GOAL_THRESHOLD_V;
+    }
 
-        // Determine if state is goal
-        bool is_goal(const State& state) {
-            return abs(GOAL_STATE[0] - state[0]) <= GOAL_THRESHOLD_X
-                && abs(GOAL_STATE[1] - state[1]) <= GOAL_THRESHOLD_V;
-        }
-
-    };
+};
 
 }
 

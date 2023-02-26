@@ -90,7 +90,7 @@ void SBMPO::initialize() {
 
     start_node_ = implicit_grid_->get(model_->initial_state());
     start_node_->rhs() = 0;
-    start_node_->g() = 0;
+    start_node_->f() = model_->heuristic(start_node_->state());
 
     node_queue_->insert(start_node_);
 }
@@ -103,7 +103,7 @@ void SBMPO::generate_children(const std::shared_ptr<Node> parent_node) {
         State new_state = model_->next_state(parent_node->state(), control, parameters_.sample_time);
 
         // Skip if invalid state
-        if (model_->is_valid(new_state))
+        if (!model_->is_valid(new_state))
             continue;
 
         // Pull node from implicit grid
@@ -113,8 +113,8 @@ void SBMPO::generate_children(const std::shared_ptr<Node> parent_node) {
         if (child_node == parent_node || child_node == start_node_)
             continue;
 
-        // Add link to parent node
-        child_node->link_to(parent_node, control);
+        // Link the nodes
+        Node::link_nodes(parent_node, child_node, control);
 
     }
 
@@ -149,10 +149,10 @@ bool SBMPO::generate_path() {
         if (parents.empty())
             break;
 
-        std::pair<std::shared_ptr<Node>, Control> min_parent;
-        for (std::pair<std::shared_ptr<Node>, Control> prnt : parents)
-            if (prnt.first->g() < min_parent.first->g())
-                min_parent = prnt;
+        std::pair<std::shared_ptr<Node>, Control> min_parent = parents[0];
+        for (auto prnt = parents.begin()+1; prnt != parents.end(); ++prnt)
+            if (prnt->first->g() < min_parent.first->g())
+                min_parent = *prnt;
 
         control_path_.push_back(min_parent.second);
         cost_ += model_->cost(node->state(), min_parent.second, parameters_.sample_time);

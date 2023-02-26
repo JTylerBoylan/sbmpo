@@ -69,11 +69,11 @@ namespace sbmpo_models {
 
     // Add stats to data
     void appendStatsToFile(const std::string& filename, 
-            const float time_ms, const int exit_code, const float cost, const float iterations, const int buffer_size, const float success_rate) {
+            const unsigned long time_us, const int exit_code, const float cost, const float iterations, const int buffer_size, const float success_rate) {
 
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);
 
-        myFile << time_ms;
+        myFile << time_us;
         myFile << ",";
         myFile << exit_code;
         myFile << ",";
