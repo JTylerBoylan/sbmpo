@@ -81,8 +81,8 @@ These parameters include:
 | `max_iterations` | Maximum branchout iterations | `int` |
 | `max_generations` | Maximum branchout generations | `int` |
 | `sample_time` | Time period per branchout | `float` |
-| `grid_resolution` | Grid resolutions (0 for ungridded state) | `std::vector<float>` |
-| `samples` | List of controls to be sampled in a branchout | `std::vector<std::vector<float>>` |
+| `grid_resolution` | Grid resolutions | `std::vector<float>` |
+| `samples` | List of controls to be sampled in a branchout | `std::vector<sbmpo::Control>` |
 
 #### Run the model
 To run the model, simply create a SBMPO planner object with your custom model class and parameters, then execute it's `run()` function.
