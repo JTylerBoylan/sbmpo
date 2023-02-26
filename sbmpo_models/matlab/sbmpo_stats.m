@@ -9,7 +9,7 @@ function stats = sbmpo_stats(stats_file)
 
        stat_data = csv_matrix(p,:);
 
-       stats(p).time_ms = stat_data(1);
+       stats(p).time_us = stat_data(1);
        stats(p).exit_code = stat_data(2);
        stats(p).iterations = stat_data(3);
        stats(p).cost = stat_data(4);

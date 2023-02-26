@@ -28,6 +28,9 @@ class SBMPO {
     /// @brief Run the SBMPO planner
     void run();
 
+    /// @brief Reset the SBMPO planner
+    void reset();
+
     /// @brief Iteration count of planner
     /// @return Iteration value
     unsigned long iterations(){ return iterations_; }

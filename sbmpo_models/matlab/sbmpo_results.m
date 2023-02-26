@@ -1,35 +1,57 @@
-function plans = sbmpo_results(results_file)
+function [paths, nodes] = sbmpo_results(results_file)
 %SBMPO_RESULTS Convert results CSV to MATLAB data
 %   Input: File path
 
     csv_matrix = readmatrix(results_file);
 
-    plans = struct;
-    for p = 1:size(csv_matrix, 1)
+    paths = struct;
+    p = 1;
+    for line = 1:2:size(csv_matrix, 1)
+        
+       plan_data = csv_matrix(line,:);
 
-       plan_data = csv_matrix(p,:);
+       paths(p).path_size = plan_data(1);
+       paths(p).num_states = plan_data(2);
+       i = 2;
 
-       plans(p).path_size = plan_data(1);
-       plans(p).path = plan_data(2:plans(p).path_size+1);
-       i = plans(p).path_size+1;
+       paths(p).nodes = struct;
+       for n = 1:paths(p).path_size
+            paths(p).nodes(n).generation = plan_data(i+1);
+            paths(p).nodes(n).f = plan_data(i+2);
+            paths(p).nodes(n).g = plan_data(i+3);
+            paths(p).nodes(n).rhs = plan_data(i+4);
+            i = i+4;
 
-       plans(p).buffer_size = plan_data(i+1);
-       plans(p).num_states = plan_data(i+2);
-       i = i + 2;
-
-       plans(p).nodes = struct;
-       for n = 1:plans(p).buffer_size
-            plans(p).nodes(n).id = plan_data(i+1);
-            plans(p).nodes(n).generation = plan_data(i+2);
-            plans(p).nodes(n).f = plan_data(i+3);
-            plans(p).nodes(n).g = plan_data(i+4);
-            plans(p).nodes(n).rhs = plan_data(i+5);
-            i = i+5;
-
-            plans(p).nodes(n).state = plan_data(i+1:i+plans(p).num_states);
-            i = i+plans(p).num_states;
+            paths(p).nodes(n).state = plan_data(i+1:i+paths(p).num_states);
+            i = i+paths(p).num_states;
        end
+       
+       p = p + 1;
+    end
+    
+    nodes = struct;
+    p = 1;
+    for line = 2:2:size(csv_matrix, 1)
+        
+       plan_data = csv_matrix(line,:);
 
+       nodes(p).buffer_size = plan_data(1);
+       nodes(p).num_states = plan_data(2);
+       i = 2;
+
+       nodes(p).nodes = struct;
+       for n = 1:nodes(p).buffer_size
+            nodes(p).nodes(n).generation = plan_data(i+1);
+            nodes(p).nodes(n).f = plan_data(i+2);
+            nodes(p).nodes(n).g = plan_data(i+3);
+            nodes(p).nodes(n).rhs = plan_data(i+4);
+            i = i+4;
+
+            nodes(p).nodes(n).state = plan_data(i+1:i+nodes(p).num_states);
+            i = i+nodes(p).num_states;
+       end
+       
+       p = p + 1;
     end
 end
 

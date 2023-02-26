@@ -72,6 +72,11 @@ class NodeQueue {
         return heap.size() == 0;
     }
 
+    /// @brief Clear the heap
+    void clear() {
+        heap.clear();
+    }
+
     private:
 
     std::vector<std::shared_ptr<Node>> heap;

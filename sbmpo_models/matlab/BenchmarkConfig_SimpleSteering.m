@@ -7,7 +7,7 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 5;
+runs = 1000;
 
 MaxIterations = 10000;
 MaxGenerations = 100;
@@ -17,8 +17,8 @@ GoalThreshold = 0.25;
 NumberOfStates = 3;
 NumberOfControls = 2;
 NumberOfGriddedStates = 3;
-InitialState = [0, 0, 1.5707];
-GoalState = [5, 5, 0];
+InitialState = [-3, -3, 1.5707];
+GoalState = [3, 3, 0];
 GridActiveStates = [1, 1, 1];
 GridResolution = [0.3536, 0.3536, 0.0982];
 
@@ -30,7 +30,7 @@ LinearControls = {
         [0.5 1.0];
       };
 
-%% Configurration
+%% Configuration
   
 V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
 
@@ -53,12 +53,11 @@ for r = 1:runs
         end
     end 
 
-    Configuration(r) = {[V(MaxIterations,r) V(MaxGenerations,r)...
-            V(SampleHorizonTime,r)...
-            V(NumberOfStates,r) V(NumberOfControls,r) V(NumberOfGriddedStates,r) ...
-            V(GridActiveStates,r) V(GridResolution,r)...
+    Configuration(r) = {[...
+            V(MaxIterations,r) V(MaxGenerations,r) V(SampleHorizonTime,r)...
+            V(NumberOfStates,r) V(NumberOfControls,r) V(GridResolution,r)...
             NumberOfSamples(r) Samples]};
 
 end
     
- writecell(Configuration, '../config/book_model_config.csv', 'Delimiter', ',')
+ writecell(Configuration, '../benchmarking/config.csv', 'Delimiter', ',')

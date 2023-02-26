@@ -1,15 +1,15 @@
 %% SBMPO Results Visualizer
 close all
 
-stats = sbmpo_stats("../results/basic_model/stats.csv");
-plans = sbmpo_results("../results/basic_model/results.csv");
-obstacles = sbmpo_obstacles("../results/basic_model/obstacles.csv");
+stats = sbmpo_stats("../benchmarking/stats.csv");
+[paths, nodes] = sbmpo_results("../benchmarking/nodes.csv");
+obstacles = sbmpo_obstacles("../benchmarking/obstacles.csv");
 
 %rrt_results = readmatrix('docs/result_obstacles.txt','Delimiter',' ');
 %rrt_results = readmatrix('docs/result_large.txt','Delimiter',' ');
 
 % Convert path states to points and plot
-for p = 1:length(plans)
+for p = 1:length(paths)
 
     start = V(InitialState, p);
     goal = V(GoalState, p);
@@ -36,25 +36,25 @@ for p = 1:length(plans)
     rectangle('Position', goal, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot all nodes
-%     bx = zeros(1, plans(p).buffer_size);
-%     by = zeros(1, plans(p).buffer_size);
-%     for b = 1:plans(p).buffer_size
-%         node = plans(p).nodes(b);
-%         bx(b) = node.state(1);
-%         by(b) = node.state(2);
-%     end
-%     plot (bx, by, 'xk', 'MarkerSize', 2)
-
+    nx = zeros(1, nodes(p).buffer_size);
+    ny = zeros(1, nodes(p).buffer_size);
+    for n = 1:nodes(p).buffer_size
+        node = nodes(p).nodes(n);
+        nx(n) = node.state(1);
+        ny(n) = node.state(2); 
+    end
+    plot (nx, ny, 'ob', 'MarkerSize', 2, 'HandleVisibility', 'off')
+    
     % Plot path
-    px = zeros(1, plans(p).path_size);
-    py = zeros(1, plans(p).path_size);
-    for n = 1:plans(p).path_size
-        node = plans(p).nodes(plans(p).path(n) + 1);
+    px = zeros(1, paths(p).path_size);
+    py = zeros(1, paths(p).path_size);
+    for n = 1:paths(p).path_size
+        node = paths(p).nodes(n);
         px(n) = node.state(1);
         py(n) = node.state(2);
     end
     plot (px, py, '-g', 'LineWidth', 5, 'DisplayName', 'SBMPO')
-    %plot (px, py, 'ob', 'MarkerSize', 5)
+    plot (px, py, 'ob', 'MarkerSize', 5, 'HandleVisibility', 'off')
 
     %rrt_x = rrt_results(:,1);
     %rrt_y = rrt_results(:,2);

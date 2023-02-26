@@ -94,6 +94,7 @@ namespace sbmpo_models {
         std::ofstream myFile(filename, std::ofstream::out | std::fstream::app);      
 
         myFile << nodes.size();
+        myFile << ",";
         myFile << nodes[0]->state().size();
 
         for (int n = 0; n < nodes.size(); n++) {

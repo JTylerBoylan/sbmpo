@@ -58,7 +58,7 @@ int main (int argc, char ** argv) {
                                                         obstacleMinR ,obstacleMaxR);
         */
         
-        sbmpo_models::Grid2DModel model;
+        sbmpo_models::SimpleSteeringModel model;
 
         std::vector<std::array<float,3>> obstacles = obstaclesList[par++];
         model.obstacles = obstacles;
@@ -67,6 +67,7 @@ int main (int argc, char ** argv) {
 
         for (int r = 0; r < runsPerParam; r++) {
 
+            sbmpo.reset();
             sbmpo.run();
 
             exitCode = sbmpo.exit_code();

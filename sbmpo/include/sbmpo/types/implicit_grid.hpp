@@ -45,6 +45,11 @@ class ImplicitGrid {
         return node_vec;
     }
 
+    /// @brief Clear the Implicit Grid
+    void clear() {
+        node_map_.clear();
+    }
+
     private:
 
     std::vector<float> grid_resolutions_;

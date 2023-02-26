@@ -16,7 +16,7 @@ const int INTEGRATION_SIZE = 5;
 
 class SimpleSteeringModel : public Model {
 
-    const float BODY_RADIUS = 0.20f;
+    const float BODY_RADIUS = 0.0f;
     const float GOAL_THRESHOLD = 0.25f;
 
     const std::vector<std::vector<float>> BOUNDS = {
@@ -26,14 +26,14 @@ class SimpleSteeringModel : public Model {
 
     public:
 
-    State START_STATE = {-3.0f, -3.0f, 0.0f};
-    State GOAL_STATE = {3.0f, 3.0f};
-    std::vector<std::array<float,3>> OBSTACLES;
+    State start_state = {-3.0f, -3.0f, 0.0f};
+    State goal_state = {3.0f, 3.0f};
+    std::vector<std::array<float,3>> obstacles;
 
     SimpleSteeringModel() {}
 
     State initial_state() {
-        return START_STATE;
+        return start_state;
     }
 
     // Evaluate a node with a control
@@ -62,8 +62,8 @@ class SimpleSteeringModel : public Model {
 
     // Get the heuristic of a state
     float heuristic(const State& state) {
-        const float dx = GOAL_STATE[0] - state[0];
-        const float dy = GOAL_STATE[1] - state[1];
+        const float dx = goal_state[0] - state[0];
+        const float dy = goal_state[1] - state[1];
         return sqrtf(dx*dx + dy*dy);
     }
 
@@ -78,10 +78,10 @@ class SimpleSteeringModel : public Model {
             return false;
 
         // Obstacle collision check
-        for (int o = 0; o < OBSTACLES.size(); o++) {
-            const float dx = state[0] - OBSTACLES[o][0];
-            const float dy = state[1] - OBSTACLES[o][1];
-            const float threshold = OBSTACLES[o][2] + BODY_RADIUS;
+        for (int o = 0; o < obstacles.size(); o++) {
+            const float dx = state[0] - obstacles[o][0];
+            const float dy = state[1] - obstacles[o][1];
+            const float threshold = obstacles[o][2] + BODY_RADIUS;
             if (dx*dx + dy*dy < threshold*threshold)
                 return false;
         }

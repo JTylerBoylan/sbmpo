@@ -84,6 +84,20 @@ void SBMPO::run() {
 
 }
 
+void SBMPO::reset() {
+    this->implicit_grid_->clear();
+    this->node_queue_->clear();
+    this->node_path_.clear();
+    this->state_path_.clear();
+    this->control_path_.clear();
+    this->exit_code_ = UNKNOWN_ERROR;
+    this->iterations_ = 0;
+    this->time_us_ = 0;
+    this->cost_ = 0.0f;
+    this->start_node_ = nullptr;
+    this->best_node_ = nullptr;
+}
+
 void SBMPO::initialize() {
     this->iterations_ = 0;
     this->exit_code_ = UNKNOWN_ERROR;
