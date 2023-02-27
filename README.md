@@ -25,11 +25,11 @@ author = {Mario Harper and Camilo Ordonez and Emmanuel Collins}
 ### CMake 3.5
 
 ## Installation
-To install, clone this package into your workspace and use the provided build script
+To install, clone this package into your workspace and make inside the build folder.
 
 ```
 git clone https://github.com/JTylerBoylan/SBMPO.git
-cd SBMPO && ./build.sh
+cd ./SBMPO/build && make
 ```
 
 ## Creating your own model
