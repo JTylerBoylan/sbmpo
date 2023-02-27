@@ -1,1 +1,1 @@
-/usr/bin/gcc -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libsbmpo.so.1 -o libsbmpo.so.1.0 CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o 
+/usr/bin/g++ -fPIC -g  -shared -Wl,-soname,libsbmpo.so.1 -o libsbmpo.so.1.0 CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o 

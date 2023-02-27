@@ -60,15 +60,15 @@ include sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/flags.make
 sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o: sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/flags.make
 sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o: ../sbmpo_models/src/simple_steering_benchmark.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/sbmpo_ws/SBMPO/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o"
-	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/gcc  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o -c /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp
+	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o -c /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp
 
 sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.i"
-	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/gcc $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp > CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.i
+	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp > CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.i
 
 sbmpo_models/CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.s"
-	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/gcc $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp -o CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.s
+	cd /sbmpo_ws/SBMPO/build/sbmpo_models && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp -o CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.s
 
 # Object files for target simple_steering_benchmark
 simple_steering_benchmark_OBJECTS = \

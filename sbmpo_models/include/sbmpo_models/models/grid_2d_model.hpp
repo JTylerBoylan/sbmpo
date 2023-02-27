@@ -64,7 +64,7 @@ class Grid2DModel : public BenchmarkModel {
             return false;
 
         // Obstacle collision check
-        for (int o = 0; o < obstacles.size(); o++) {
+        for (size_t o = 0; o < obstacles.size(); o++) {
             const float dx = state[0] - obstacles[o][0];
             const float dy = state[1] - obstacles[o][1];
             const float threshold = obstacles[o][2] + BODY_RADIUS;
@@ -79,6 +79,8 @@ class Grid2DModel : public BenchmarkModel {
     bool is_goal(const State& state) {
         return heuristic(state) <= GOAL_THRESHOLD;
     }
+
+    ~Grid2DModel() {}
 
 };
 

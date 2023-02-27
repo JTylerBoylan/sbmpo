@@ -10,7 +10,7 @@ namespace sbmpo {
 enum ExitCode {GOAL_REACHED, ITERATION_LIMIT, GENERATION_LIMIT, NO_NODES_LEFT, INVALID_PATH, UNKNOWN_ERROR};
 
 struct SBMPOParameters {
-    int max_iterations, max_generations;
+    uint max_iterations, max_generations;
     float sample_time;
     std::vector<float> grid_resolution;
     std::vector<Control> samples;
@@ -33,7 +33,7 @@ class SBMPO {
 
     /// @brief Iteration count of planner
     /// @return Iteration value
-    unsigned long iterations(){ return iterations_; }
+    uint iterations(){ return iterations_; }
 
     /// @brief Exit code of the plan run
     /// @return Value of the exit code
@@ -79,7 +79,7 @@ class SBMPO {
     std::shared_ptr<Node> best_node_;
 
     ExitCode exit_code_;
-    unsigned long iterations_;
+    uint iterations_;
     time_t time_us_;
     float cost_;
 

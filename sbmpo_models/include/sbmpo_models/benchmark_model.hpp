@@ -61,7 +61,7 @@ class BenchmarkModel : public Model {
 
             if (verbose_) print_parameters(*param);
 
-                int exit_code;
+                int exit_code = UNKNOWN_ERROR;
                 unsigned long time_us = 0.0;
                 double cost = 0.0;
                 int node_count = 0;
@@ -76,7 +76,7 @@ class BenchmarkModel : public Model {
                 
                 sbmpo::SBMPO sbmpo(*this, *param);
 
-                for (int r = 0; r < runs_per_param_; r++) {
+                for (uint r = 0; r < runs_per_param_; r++) {
 
                     sbmpo.reset();
                     sbmpo.run();
@@ -119,6 +119,8 @@ class BenchmarkModel : public Model {
     void set_obstacle_type(ObstacleType obstacle_type) {
         obstacle_type_ = obstacle_type;
     }
+
+    virtual ~BenchmarkModel() {};
 
     private:
 

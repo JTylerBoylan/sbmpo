@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/sbmpo_ws/SBMPO/build/sbmpo",
+  "command": "/usr/bin/g++  -Dsbmpo_EXPORTS -I/sbmpo_ws/SBMPO/sbmpo/include  -g -fPIC   -Wall -std=gnu++11 -o CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o -c /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp",
+  "file": "/sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp"
+},
+{
+  "directory": "/sbmpo_ws/SBMPO/build/sbmpo_models",
+  "command": "/usr/bin/g++   -I/sbmpo_ws/SBMPO/sbmpo_models/include -I/sbmpo_ws/SBMPO/sbmpo/include  -g   -Wall -std=gnu++11 -o CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o -c /sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp",
+  "file": "/sbmpo_ws/SBMPO/sbmpo_models/src/simple_steering_benchmark.cpp"
+},
+{
+  "directory": "/sbmpo_ws/SBMPO/build/sbmpo_models",
+  "command": "/usr/bin/g++   -I/sbmpo_ws/SBMPO/sbmpo_models/include -I/sbmpo_ws/SBMPO/sbmpo/include  -g   -Wall -std=gnu++11 -o CMakeFiles/grid_2d_benchmark.dir/src/grid_2d_benchmark.cpp.o -c /sbmpo_ws/SBMPO/sbmpo_models/src/grid_2d_benchmark.cpp",
+  "file": "/sbmpo_ws/SBMPO/sbmpo_models/src/grid_2d_benchmark.cpp"
+}
+]

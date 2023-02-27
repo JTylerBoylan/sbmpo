@@ -179,7 +179,7 @@ class CSVTool {
         myFile << ",";
         myFile << nodes[0]->state().size();
 
-        for (int n = 0; n < nodes.size(); n++) {
+        for (size_t n = 0; n < nodes.size(); n++) {
 
             const std::shared_ptr<Node> node = nodes[n];
 

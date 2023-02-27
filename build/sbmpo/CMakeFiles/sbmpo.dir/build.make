@@ -60,15 +60,15 @@ include sbmpo/CMakeFiles/sbmpo.dir/flags.make
 sbmpo/CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o: sbmpo/CMakeFiles/sbmpo.dir/flags.make
 sbmpo/CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o: ../sbmpo/src/sbmpo.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/sbmpo_ws/SBMPO/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object sbmpo/CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o"
-	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/gcc  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o -c /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp
+	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/sbmpo.dir/src/sbmpo.cpp.o -c /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp
 
 sbmpo/CMakeFiles/sbmpo.dir/src/sbmpo.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sbmpo.dir/src/sbmpo.cpp.i"
-	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/gcc $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp > CMakeFiles/sbmpo.dir/src/sbmpo.cpp.i
+	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp > CMakeFiles/sbmpo.dir/src/sbmpo.cpp.i
 
 sbmpo/CMakeFiles/sbmpo.dir/src/sbmpo.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sbmpo.dir/src/sbmpo.cpp.s"
-	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/gcc $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp -o CMakeFiles/sbmpo.dir/src/sbmpo.cpp.s
+	cd /sbmpo_ws/SBMPO/build/sbmpo && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /sbmpo_ws/SBMPO/sbmpo/src/sbmpo.cpp -o CMakeFiles/sbmpo.dir/src/sbmpo.cpp.s
 
 # Object files for target sbmpo
 sbmpo_OBJECTS = \

@@ -72,6 +72,8 @@ class DoubleIntegratorModel : public BenchmarkModel {
             && abs(goal_state[1] - state[1]) <= GOAL_THRESHOLD_V;
     }
 
+    ~DoubleIntegratorModel() {}
+
 };
 
 }

@@ -1,1 +1,1 @@
-/usr/bin/gcc  -O3 -DNDEBUG   CMakeFiles/grid_2d_benchmark.dir/src/grid_2d_benchmark.cpp.o  -o grid_2d_benchmark  -Wl,-rpath,/sbmpo_ws/SBMPO/build/sbmpo ../sbmpo/libsbmpo.so.1.0 -lstdc++ -lstdc++fs -lm 
+/usr/bin/g++  -g   CMakeFiles/grid_2d_benchmark.dir/src/grid_2d_benchmark.cpp.o  -o grid_2d_benchmark  -Wl,-rpath,/sbmpo_ws/SBMPO/build/sbmpo ../sbmpo/libsbmpo.so.1.0 -lstdc++ -lstdc++fs -lm 
