@@ -1,14 +1,9 @@
-#include <ros/ros.h>
-
 #include <sbmpo_models/models/simple_steering_model.hpp>
 
 bool verbose = true;
 int runsPerParam = 1;
 
 int main (int argc, char ** argv) {
-
-    ros::init(argc, argv, "steering_model_benchmark");
-    ros::NodeHandle node("~");
 
     srand(time(NULL));
 

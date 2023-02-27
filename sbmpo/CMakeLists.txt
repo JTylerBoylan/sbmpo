@@ -1,24 +1,23 @@
-cmake_minimum_required(VERSION 3.0.2)
-project(sbmpo)
+cmake_minimum_required(VERSION 3.5)
 
-add_compile_options(-std=c++11)
+# Define project and its version
+project(sbmpo VERSION 1.0)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-)
+# Use C++11
+set(CMAKE_CXX_STANDARD 11)
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES sbmpo
-  CATKIN_DEPENDS roscpp
-)
+# Specify the directory containing header files for your library
+include_directories(include)
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+# Create the library target and specify source files
+add_library(sbmpo SHARED)
+target_sources(sbmpo PRIVATE src/sbmpo.cpp)
 
-add_library(${PROJECT_NAME}
-  src/sbmpo.cpp
-)
+# Set include directories for library target
+target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# Set library versioning
+set_target_properties(sbmpo PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
+
+# Link any necessary dependencies (example: Boost)
+# target_link_libraries(sbmpo PRIVATE Boost::system)

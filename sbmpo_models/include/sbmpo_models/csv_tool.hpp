@@ -7,8 +7,6 @@
 #include <stdexcept> // std::runtime_error
 #include <sstream> // std::stringstream
 
-#include <ros/package.h>
-
 #include <sbmpo/sbmpo.hpp>
 
 namespace sbmpo_models {
@@ -25,7 +23,7 @@ class CSVTool {
     public:
 
     CSVTool() {
-        this->csv_folder_ = ros::package::getPath("sbmpo_models") + "/benchmarking/";
+        this->csv_folder_ = "/sbmpo_ws/SBMPO/sbmpo_models/benchmarking/";
     }
 
     void set_save_folder(std::string folder) {

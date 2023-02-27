@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include <ros/ros.h>
-
 #include <sbmpo/sbmpo.hpp>
 #include <sbmpo_models/csv_tool.hpp>
 
@@ -102,7 +100,7 @@ class BenchmarkModel : public Model {
                 if (verbose_) print_results(sbmpo);
                 if (verbose_) print_obstacles(obstacles);
 
-                if (verbose_) ROS_INFO("Writing results in folder %s ...", csv_tool_.get_save_folder().c_str());
+                if (verbose_) printf("Writing results in folder %s ...\n\n", csv_tool_.get_save_folder().c_str());
                 csv_tool_.append_stats(time_us_avg, exit_code, iterations_avg, cost_avg, node_count_avg, success_rate);
                 csv_tool_.append_nodes(sbmpo.node_path());
                 csv_tool_.append_nodes(sbmpo.all_nodes());
@@ -111,7 +109,7 @@ class BenchmarkModel : public Model {
 
         }
 
-        if (verbose_) ROS_INFO("Finished benchmarking.");
+        if (verbose_) printf("Finished benchmarking.\n");
     }
 
     void set_folder(std::string folder_path) {
@@ -179,57 +177,57 @@ class BenchmarkModel : public Model {
 
     int print_count = 0;
     void print_parameters(const sbmpo::SBMPOParameters &params) {
-        ROS_INFO("---- Planner Parameters [%d] ----", print_count);
-        ROS_INFO("Max iterations: %d", params.max_iterations);
-        ROS_INFO("Max generations: %d", params.max_generations);
-        ROS_INFO("Sample Time: %.2f", params.sample_time);;
+        printf("---- Planner Parameters [%d] ----\n", print_count);
+        printf("Max iterations: %d\n", params.max_iterations);
+        printf("Max generations: %d\n", params.max_generations);
+        printf("Sample Time: %.2f\n", params.sample_time);;
 
         std::string st;
 
         for (float f : params.grid_resolution)
             st += std::to_string(f) + " ";
-        ROS_INFO("Grid Resolution: %s", st.c_str());
+        printf("Grid Resolution: %s\n", st.c_str());
         st.clear();
 
-        ROS_INFO("Samples:");
+        printf("Samples:\n");
         for (sbmpo::Control control : params.samples) {
             for (float f : control)
                 st += std::to_string(f) + " ";
-            ROS_INFO("  - %s", st.c_str());
+            printf("  - %s\n", st.c_str());
             st.clear();
         }
     }
 
     void print_results(sbmpo::SBMPO &results) {
-        ROS_INFO("---- Planner Path [%d] ----", print_count++);
+        printf("---- Planner Path [%d] ----\n", print_count++);
         int c = 0;
         for (std::shared_ptr<sbmpo::Node> node : results.node_path()) {
-            ROS_INFO("  (%d) x: %.3f, y: %.3f, g: %.3f, rhs: %.3f, f: %.3f",
+            printf("  (%d) x: %.3f, y: %.3f, g: %.3f, rhs: %.3f, f: %.3f\n",
                 ++c,
                 node->state()[0], node->state()[1],
                 node->g(), node->rhs(), node->f());
         }
-        ROS_INFO("--------");
+        printf("--------\n");
     }
 
     void print_stats(const unsigned long timeUs, const int exitCode, const int iterations, const float cost, const int bufferSize, const float successRate) {
-        ROS_INFO("---- Planner Stats ----");
-        ROS_INFO("  Time: %lu us", timeUs);
-        ROS_INFO("  Exit Code: %d", exitCode);
-        ROS_INFO("  Iterations: %d", iterations);
-        ROS_INFO("  Cost: %.2f", cost);
-        ROS_INFO("  Buffer Size: %d", bufferSize);
-        ROS_INFO("  Success Rate: %.1f%%", successRate * 100);
-        ROS_INFO("--------");
+        printf("---- Planner Stats ----\n");
+        printf("  Time: %lu us\n", timeUs);
+        printf("  Exit Code: %d\n", exitCode);
+        printf("  Iterations: %d\n", iterations);
+        printf("  Cost: %.2f\n", cost);
+        printf("  Buffer Size: %d\n", bufferSize);
+        printf("  Success Rate: %.1f\n", successRate * 100);
+        printf("--------\n");
     }
 
     void print_obstacles(const std::vector<std::array<float, 3>> obstacles) {
-        ROS_INFO("Obstacles:");
+        printf("Obstacles:\n");
         for (std::array<float, 3> obs : obstacles) {
             std::string st;
             for (float f : obs)
                 st += std::to_string(f) + " ";
-            ROS_INFO(" - %s", st.c_str());
+            printf(" - %s\n", st.c_str());
         }
     }
 
