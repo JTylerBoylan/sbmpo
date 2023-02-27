@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="sbmpo_models" type="grid_2d_benchmark" name="grid_2d_benchmark" output="screen"></node>
+
+</launch>

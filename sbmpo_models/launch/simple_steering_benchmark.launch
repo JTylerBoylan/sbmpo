@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="sbmpo_models" type="simple_steering_benchmark" name="simple_steering_benchmark" output="screen"></node>
+
+</launch>

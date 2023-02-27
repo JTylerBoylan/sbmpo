@@ -1,7 +1,0 @@
-<launch>
-
-    <node pkg="sbmpo_models" type="benchmark" name="benchmark" output="screen">
-        <param name="runs" value="10"/>
-    </node>
-
-</launch>

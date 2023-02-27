@@ -7,7 +7,7 @@ clc
 %% Parameters
 
 % Set total number of runs
-runs = 1000;
+runs = 5;
 
 MaxIterations = 10000;
 MaxGenerations = 100;

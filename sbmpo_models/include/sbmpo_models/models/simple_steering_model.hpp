@@ -1,10 +1,7 @@
 #ifndef SBMPO_SIMPLE_STEERING_MODEL_HPP
 #define SBMPO_SIMPLE_STEERING_MODEL_HPP
 
-#include <sbmpo/model.hpp>
-#include <math.h>
-#include <array>
-#include <random>
+#include <sbmpo_models/benchmark_model.hpp>
 
 #define M_2PI 6.283185307179586
 
@@ -14,7 +11,7 @@ using namespace sbmpo;
 
 const int INTEGRATION_SIZE = 5;
 
-class SimpleSteeringModel : public Model {
+class SimpleSteeringModel : public BenchmarkModel {
 
     const float BODY_RADIUS = 0.0f;
     const float GOAL_THRESHOLD = 0.25f;
@@ -28,7 +25,6 @@ class SimpleSteeringModel : public Model {
 
     State start_state = {-3.0f, -3.0f, 0.0f};
     State goal_state = {3.0f, 3.0f};
-    std::vector<std::array<float,3>> obstacles;
 
     SimpleSteeringModel() {}
 

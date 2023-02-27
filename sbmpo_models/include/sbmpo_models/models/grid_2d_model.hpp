@@ -1,11 +1,7 @@
 #ifndef SBMPO_GRID_2D_MODEL_HPP
 #define SBMPO_GRID_2D_MODEL_HPP
 
-#include <sbmpo/model.hpp>
-#include <math.h>
-#include <array>
-#include <random>
-#include <iostream>
+#include <sbmpo_models/benchmark_model.hpp>
 
 #define M_2PI 6.283185307179586
 
@@ -13,7 +9,7 @@ namespace sbmpo_models {
 
 using namespace sbmpo;
 
-class Grid2DModel : public Model {
+class Grid2DModel : public BenchmarkModel {
 
     const float BODY_RADIUS = 0.20f;
     const float GOAL_THRESHOLD = 0.25f;
@@ -27,9 +23,8 @@ class Grid2DModel : public Model {
 
     State start_state = {-3.0f, -3.0f};
     State goal_state = {3.0f, 3.0f};
-    std::vector<std::array<float,3>> obstacles;
 
-    Grid2DModel() {}
+    Grid2DModel() : BenchmarkModel() {}
 
     State initial_state() {
         return start_state;
