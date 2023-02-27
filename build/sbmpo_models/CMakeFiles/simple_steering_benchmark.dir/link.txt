@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/simple_steering_benchmark.dir/src/simple_steering_benchmark.cpp.o  -o simple_steering_benchmark  -Wl,-rpath,/sbmpo_ws/SBMPO/build/sbmpo ../sbmpo/libsbmpo.so.1.0 -lstdc++ -lstdc++fs -lm 

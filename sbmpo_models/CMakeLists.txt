@@ -6,6 +6,8 @@ project(sbmpo_models VERSION 1.0)
 # Set C++ standard to C++11
 set(CMAKE_CXX_STANDARD 11)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+
 # Enable building outside the source directory
 cmake_policy(SET CMP0079 NEW)
 
