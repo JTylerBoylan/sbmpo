@@ -61,7 +61,7 @@ class Node {
 
     /// @brief Get the generation of the Node
     /// @return Reference to the generation
-    uint &generation() { return gen_; }
+    int &generation() { return gen_; }
 
     private:
 
@@ -74,7 +74,7 @@ class Node {
 
     // Node properties
     float fval_, gval_, rhs_;
-    uint gen_;
+    int gen_;
 
 };
 

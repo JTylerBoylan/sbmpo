@@ -37,7 +37,7 @@ class BenchmarkModel : public Model {
         this->verbose_ = tf;
     }
 
-    void set_runs_per_param(uint runs_per_param) {
+    void set_runs_per_param(int runs_per_param) {
         this->runs_per_param_ = runs_per_param;
     }
 
@@ -76,7 +76,7 @@ class BenchmarkModel : public Model {
                 
                 sbmpo::SBMPO sbmpo(*this, *param);
 
-                for (uint r = 0; r < runs_per_param_; r++) {
+                for (int r = 0; r < runs_per_param_; r++) {
 
                     sbmpo.reset();
                     sbmpo.run();
@@ -125,7 +125,7 @@ class BenchmarkModel : public Model {
     private:
 
     bool verbose_;
-    uint runs_per_param_;
+    int runs_per_param_;
 
     CSVTool csv_tool_;
 
