@@ -113,11 +113,11 @@ class Benchmark {
 
     void print_results(sbmpo::SBMPO &results) {
         printf("---- Planner Path [%d] ----\n", print_count++);
-        std::vector<std::shared_ptr<sbmpo::Node>> node_path = results.node_path();
+        std::vector<sbmpo::Node::Ptr> node_path = results.node_path();
         std::vector<sbmpo::State> state_path = results.state_path();
         std::vector<sbmpo::Control> control_path = results.control_path();
         for (size_t n = 0; n < node_path.size(); n++) {
-            std::shared_ptr<sbmpo::Node> node = node_path[n];
+            sbmpo::Node::Ptr node = node_path[n];
             printf(" (%d) ", node->generation());
             printf("state: [");
             for (float s : state_path[n])

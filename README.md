@@ -96,10 +96,10 @@ Here are some of the functions you can use:
 | `time_t` | `time_us()` | Get the computation time of the run in microseconds |
 | `float` | `cost()` | Get the cost of the best path |
 | `size_t` | `size()` | Get the number of nodes on the grid |
-| `std::vector<std::shared_ptr<Node>>` | `node_path()` | Returns the best path found as a list of Node pointers |
+| `std::vector<sbmpo::Node::Ptr>` | `node_path()` | Returns the best path found as a list of Node pointers |
 | `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
 | `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
-| `std::vector<std::shared_ptr<Node>>` | `all_nodes()` | Returns all nodes on the grid as a list of Node pointers |
+| `std::vector<sbmpo::Node::Ptr>` | `all_nodes()` | Returns all nodes on the grid as a list of Node pointers |
 
 ##### Exit Codes:
 | Exit Code | Description |

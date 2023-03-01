@@ -67,7 +67,7 @@ void SBMPO::run() {
         this->generate_children(best_node_);
 
         // Update children
-        for (std::shared_ptr<Node> chld : best_node_->children())
+        for (Node::Ptr chld : best_node_->children())
             this->update_node(chld);
 
         // Next iteration
@@ -109,7 +109,7 @@ void SBMPO::initialize() {
     node_queue_->insert(start_node_);
 }
 
-void SBMPO::generate_children(const std::shared_ptr<Node> parent_node) {
+void SBMPO::generate_children(const Node::Ptr parent_node) {
 
     for (Control control : parameters_.samples) {
 
@@ -121,7 +121,7 @@ void SBMPO::generate_children(const std::shared_ptr<Node> parent_node) {
             continue;
 
         // Pull node from implicit grid
-        std::shared_ptr<Node> child_node = implicit_grid_->get(new_state);
+        Node::Ptr child_node = implicit_grid_->get(new_state);
 
         // Skip if landed on same node or start node
         if (child_node == parent_node || child_node == start_node_)
@@ -134,11 +134,11 @@ void SBMPO::generate_children(const std::shared_ptr<Node> parent_node) {
 
 }
 
-void SBMPO::update_node(const std::shared_ptr<Node> node) {
+void SBMPO::update_node(const Node::Ptr node) {
     if (node == start_node_)
         return;
     node->rhs() = std::numeric_limits<float>::infinity();
-    for (std::pair<std::shared_ptr<Node>, Control> prnt : node->parents())
+    for (std::pair<Node::Ptr, Control> prnt : node->parents())
         node->rhs() = std::min(node->rhs(), prnt.first->g() + model_->cost(prnt.first->state(), prnt.second, parameters_.sample_time));
     node_queue_->remove(node);
     if (node->g() != node->rhs()) {
@@ -150,7 +150,7 @@ void SBMPO::update_node(const std::shared_ptr<Node> node) {
 bool SBMPO::generate_path() {
 
     this->cost_ = 0.0;
-    std::shared_ptr<Node> node = best_node_;
+    Node::Ptr node = best_node_;
     while (true) {
 
         if (std::count(node_path_.begin(), node_path_.end(), node))
@@ -159,11 +159,11 @@ bool SBMPO::generate_path() {
         node_path_.push_back(node);
         state_path_.push_back(node->state());
 
-        std::vector<std::pair<std::shared_ptr<Node>, Control>> parents = node->parents();
+        std::vector<std::pair<Node::Ptr, Control>> parents = node->parents();
         if (parents.empty())
             break;
 
-        std::pair<std::shared_ptr<Node>, Control> min_parent = parents[0];
+        std::pair<Node::Ptr, Control> min_parent = parents[0];
         for (auto prnt = parents.begin()+1; prnt != parents.end(); ++prnt)
             if (prnt->first->g() < min_parent.first->g())
                 min_parent = *prnt;

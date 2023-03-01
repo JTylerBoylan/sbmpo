@@ -19,7 +19,7 @@ class NodeQueue {
 
     /// @brief Insert a node into the queue
     /// @param node Node to be inserted
-    void insert(std::shared_ptr<Node> node) {
+    void insert(Node::Ptr node) {
         int size = heap.size();
         if (size == 0) {
             heap.push_back(node);
@@ -33,7 +33,7 @@ class NodeQueue {
 
     /// @brief Remove a node from queue
     /// @param node Node to be removed
-    void remove(std::shared_ptr<Node> node) {
+    void remove(Node::Ptr node) {
 
         int size = heap.size();
 
@@ -59,8 +59,8 @@ class NodeQueue {
 
     /// @brief Get best node from queue
     /// @return Pointer to Node with best f score
-    std::shared_ptr<Node> pop() {
-        std::shared_ptr<Node> top = heap[0];
+    Node::Ptr pop() {
+        Node::Ptr top = heap[0];
         heap[0] = heap[heap.size() - 1];
         heap.pop_back();
         heapify(0);
@@ -80,9 +80,9 @@ class NodeQueue {
 
     private:
 
-    std::vector<std::shared_ptr<Node>> heap;
+    std::vector<Node::Ptr> heap;
 
-    bool compare (std::shared_ptr<Node> nodeA, std::shared_ptr<Node> nodeB) {
+    bool compare (Node::Ptr nodeA, Node::Ptr nodeB) {
         return nodeA->f() < nodeB->f();
     }
 

@@ -23,11 +23,11 @@ class ImplicitGrid {
     /// @brief Get Node pointer from State position
     /// @param state State of the Node
     /// @return Existing Node on Implicit Grid or a new Node
-    std::shared_ptr<Node> get(const State &state) {
+    Node::Ptr get(const State &state) {
         GridKey key = to_key_(state);
         if (node_map_.count(key))
             return node_map_[key];
-        std::shared_ptr<Node> new_node = std::make_shared<Node>(state);
+        Node::Ptr new_node = std::make_shared<Node>(state);
         node_map_[key] = new_node;
         return new_node;
     }
@@ -38,8 +38,8 @@ class ImplicitGrid {
 
     /// @brief Get all the nodes on the grid
     /// @return Vector with all node pointers
-    std::vector<std::shared_ptr<Node>> nodes() {
-        std::vector<std::shared_ptr<Node>> node_vec;
+    std::vector<Node::Ptr> nodes() {
+        std::vector<Node::Ptr> node_vec;
         for (auto it = node_map_.begin(); it != node_map_.end(); ++it)
             node_vec.push_back(it->second);
         return node_vec;
@@ -54,7 +54,7 @@ class ImplicitGrid {
 
     std::vector<float> grid_resolutions_;
 
-    std::map<GridKey, std::shared_ptr<Node>> node_map_;
+    std::map<GridKey, Node::Ptr> node_map_;
 
     // Convert State to a GridKey
     GridKey to_key_(const State &state) {

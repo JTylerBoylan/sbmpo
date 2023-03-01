@@ -53,7 +53,7 @@ class SBMPO {
 
     /// @brief Get the plan path in terms of Nodes
     /// @return List of Node pointers
-    std::vector<std::shared_ptr<Node>> node_path() { return node_path_; }
+    std::vector<Node::Ptr> node_path() { return node_path_; }
 
     /// @brief Get the plan path in terms of States
     /// @return List of States
@@ -65,7 +65,7 @@ class SBMPO {
 
     /// @brief Get all nodes in plan run
     /// @return List of Node pointers
-    std::vector<std::shared_ptr<Node>> all_nodes() { return implicit_grid_->nodes(); }
+    std::vector<Node::Ptr> all_nodes() { return implicit_grid_->nodes(); }
 
     private:
 
@@ -75,15 +75,15 @@ class SBMPO {
     std::shared_ptr<ImplicitGrid> implicit_grid_;
     std::shared_ptr<NodeQueue> node_queue_;
 
-    std::shared_ptr<Node> start_node_;
-    std::shared_ptr<Node> best_node_;
+    Node::Ptr start_node_;
+    Node::Ptr best_node_;
 
     ExitCode exit_code_;
     int iterations_;
     time_t time_us_;
     float cost_;
 
-    std::vector<std::shared_ptr<Node>> node_path_;
+    std::vector<Node::Ptr> node_path_;
     std::vector<State> state_path_;
     std::vector<Control> control_path_;
 
@@ -91,10 +91,10 @@ class SBMPO {
     void initialize();
 
     // Generate children from node
-    void generate_children(const std::shared_ptr<Node> node);
+    void generate_children(const Node::Ptr node);
 
     // Update node
-    void update_node(const std::shared_ptr<Node> node);
+    void update_node(const Node::Ptr node);
 
     // Generate path
     bool generate_path();

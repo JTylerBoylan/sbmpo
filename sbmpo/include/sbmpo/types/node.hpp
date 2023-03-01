@@ -14,11 +14,14 @@ class Node {
 
     public:
 
+    /// @brief Pointer to a Node
+    typedef std::shared_ptr<Node> Ptr;
+
     /// @brief Link a parent node to a child node by a control
     /// @param parent_node Parent node 
     /// @param child_node Child node
     /// @param control Control of linkage
-    static void link_nodes(std::shared_ptr<Node> parent_node, std::shared_ptr<Node> child_node, Control control) {
+    static void link_nodes(Node::Ptr parent_node, Node::Ptr child_node, Control control) {
         child_node->parents_.push_back({parent_node, control});
         parent_node->children_.push_back(child_node);
         if (parent_node->gen_ + 1 < child_node->gen_ || child_node->gen_ == 0)
@@ -41,11 +44,11 @@ class Node {
 
     /// @brief Get the parents of this Node
     /// @return Reference vector of pointers to parent Nodes 
-    std::vector<std::pair<std::shared_ptr<Node>, Control>> &parents() { return parents_; }
+    std::vector<std::pair<Node::Ptr, Control>> &parents() { return parents_; }
 
     /// @brief Get the children of this Node
     /// @return Reference vector of pointers to children Nodes
-    std::vector<std::shared_ptr<Node>> &children() { return children_; }
+    std::vector<Node::Ptr> &children() { return children_; }
 
     /// @brief Get the f value of the Node
     /// @return Reference to F value float
@@ -69,8 +72,8 @@ class Node {
     State state_;
     
     // Node linkages
-    std::vector<std::pair<std::shared_ptr<Node>, Control>> parents_;
-    std::vector<std::shared_ptr<Node>> children_;
+    std::vector<std::pair<Node::Ptr, Control>> parents_;
+    std::vector<Node::Ptr> children_;
 
     // Node properties
     float fval_, gval_, rhs_;

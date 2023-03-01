@@ -171,7 +171,7 @@ class CSVTool {
     }
 
         // Add to results file
-    void append_nodes(std::vector<std::shared_ptr<Node>> nodes) {
+    void append_nodes(std::vector<Node::Ptr> nodes) {
 
         std::ofstream myFile(csv_folder_ + nodes_file, std::ofstream::out | std::fstream::app);      
 
@@ -181,7 +181,7 @@ class CSVTool {
 
         for (size_t n = 0; n < nodes.size(); n++) {
 
-            const std::shared_ptr<Node> node = nodes[n];
+            const Node::Ptr node = nodes[n];
 
             myFile << ",";
             myFile << node->generation();
