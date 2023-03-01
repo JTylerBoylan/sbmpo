@@ -12,24 +12,34 @@ class Benchmark {
 
     public:
 
+    /// @brief Create a new benchmark
+    /// @param csv_folder Path to csv workspace folder
     Benchmark(std::string csv_folder) 
         : csv_tool_(csv_folder) {
         this->verbose_ = true;
         this->runs_per_param_ = 1;
     }
 
+    /// @brief Change path to csv workspace folder
+    /// @param folder_path Path to workspace folder
     void set_folder(std::string folder_path) {
         csv_tool_.set_save_folder(folder_path);
     }
 
+    /// @brief Change verbose option (default true)
+    /// @param tf True if verbose
     void set_verbose(bool tf) {
         this->verbose_ = tf;
     }
 
+    /// @brief Change number of runs per parameter set
+    /// @param runs_per_param Number of runs
     void set_runs_per_param(int runs_per_param) {
         this->runs_per_param_ = runs_per_param;
     }
 
+    /// @brief Benchmark a model
+    /// @param model Model to be benchmarked
     virtual void benchmark(sbmpo::Model &model) {
 
         csv_tool_.clear_results_file();
@@ -89,6 +99,7 @@ class Benchmark {
     CSVTool csv_tool_;
 
     int print_count = 0;
+    // Print parameters
     void print_parameters(const sbmpo::SBMPOParameters &params) {
         printf("---- Planner Parameters [%d] ----\n", print_count);
         printf("Max iterations: %d\n", params.max_iterations);
@@ -111,6 +122,7 @@ class Benchmark {
         }
     }
 
+    // Print results
     void print_results(sbmpo::SBMPO &results) {
         printf("---- Planner Path [%d] ----\n", print_count++);
         std::vector<sbmpo::Node::Ptr> node_path = results.node_path();
@@ -131,6 +143,7 @@ class Benchmark {
         printf("--------\n");
     }
 
+    // Print statistics
     void print_stats(const unsigned long timeUs, const int exitCode, const int iterations, const float cost, const int bufferSize, const float successRate) {
         printf("---- Planner Stats ----\n");
         printf("  Time: %lu us\n", timeUs);

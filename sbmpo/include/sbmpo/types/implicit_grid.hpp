@@ -56,7 +56,7 @@ class ImplicitGrid {
 
     std::map<GridKey, Node::Ptr> node_map_;
 
-    // Convert State to a GridKey
+    /// Convert State to a GridKey
     GridKey to_key_(const State &state) {
         GridKey key;
         for (size_t s = 0; s < state.size(); s++)

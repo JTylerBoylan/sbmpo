@@ -13,20 +13,28 @@ class Obstacles2DBenchmark : public Benchmark {
 
     public:
 
+    /// @brief Create a new 2D obstacles benchmark
+    /// @param csv_folder Path to csv workspace folder
     Obstacles2DBenchmark(std::string csv_folder) : Benchmark(csv_folder)
-    {}
+    {
+        this->obstacles_file_ = csv_folder + "obstacles.csv";
+    }
 
+    /// @brief Set the obstacles of the benchmark
+    /// @param obstacles Obstacles to be set
     void set_obstacles(Obstacles obstacles) {
         this->obstacles_ = obstacles;
     }
 
+    /// @brief Benchmark a model with 2D obstacles
+    /// @param model Model to be benchmarked
     void benchmark(sbmpo::Model &model) override {
 
         csv_tool_.clear_results_file();
 
         size_t par = 0;
         std::vector<SBMPOParameters> parameters_list = csv_tool_.get_params();
-        std::vector<Obstacles> obstaclesList = csv_tool_.get_obstacles();
+        std::vector<Obstacles> obstaclesList = this->get_obstacles();
         for (auto param = parameters_list.begin(); param != parameters_list.end(); ++param) {
 
             if (verbose_) print_parameters(*param);
@@ -80,6 +88,9 @@ class Obstacles2DBenchmark : public Benchmark {
 
     Obstacles obstacles_;
 
+    std::string obstacles_file_;
+
+    // Print obstacles
     void print_obstacles(const Obstacles obstacles) {
         printf("Obstacles:\n");
         for (std::array<float, 3> obs : obstacles) {
@@ -88,6 +99,44 @@ class Obstacles2DBenchmark : public Benchmark {
                 st += std::to_string(f) + " ";
             printf(" - %s\n", st.c_str());
         }
+    }
+
+    // Read obstacles from file
+    std::vector<std::vector<std::array<float,3>>> get_obstacles() {
+
+        std::vector<std::vector<std::array<float,3>>> obstaclesList;
+
+        std::ifstream myFile(obstacles_file_);
+        if(!myFile.is_open()) 
+            throw std::runtime_error("Could not open file");
+
+        std::string line, value;
+        while (std::getline(myFile, line)) {
+
+            std::vector<std::array<float,3>> obstacles;
+            std::stringstream ss(line);
+
+            std::getline(ss, value, ',');
+            int num_obstacles = std::stoi(value);
+
+            for (int obs = 0; obs < num_obstacles; obs++) {
+
+                float x,y,r;
+
+                std::getline(ss, value, ',');
+                x = std::stof(value);
+                std::getline(ss, value, ',');
+                y = std::stof(value);
+                std::getline(ss, value, ',');
+                r = std::stof(value);
+
+                obstacles.push_back({x, y, r});
+            }
+
+            obstaclesList.push_back(obstacles);
+        }
+
+        return obstaclesList;
     }
 
 };

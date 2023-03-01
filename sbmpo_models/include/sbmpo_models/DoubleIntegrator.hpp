@@ -20,6 +20,7 @@ class DoubleIntegratorModel : public Model {
        this-> max_acc_ = 1.0f;
     }
 
+    // Get the initial state
     virtual State initial_state() {
         return start_state_;
     }
@@ -71,26 +72,38 @@ class DoubleIntegratorModel : public Model {
 
     virtual ~DoubleIntegratorModel() {}
     
+    /// @brief Set the start state of the model
+    /// @param start_state State to set as start
     void set_start_state(State start_state) {
         this->start_state_ = start_state;
     }
 
+    /// @brief Set the goal state of the model
+    /// @param goal_state State to set as goal
     void set_goal_state(State goal_state) {
         this->goal_state_ = goal_state;
     }
 
+    /// @brief Set the goal threshold X value
+    /// @param goal_threshold_x Value to set as goal threshold X
     void set_goal_threshold_x(float goal_threshold_x) {
         this->threshold_x_ = goal_threshold_x;
     }
 
+    /// @brief Set the goal threshold V value
+    /// @param goal_threshold_v Value to set as goal threshold V
     void set_goal_threshold_v(float goal_threshold_v) {
         this->threshold_v_ = goal_threshold_v;
     }
 
+    /// @brief Set the minimum acceleration value
+    /// @param min_acceleration Value to set as the minimum acceleration
     void set_min_acceleration(float min_acceleration) {
         this->min_acc_ = min_acceleration;
     }
 
+    /// @brief Set the maximum acceleration value
+    /// @param max_acceleration Value to set as the maximum acceleration
     void set_max_acceleration(float max_acceleration) {
         this->max_acc_ = max_acceleration;
     }

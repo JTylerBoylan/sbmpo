@@ -45,14 +45,14 @@ namespace my_namespace {
     // Constructor
     my_custom_model() {}
 
-    // Return the initial state of the model
+    // Get the initial state of the model
     State initial_state() {}
     
     // Evaluate state and control in the model
     State next_state(const State& state, const Control& control, const float time_span) {}
     
-    // Determine the cost between two states with a given control
-    float cost(const State& state2, const State& state1, const Control& control, const float time_span) {}
+    // Determine the cost of a state after a control
+    float cost(const State& state, const Control& control, const float time_span) {}
     
     // Determine the heuristic of a state
     float heuristic(const State& state) {}

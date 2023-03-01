@@ -82,10 +82,12 @@ class NodeQueue {
 
     std::vector<Node::Ptr> heap;
 
+    // Queue ordering comparator
     bool compare (Node::Ptr nodeA, Node::Ptr nodeB) {
         return nodeA->f() < nodeB->f();
     }
 
+    /// Heapify the queue
     void heapify(int i) {
 
         int size = heap.size();

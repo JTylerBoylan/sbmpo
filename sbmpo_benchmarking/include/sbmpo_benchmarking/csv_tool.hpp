@@ -22,26 +22,30 @@ class CSVTool {
 
     public:
 
+    /// @brief Create a new CSV Tool
+    /// @param csv_folder Path to csv workspace folder
     CSVTool(std::string csv_folder) {
         this->csv_folder_ = csv_folder;
     }
 
+    /// @brief Change the csv workspace folder
+    /// @param folder Path to new workspace folder
     void set_save_folder(std::string folder) {
         this->csv_folder_ = folder;
     }
 
+    /// @brief Get current workspace folder
+    /// @return Path to workspace folder
     std::string get_save_folder() { return this->csv_folder_; }
 
+    /// @brief Clear results files (stats.csv and nodes.csv)
     void clear_results_file() {
         this->clear_file(csv_folder_ + stats_file);
         this->clear_file(csv_folder_ + nodes_file);
     }
 
-    void clear_obstacles_file() {
-        this->clear_file(csv_folder_ + obstacles_file);
-    }
-
-    // Read from config
+    /// @brief Get parameters from config.csv file
+    /// @return List of SBMPOParameters
     std::vector<SBMPOParameters> get_params() {
 
         std::vector<SBMPOParameters> parameters;
@@ -94,6 +98,8 @@ class CSVTool {
         return parameters;
     }
 
+    /// @brief Get timings from latest SBMPO result
+    /// @return List of timings (in microseconds)
     std::vector<float> get_timings() {
 
         std::vector<float> timeList;
@@ -113,45 +119,14 @@ class CSVTool {
         return timeList;
     }
 
-    std::vector<std::vector<std::array<float,3>>> get_obstacles() {
-
-        std::vector<std::vector<std::array<float,3>>> obstaclesList;
-
-        std::ifstream myFile(csv_folder_ + obstacles_file);
-        if(!myFile.is_open()) 
-            throw std::runtime_error("Could not open file");
-
-        std::string line, value;
-        while (std::getline(myFile, line)) {
-
-            std::vector<std::array<float,3>> obstacles;
-            std::stringstream ss(line);
-
-            std::getline(ss, value, ',');
-            int num_obstacles = std::stoi(value);
-
-            for (int obs = 0; obs < num_obstacles; obs++) {
-
-                float x,y,r;
-
-                std::getline(ss, value, ',');
-                x = std::stof(value);
-                std::getline(ss, value, ',');
-                y = std::stof(value);
-                std::getline(ss, value, ',');
-                r = std::stof(value);
-
-                obstacles.push_back({x, y, r});
-            }
-
-            obstaclesList.push_back(obstacles);
-        }
-
-        return obstaclesList;
-    }
-
-        // Add stats to data
-    void append_stats(const unsigned long time_us, const int exit_code, const float cost, const float iterations, const int buffer_size, const float success_rate) {
+    /// @brief Append SMPO run results to stats.csv
+    /// @param time_us Computation time (in microseconds)
+    /// @param exit_code Exit code
+    /// @param cost Cost of plan
+    /// @param iterations Number of iterations
+    /// @param node_count Number of nodes on grid
+    /// @param success_rate Success rate of planner
+    void append_stats(const unsigned long time_us, const int exit_code, const float cost, const float iterations, const int node_count, const float success_rate) {
 
         std::ofstream myFile(csv_folder_ + stats_file, std::ofstream::out | std::fstream::app);
 
@@ -163,14 +138,15 @@ class CSVTool {
         myFile << ",";
         myFile << iterations;
         myFile << ",";
-        myFile << buffer_size;
+        myFile << node_count;
         myFile << ",";
         myFile << success_rate;
         myFile << "\n";
 
     }
 
-        // Add to results file
+    /// @brief Append list of nodes to nodes.csv
+    /// @param nodes List of nodes to append
     void append_nodes(std::vector<Node::Ptr> nodes) {
 
         std::ofstream myFile(csv_folder_ + nodes_file, std::ofstream::out | std::fstream::app);      
@@ -205,20 +181,11 @@ class CSVTool {
         myFile.close();
     }
 
-    void append_obstacles(std::vector<std::array<float, 3>> obstacles) {
-        std::ofstream myFile(csv_folder_ + obstacles_file, std::ofstream::out | std::fstream::app);
-        myFile << obstacles.size();
-        for (std::array<float, 3> ob : obstacles)
-            for (int o = 0; o < 3; o++)
-                myFile << "," << ob[o];
-        myFile << '\n';
-        myFile.close();
-    }
-
     private:
 
     std::string csv_folder_;
 
+    // Clear a file
     void clear_file(const std::string &filename) {
         std::ofstream myFile(filename, std::ofstream::out | std::ofstream::trunc);
         myFile.close();
