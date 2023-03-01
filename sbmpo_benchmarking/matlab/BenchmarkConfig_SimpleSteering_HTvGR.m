@@ -64,4 +64,4 @@ for r = 1:runs
 
 end
     
- writecell(Configuration, '../benchmarking/config.csv', 'Delimiter', ',')
+ writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')

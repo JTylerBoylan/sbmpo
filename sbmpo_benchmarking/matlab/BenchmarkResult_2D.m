@@ -1,9 +1,9 @@
 %% SBMPO Results Visualizer
 close all
 
-stats = sbmpo_stats("../benchmarking/stats.csv");
-[paths, nodes] = sbmpo_results("../benchmarking/nodes.csv");
-obstacles = sbmpo_obstacles("../benchmarking/obstacles.csv");
+stats = sbmpo_stats("../csv/stats.csv");
+[paths, nodes] = sbmpo_results("../csv/nodes.csv");
+obstacles = sbmpo_obstacles("../csv/obstacles.csv");
 
 % Convert path states to points and plot
 for p = 1:length(paths)

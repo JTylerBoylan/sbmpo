@@ -1,6 +1,6 @@
 %% SBMPO Results Visualizer
 
-stats = sbmpo_stats("../results/book_model/stats.csv");
+stats = sbmpo_stats("../csv/stats.csv");
 
 max_branchout = max(NumberOfSamples);
 num_samples = 1:max_branchout;

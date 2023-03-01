@@ -59,4 +59,4 @@ V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
 
 end
     
- writecell(Configuration, '../benchmarking/config.csv', 'Delimiter', ',')
+ writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')

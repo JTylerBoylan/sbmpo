@@ -3,7 +3,7 @@ close all
 
 shape = [length(HorizonTime) length(GridResolutionXY)];
 
-stats = sbmpo_stats("../results/book_model/stats.csv");
+stats = sbmpo_stats("../csv/stats.csv");
 
 size = length(stats);
 time_ms = zeros(1, size);
