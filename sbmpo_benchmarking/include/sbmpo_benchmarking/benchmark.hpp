@@ -30,7 +30,7 @@ class Benchmark {
         this->runs_per_param_ = runs_per_param;
     }
 
-    virtual void benchmark(sbmpo::Model * model) {
+    virtual void benchmark(sbmpo::Model &model) {
 
         csv_tool_.clear_results_file();
 
@@ -46,7 +46,7 @@ class Benchmark {
             int success_count = 0;
             int iterations = 0;
             
-            sbmpo::SBMPO sbmpo(*model, *param);
+            sbmpo::SBMPO sbmpo(model, *param);
 
             for (int r = 0; r < runs_per_param_; r++) {
 
@@ -113,12 +113,20 @@ class Benchmark {
 
     void print_results(sbmpo::SBMPO &results) {
         printf("---- Planner Path [%d] ----\n", print_count++);
-        int c = 0;
-        for (std::shared_ptr<sbmpo::Node> node : results.node_path()) {
-            printf("  (%d) x: %.3f, y: %.3f, g: %.3f, rhs: %.3f, f: %.3f\n",
-                ++c,
-                node->state()[0], node->state()[1],
-                node->g(), node->rhs(), node->f());
+        std::vector<std::shared_ptr<sbmpo::Node>> node_path = results.node_path();
+        std::vector<sbmpo::State> state_path = results.state_path();
+        std::vector<sbmpo::Control> control_path = results.control_path();
+        for (size_t n = 0; n < node_path.size(); n++) {
+            std::shared_ptr<sbmpo::Node> node = node_path[n];
+            printf(" (%d) ", node->generation());
+            printf("state: [");
+            for (float s : state_path[n])
+                printf(" %.3f", s);
+            printf(" ], control: [");
+            if (n != node_path.size() - 1)
+                for (float c : control_path[n])
+                    printf(" %.3f", c);
+            printf("], g: %.3f, rhs: %.2f, f: %.3f\n", node->g(), node->rhs(), node->f());
         }
         printf("--------\n");
     }

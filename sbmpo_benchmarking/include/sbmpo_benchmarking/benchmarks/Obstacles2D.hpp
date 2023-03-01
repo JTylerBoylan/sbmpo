@@ -20,7 +20,7 @@ class Obstacles2DBenchmark : public Benchmark {
         this->obstacles_ = obstacles;
     }
 
-    void benchmark(sbmpo::Model * model) override {
+    void benchmark(sbmpo::Model &model) override {
 
         csv_tool_.clear_results_file();
 
@@ -40,7 +40,7 @@ class Obstacles2DBenchmark : public Benchmark {
 
             obstacles_ = par < obstaclesList.size() ? obstaclesList[par++] : Obstacles();
             
-            sbmpo::SBMPO sbmpo(*model, *param);
+            sbmpo::SBMPO sbmpo(model, *param);
 
             for (int r = 0; r < runs_per_param_; r++) {
 

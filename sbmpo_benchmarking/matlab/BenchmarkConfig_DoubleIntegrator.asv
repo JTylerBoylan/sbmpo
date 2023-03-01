@@ -1,0 +1,56 @@
+%% Book Model Configuration - Grid Rresolution vs Horizon Time Benchmark
+
+clear
+close all
+clc
+
+%% Parameters
+
+% Non-configured parameters
+InitialState = [0, 0];
+GoalState = [10, 0];
+
+% Set total number of runs
+runs = 1;
+
+MaxIterations = 10000;
+MaxGenerations = 100;
+SampleHorizonTime = 0.1;
+
+NumberOfStates = 2;
+NumberOfControls = 1;
+NumberOfGriddedStates = 2;
+GridResolution = [0.01, 0.001];
+
+Controls = {
+        [-1.0 -0.67 -0.33 0 0.33 0.67 1.0];
+      };
+
+%% Configurration
+  
+Configuration = cell(runs,1);
+NumberOfSamples = zeros(1,runs);
+for r = 1:runs
+V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
+
+
+    Control = cell2mat(V(XControls, r));
+    
+    NumberOfSamples(r) = length(Control);
+    Samples = zeros(1, NumberOfSamples(r)*V(NumberOfControls,r));
+
+    for v = 1:SizeVX
+        for u = 1:SizeVY
+            Samples(2*(v-1)*SizeVY + 2*(u-1) + 1) = XControl(v);
+            Samples(2*(v-1)*SizeVY + 2*(u-1) + 2) = YControl(u);
+        end
+    end 
+
+    Configuration(r) = {[...
+            V(MaxIterations,r) V(MaxGenerations,r) V(SampleHorizonTime,r)...
+            V(NumberOfStates,r) V(NumberOfControls,r) V(GridResolution,r)...
+            NumberOfSamples(r) Samples]};
+
+end
+    
+ writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')

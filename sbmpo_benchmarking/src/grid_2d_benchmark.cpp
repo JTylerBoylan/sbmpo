@@ -15,7 +15,7 @@ int main (int argc, char ** argv) {
     grid2dModel.set_start_state({-3.0f, -3.0f});
     grid2dModel.set_goal_state({3.0f, 3.0f});
     grid2dModel.set_body_radius(0.125f);
-    grid2dModel.benchmark(&grid2dModel);
+    grid2dModel.benchmark(grid2dModel);
 
     return 0;
 

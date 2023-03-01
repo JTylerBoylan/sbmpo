@@ -2,6 +2,7 @@
 #define SBMPO_TYPE_QUEUE_HPP
 
 #include <sbmpo/types/node.hpp>
+
 #include <algorithm>
 
 namespace sbmpo {

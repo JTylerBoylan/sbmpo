@@ -3,8 +3,6 @@
 
 #include <sbmpo/model.hpp>
 
-#define M_2PI 6.283185307179586
-
 namespace sbmpo_models {
 
 using namespace sbmpo;

@@ -3,8 +3,6 @@
 
 #include <sbmpo/model.hpp>
 
-#define M_2PI 6.283185307179586
-
 namespace sbmpo_models {
 
 using namespace sbmpo;
@@ -45,7 +43,7 @@ class DoubleIntegratorModel : public Model {
     // Get the heuristic of a state
     virtual float heuristic(const State& state) {
 
-        float r = state[0] - goal_state_[0];
+        float r = state[0];
         float vi = state[1];
 
         float b,c;
@@ -99,13 +97,13 @@ class DoubleIntegratorModel : public Model {
 
     protected:
 
-    State start_state_ = {0.0f, 0.0f};
-    State goal_state_ = {10.0f, 0.0f};
+    State start_state_;
+    State goal_state_;
 
-    float threshold_x_ = 0.05f;
-    float threshold_v_ = 0.05f;
-    float min_acc_ = -1.0f;
-    float max_acc_ = 1.0f;
+    float threshold_x_;
+    float threshold_v_;
+    float min_acc_;
+    float max_acc_;
 
 
 };

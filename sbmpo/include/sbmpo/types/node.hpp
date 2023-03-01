@@ -21,7 +21,7 @@ class Node {
     static void link_nodes(std::shared_ptr<Node> parent_node, std::shared_ptr<Node> child_node, Control control) {
         child_node->parents_.push_back({parent_node, control});
         parent_node->children_.push_back(child_node);
-        if (parent_node->gen_ + 1 < child_node->gen_)
+        if (parent_node->gen_ + 1 < child_node->gen_ || child_node->gen_ == 0)
             child_node->gen_ = parent_node->gen_ + 1;
     }
 
