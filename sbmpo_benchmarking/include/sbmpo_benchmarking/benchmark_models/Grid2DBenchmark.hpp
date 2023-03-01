@@ -8,8 +8,6 @@ namespace sbmpo_benchmarking {
 
 using namespace sbmpo_models;
 
-typedef std::array<float, 4> MapBounds;
-
 class Grid2DBenchmark : public Grid2DModel, public Obstacles2DBenchmark
 {
 
@@ -25,7 +23,7 @@ class Grid2DBenchmark : public Grid2DModel, public Obstacles2DBenchmark
         this->body_radius_ = body_radius;
     }
 
-    void set_map_bounds(MapBounds map_bounds) {
+    void set_map_bounds(std::array<float, 4> map_bounds) {
         this->map_bounds_ = map_bounds;
     }
 
@@ -54,7 +52,7 @@ class Grid2DBenchmark : public Grid2DModel, public Obstacles2DBenchmark
     protected:
 
     float body_radius_;
-    MapBounds map_bounds_;
+    std::array<float, 4> map_bounds_;
 
 };
 

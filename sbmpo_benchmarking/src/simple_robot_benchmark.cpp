@@ -12,6 +12,9 @@ int main (int argc, char ** argv) {
     }
 
     sbmpo_benchmarking::SimpleRobotBenchmark simpleRobotModel(csv_folder);
+    simpleRobotModel.set_start_state({-3.0f, -3.0f, 0.0f});
+    simpleRobotModel.set_goal_state({3.0f, 3.0f});
+    simpleRobotModel.set_body_radius(0.125f);
     simpleRobotModel.benchmark(&simpleRobotModel);
 
     return 0;

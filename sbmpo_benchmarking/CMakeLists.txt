@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 # Define project and its version
 project(sbmpo_benchmarking VERSION 1.0)
 
-# Set C++ standard to C++11
-set(CMAKE_CXX_STANDARD 11)
-
 include_directories(include)
 
 # Grid2D Model Executable

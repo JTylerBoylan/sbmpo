@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 # Define project and its version
 project(sbmpo_models VERSION 1.0)
 
-# Use C++11
-set(CMAKE_CXX_STANDARD 11)
-
 # Specify the directory containing header files for your library
 include_directories(include)
 

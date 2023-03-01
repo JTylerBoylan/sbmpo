@@ -15,21 +15,26 @@ class SimpleRobotBenchmark : public SimpleRobotModel, public Obstacles2DBenchmar
 
     SimpleRobotBenchmark(std::string csv_folder) : SimpleRobotModel(), Obstacles2DBenchmark(csv_folder) 
     {
-        this->map_bounds_ = {
-            {-5.0, -5.0},
-            {5.0, 5.0}  
-        };
+        this->body_radius_ = 0.25;
+        this->map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};
+    }
 
+    void set_body_radius(float body_radius) {
+        this->body_radius_ = body_radius;
+    }
+
+    void set_map_bounds(std::array<float, 4> map_bounds) {
+        this->map_bounds_ = map_bounds;
     }
 
     // Determine if node is valid
     bool is_valid(const State& state) override {
         
         // Bound check
-        if (state[0] - map_bounds_[0][0] < body_radius_ ||
-            state[1] - map_bounds_[0][1] < body_radius_ ||
-            map_bounds_[1][0] - state[0] < body_radius_ ||
-            map_bounds_[1][1] - state[1] < body_radius_)
+        if (state[0] - map_bounds_[0] < body_radius_ ||
+            state[1] - map_bounds_[1] < body_radius_ ||
+            map_bounds_[2] - state[0] < body_radius_ ||
+            map_bounds_[3] - state[1] < body_radius_)
             return false;
 
         // Obstacle collision check
@@ -46,7 +51,8 @@ class SimpleRobotBenchmark : public SimpleRobotModel, public Obstacles2DBenchmar
 
     protected:
 
-        std::vector<std::vector<float>> map_bounds_;
+    float body_radius_;
+    std::array<float, 4> map_bounds_;
 
 };
 

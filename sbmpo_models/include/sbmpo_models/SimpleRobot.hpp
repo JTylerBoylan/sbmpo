@@ -16,7 +16,6 @@ class SimpleRobotModel : public Model {
     SimpleRobotModel() {
         this->start_state_ = {0.0f, 0.0f, 0.0f};
         this->goal_state_ = {5.0f, 5.0f};
-        this->body_radius_ = 0.25f;
         this->goal_threshold_ = 0.25f;
         this->integration_steps_ = 5;
     }
@@ -76,10 +75,6 @@ class SimpleRobotModel : public Model {
         this->goal_state_ = goal_state;
     }
 
-    void set_body_radius(float body_radius) {
-        this->body_radius_ = body_radius;
-    }
-
     void set_goal_threshold(float goal_threshold) {
         this->goal_threshold_ = goal_threshold;
     }
@@ -93,9 +88,8 @@ class SimpleRobotModel : public Model {
     State start_state_;
     State goal_state_;
 
-    float body_radius_ = 0.25f;
-    float goal_threshold_ = 0.25f;
-    int integration_steps_ = 5;
+    float goal_threshold_;
+    int integration_steps_;
 
 };
 
