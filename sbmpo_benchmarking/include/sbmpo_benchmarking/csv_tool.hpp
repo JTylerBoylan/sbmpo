@@ -1,5 +1,5 @@
-#ifndef SBMPO_MODELS_CSV_TOOL_HPP
-#define SBMPO_MODELS_CSV_TOOL_HPP
+#ifndef SBMPO_BECNHMARKING_CSV_TOOL_HPP
+#define SBMPO_BECNHMARKING_CSV_TOOL_HPP
 
 #include <string>
 #include <iostream>
@@ -9,7 +9,7 @@
 
 #include <sbmpo/sbmpo.hpp>
 
-namespace sbmpo_models {
+namespace sbmpo_benchmarking {
 
 using namespace sbmpo;
 
@@ -22,8 +22,8 @@ class CSVTool {
 
     public:
 
-    CSVTool() {
-        this->csv_folder_ = "/sbmpo_ws/SBMPO/sbmpo_models/benchmarking/";
+    CSVTool(std::string csv_folder) {
+        this->csv_folder_ = csv_folder;
     }
 
     void set_save_folder(std::string folder) {

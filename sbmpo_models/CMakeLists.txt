@@ -3,24 +3,25 @@ cmake_minimum_required(VERSION 3.5)
 # Define project and its version
 project(sbmpo_models VERSION 1.0)
 
-# Set C++ standard to C++11
+# Use C++11
 set(CMAKE_CXX_STANDARD 11)
 
-# Find sbmpo library
-find_package(sbmpo REQUIRED)
+# Specify the directory containing header files for your library
+include_directories(include)
 
-include_directories(include ${sbmpo_INCLUDE_DIRS})
+# Get all header files in the include/sbmpo_models directory
+file(GLOB SBMPO_MODELS_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/sbmpo_models/*.hpp")
 
-# Grid2D Model Executable
-add_executable(grid_2d_benchmark 
-  src/grid_2d_benchmark.cpp
-)
-target_include_directories(grid_2d_benchmark PUBLIC include ${sbmpo_INCLUDE_DIRS})
-target_link_libraries(grid_2d_benchmark PUBLIC sbmpo stdc++ stdc++fs m)
+# Create a custom target for sbmpo_models that only includes the header files
+add_library(sbmpo_models INTERFACE)
+target_include_directories(sbmpo_models INTERFACE .)
 
-# Simple Steering Model Exectuable
-add_executable(simple_steering_benchmark
-  src/simple_steering_benchmark.cpp
-)
-target_include_directories(simple_steering_benchmark PUBLIC include ${sbmpo_INCLUDE_DIRS})
-target_link_libraries(simple_steering_benchmark PUBLIC sbmpo stdc++ stdc++fs m)
+# Add link to sbmpo
+target_link_libraries(sbmpo_models INTERFACE sbmpo)
+
+# Set include directories for library target
+target_include_directories(sbmpo_models INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Set library versioning
+set_target_properties(sbmpo_models PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
+

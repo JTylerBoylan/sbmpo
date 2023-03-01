@@ -1,32 +1,20 @@
 cmake_minimum_required(VERSION 3.5)
 
 # Define project and its version
-project(sbmpo VERSION 1.0 DESCRIPTION "SBMPO Library")
+project(sbmpo VERSION 1.0)
 
-include(GNUInstallDirs)
+# Use C++11
+set(CMAKE_CXX_STANDARD 11)
 
-add_library(${PROJECT_NAME}
-    src/sbmpo.cpp
-)
+# Specify the directory containing header files for your library
+include_directories(include)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    PRIVATE src)
+# Create the library target and specify source files
+add_library(sbmpo SHARED)
+target_sources(sbmpo PRIVATE src/sbmpo.cpp)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1)
+# Set include directories for library target
+target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(TARGETS ${PROJECT_NAME} EXPORT sbmpo
-    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY include/sbmpo/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-
-# Install package configuration files
-install(EXPORT sbmpo
-    DESTINATION lib/cmake/sbmpo
-    FILE sbmpoConfig.cmake)
-
-export(TARGETS ${PROJECT_NAME} FILE sbmpoConfig.cmake)
+# Set library versioning
+set_target_properties(sbmpo PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)

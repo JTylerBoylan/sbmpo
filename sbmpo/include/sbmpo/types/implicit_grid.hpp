@@ -3,8 +3,8 @@
 
 #include <sbmpo/types/node.hpp>
 
+#include <cmath>
 #include <map>
-#include <math.h>
 
 namespace sbmpo {
 

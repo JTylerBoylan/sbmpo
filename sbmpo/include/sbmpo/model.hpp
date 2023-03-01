@@ -3,6 +3,8 @@
 
 #include <sbmpo/types/node.hpp>
 
+#include <cmath>
+
 namespace sbmpo {
 
 class Model {
