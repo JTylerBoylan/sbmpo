@@ -35,6 +35,7 @@ class Node {
         this->rhs_ = std::numeric_limits<float>::infinity();
         this->gval_ = std::numeric_limits<float>::infinity();
         this->fval_ = std::numeric_limits<float>::infinity();
+        this->hval_ = std::numeric_limits<float>::infinity();
         this->gen_ = 0;
     }
 
@@ -62,6 +63,10 @@ class Node {
     /// @return Reference to rhs value float
     float &rhs() { return rhs_; }
 
+    /// @brief Get the h value of the Node
+    /// @return Reference to h value float
+    float &h() { return hval_; }
+
     /// @brief Get the generation of the Node
     /// @return Reference to the generation
     int &generation() { return gen_; }
@@ -76,7 +81,7 @@ class Node {
     std::vector<Node::Ptr> children_;
 
     // Node properties
-    float fval_, gval_, rhs_;
+    float fval_, gval_, rhs_, hval_;
     int gen_;
 
 };

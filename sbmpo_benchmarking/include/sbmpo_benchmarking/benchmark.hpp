@@ -65,7 +65,7 @@ class Benchmark {
 
                 exit_code = sbmpo.exit_code();
                 time_us += sbmpo.time_us();
-                cost += exit_code ? 0 : sbmpo.cost();
+                cost += sbmpo.cost();
                 iterations += sbmpo.iterations();
                 node_count += sbmpo.size();
                 if (!exit_code) success_count++;
@@ -74,7 +74,7 @@ class Benchmark {
 
             unsigned long time_us_avg = time_us / runs_per_param_;
             float iterations_avg = double(iterations) / runs_per_param_;
-            float cost_avg = cost / success_count;
+            float cost_avg = cost / runs_per_param_;
             float node_count_avg = double(node_count) / runs_per_param_;
             float success_rate = double(success_count) / runs_per_param_;
 

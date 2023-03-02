@@ -41,33 +41,34 @@ void SBMPO::run() {
         }
 
         // Get best node
-        best_node_ = node_queue_->pop();
+        next_node_ = node_queue_->pop();
 
         // Goal check
-        if (model_->is_goal(best_node_->state())) {
+        if (model_->is_goal(next_node_->state())) {
             exit_code_ = GOAL_REACHED;
+            best_node_ = next_node_;
             break;
         }
 
         // Generation check
-        if (best_node_->generation() > parameters_.max_generations) {
+        if (next_node_->generation() > parameters_.max_generations) {
             exit_code_ = GENERATION_LIMIT;
             break;
         }
 
         // Update vertex if changed
-        if (best_node_->g() > best_node_->rhs()) {
-            best_node_->g() = float(best_node_->rhs());
+        if (next_node_->g() > next_node_->rhs()) {
+            next_node_->g() = float(next_node_->rhs());
         } else {
-            best_node_->g() = std::numeric_limits<float>::infinity();
-            this->update_node(best_node_);
+            next_node_->g() = std::numeric_limits<float>::infinity();
+            this->update_node(next_node_);
         }
 
         // Generate children from best node
-        this->generate_children(best_node_);
+        this->generate_children(next_node_);
 
         // Update children
-        for (Node::Ptr chld : best_node_->children())
+        for (Node::Ptr chld : next_node_->children())
             this->update_node(chld);
 
         // Next iteration
@@ -77,6 +78,9 @@ void SBMPO::run() {
     if(!this->generate_path())
         exit_code_ = INVALID_PATH;
 
+    // Set plan cost
+    this->cost_ = best_node_->rhs();
+
     // End timer
     high_resolution_clock::time_point clock_end = high_resolution_clock::now();
     duration<double> time_span = duration_cast<duration<double>>(clock_end - clock_start);
@@ -85,28 +89,32 @@ void SBMPO::run() {
 }
 
 void SBMPO::reset() {
-    this->implicit_grid_->clear();
-    this->node_queue_->clear();
-    this->node_path_.clear();
-    this->state_path_.clear();
-    this->control_path_.clear();
     this->exit_code_ = UNKNOWN_ERROR;
     this->iterations_ = 0;
     this->time_us_ = 0;
     this->cost_ = 0.0f;
     this->start_node_ = nullptr;
+    this->next_node_ = nullptr;
     this->best_node_ = nullptr;
+    this->implicit_grid_->clear();
+    this->node_queue_->clear();
+    this->node_path_.clear();
+    this->state_path_.clear();
+    this->control_path_.clear();
 }
 
 void SBMPO::initialize() {
     this->iterations_ = 0;
     this->exit_code_ = UNKNOWN_ERROR;
+    this->cost_ = 0.0f;
 
     start_node_ = implicit_grid_->get(model_->initial_state());
     start_node_->rhs() = 0;
     start_node_->f() = model_->heuristic(start_node_->state());
 
     node_queue_->insert(start_node_);
+
+    this->best_node_ = start_node_;
 }
 
 void SBMPO::generate_children(const Node::Ptr parent_node) {
@@ -142,14 +150,16 @@ void SBMPO::update_node(const Node::Ptr node) {
         node->rhs() = std::min(node->rhs(), prnt.first->g() + model_->cost(prnt.first->state(), prnt.second, parameters_.sample_time));
     node_queue_->remove(node);
     if (node->g() != node->rhs()) {
-        node->f() = std::min(node->g(), node->rhs()) + model_->heuristic(node->state());
+        node->h() = node->h() == std::numeric_limits<float>::infinity() ? model_->heuristic(node->state()) : node->h();
+        node->f() = std::min(node->g(), node->rhs()) + node->h();
         node_queue_->insert(node);
     }
+    if (node->h() < best_node_->h())
+        best_node_ = node;
 }
 
 bool SBMPO::generate_path() {
 
-    this->cost_ = 0.0;
     Node::Ptr node = best_node_;
     while (true) {
 
@@ -169,7 +179,6 @@ bool SBMPO::generate_path() {
                 min_parent = *prnt;
 
         control_path_.push_back(min_parent.second);
-        cost_ += model_->cost(node->state(), min_parent.second, parameters_.sample_time);
         node = min_parent.first;
     }
 

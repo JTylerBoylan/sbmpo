@@ -76,6 +76,7 @@ class SBMPO {
     std::shared_ptr<NodeQueue> node_queue_;
 
     Node::Ptr start_node_;
+    Node::Ptr next_node_;
     Node::Ptr best_node_;
 
     ExitCode exit_code_;
