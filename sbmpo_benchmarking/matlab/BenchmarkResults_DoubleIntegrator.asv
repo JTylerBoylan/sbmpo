@@ -1,0 +1,22 @@
+% Double Integrator Results
+% Jonathan T. Boylan
+% 2023-03-01
+
+close all
+
+stats = sbmpo_stats("../csv/stats.csv");
+[path, nodes] = sbmpo_results("../csv/nodes.csv");
+
+figure('Color', [1 1 1]);
+hold on
+grid on
+
+x = zeros(1, path.path_size);
+v = zeros(1, path.path_size);
+u = zeros(1, path.path_size-1);
+for nd = 1:path.path_size
+    x(nd) = path.nodes(nd).state(1);
+    v(nd) = path.nodes(nd).state(2);
+    pat
+    u(nd) = path.nodes(nd).control;
+end

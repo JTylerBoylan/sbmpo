@@ -14,8 +14,8 @@ class DoubleIntegratorModel : public Model {
     DoubleIntegratorModel() {
         this->start_state_ = {0.0f, 0.0f};
         this->goal_state_ = {10.0f, 0.0f};
-        this->threshold_x_ = 0.05f;
-        this->threshold_v_ = 0.05f;
+        this->threshold_x_ = 0.01f;
+        this->threshold_v_ = 0.01f;
         this->min_acc_ = -1.0f;
        this-> max_acc_ = 1.0f;
     }
@@ -44,16 +44,16 @@ class DoubleIntegratorModel : public Model {
     // Get the heuristic of a state
     virtual float heuristic(const State& state) {
 
-        float r = state[0];
-        float vi = state[1];
+        float q_10 = state[0] - goal_state_[0];
+        float q_20 = state[1] - goal_state_[1];
 
-        float b,c;
-        if (r + 0.5f* vi*std::abs(vi) / max_acc_ < 0) {
-            b = 2.0f * vi / min_acc_;
-            c = (vi*vi + 2.0f*(max_acc_ - min_acc_) * r) / (max_acc_ * min_acc_);
-        } else if (r - 0.5f*vi*std::abs(vi) / min_acc_ > 0) {
-            b = 2.0f * vi / max_acc_;
-            c = (vi*vi - 2.0f*(max_acc_ - min_acc_) * r) / (max_acc_ * min_acc_);
+        float b = 0, c = 0;
+        if (q_10 + 0.5f*q_20*std::abs(q_20) / max_acc_ >= 0) {
+            b = 2.0f * q_20 / min_acc_;
+            c = (q_20*q_20 + 2.0f*(max_acc_ - min_acc_)*q_10) / (max_acc_ * min_acc_);
+        } else if (q_10 - 0.5f*q_20*std::abs(q_20) / min_acc_ < 0) {
+            b = 2.0f * q_20 / max_acc_;
+            c = (q_20*q_20 - 2.0f*(max_acc_ - min_acc_)*q_10) / (max_acc_ * min_acc_);
         }
 
         return 0.5f * (-b + sqrtf(b*b - 4*c));

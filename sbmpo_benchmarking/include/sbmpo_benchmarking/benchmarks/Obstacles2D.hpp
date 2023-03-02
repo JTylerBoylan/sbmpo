@@ -74,10 +74,11 @@ class Obstacles2DBenchmark : public Benchmark {
             if (verbose_) print_results(sbmpo);
             if (verbose_) print_obstacles(obstacles_);
 
-            if (verbose_) printf("Writing results in folder %s ...\n\n", csv_tool_.get_save_folder().c_str());
+            if (verbose_) printf("Writing results in folder %s ...\n", csv_tool_.get_save_folder().c_str());
             csv_tool_.append_stats(time_us_avg, exit_code, iterations_avg, cost_avg, node_count_avg, success_rate);
-            csv_tool_.append_nodes(sbmpo.node_path());
+            csv_tool_.append_node_path(sbmpo.node_path(), sbmpo.control_path());
             csv_tool_.append_nodes(sbmpo.all_nodes());
+            printf("\n");
 
         }
 

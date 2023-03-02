@@ -4,13 +4,24 @@
 #include <sbmpo/types/node.hpp>
 
 #include <cmath>
-#include <map>
+#include <functional>
+#include <unordered_map>
 
 namespace sbmpo {
 
 class ImplicitGrid {
 
     typedef std::vector<int> GridKey;
+
+    struct GridKeyHash {
+        std::size_t operator()(const std::vector<int>& v) const {
+            std::size_t seed = v.size();
+            for(auto& i : v) {
+                seed ^= i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            }
+            return seed;
+        }
+    };
 
     public:
 
@@ -54,7 +65,7 @@ class ImplicitGrid {
 
     std::vector<float> grid_resolutions_;
 
-    std::map<GridKey, Node::Ptr> node_map_;
+    std::unordered_map<GridKey, Node::Ptr, GridKeyHash> node_map_;
 
     /// Convert State to a GridKey
     GridKey to_key_(const State &state) {
