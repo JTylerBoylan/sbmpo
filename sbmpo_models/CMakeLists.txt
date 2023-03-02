@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.5)
 # Define project and its version
 project(sbmpo_models VERSION 1.0)
 
+# Use Release mode
+set(CMAKE_BUILD_TYPE Release)
+
 # Specify the directory containing header files for your library
 include_directories(include)
 

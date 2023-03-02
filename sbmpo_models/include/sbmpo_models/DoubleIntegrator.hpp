@@ -66,8 +66,8 @@ class DoubleIntegratorModel : public Model {
 
     // Determine if state is goal
     virtual bool is_goal(const State& state) {
-        return abs(goal_state_[0] - state[0]) <= threshold_x_
-            && abs(goal_state_[1] - state[1]) <= threshold_v_;
+        return std::abs(goal_state_[0] - state[0]) <= threshold_x_
+            && std::abs(goal_state_[1] - state[1]) <= threshold_v_;
     }
 
     virtual ~DoubleIntegratorModel() {}
