@@ -1,4 +1,6 @@
-%% Simple Steering - Branchout Factor Config
+%% Simple Steering Benchmark - Branchout Factor Comparison
+% Jonathan Boylan
+% 2023-03-01
 
 clear
 close all
@@ -8,23 +10,17 @@ clc
 
 omega_bar = pi / 5;
 
-% Set total number of runs
-runs = 4;
+params = struct;
+params.max_iterations = 10000;
+params.max_generations = 100;
+params.horizon_time = 2.5;
+params.num_states = 3;
+params.num_controls = 2;
+params.grid_resolution = [0.125; 0.125; 0.1963];
 
-MaxIterations = 10000;
-MaxGenerations = 100;
-SampleHorizonTime = 2.5;
-GoalThreshold = 0.25;
-
-NumberOfStates = 3;
-NumberOfControls = 2;
-NumberOfGriddedStates = 3;
-InitialState = [0, 0, 1.5707];
-GoalState = [5, 5, 0];
-GridActiveStates = [1, 1, 1];
-GridResolution = [0.125, 0.125, 0.1963];
-
-RotationControls = {
+branchout_factors = [9 15 21 27];
+linear_controls = [0.1 0.3 0.5];
+rotational_controls = {
         [0, +omega_bar, -omega_bar];
         [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2];
         [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2,...
@@ -32,39 +28,29 @@ RotationControls = {
         [0, +omega_bar, -omega_bar, +omega_bar/2, -omega_bar/2,...
             +omega_bar/4, -omega_bar/4, +omega_bar*3/4, -omega_bar*3/4];
       };
-  
-LinearControls = {
-        [0.1 0.3 0.5]
-      };
 
-%% Configurration
-  
-V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
-
-Configuration = cell(runs,1);
-NumberOfSamples = zeros(1,runs);
-for r = 1:runs
-
-    LinearControl = cell2mat(V(LinearControls, r));
-    RotationControl = cell2mat(V(RotationControls, r));
+for run = 1:length(branchout_factors)
+   
+    params.branchout_factor = branchout_factors(run);
+   
+    rot_con = cell2mat(rotational_controls(run));
+    branchouts = [];
+    for lin = 1:length(linear_controls)
+       for rot = 1:length(rot_con)
+          branchouts = [
+              branchouts, ...
+              [linear_controls(lin); rot_con(rot)]
+          ];
+       end
+    end
     
-    SizeLinear = length(LinearControl);
-    SizeRotation = length(RotationControl);
-    NumberOfSamples(r) = SizeRotation * SizeLinear;
-    Samples = zeros(1, NumberOfSamples(r)*V(NumberOfControls,r));
-
-    for v = 1:SizeLinear
-        for u = 1:SizeRotation
-            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 1) = LinearControl(v);
-            Samples(2*(v-1)*SizeRotation + 2*(u-1) + 2) = RotationControl(u);
-        end
-    end 
-
-    Configuration(r) = {[...
-            V(MaxIterations,r) V(MaxGenerations,r) V(SampleHorizonTime,r)...
-            V(NumberOfStates,r) V(NumberOfControls,r) V(GridResolution,r)...
-            NumberOfSamples(r) Samples]};
-
+    params.branchouts = branchouts;
+    
+    % Write to config csv
+    if (run == 1)
+        sbmpo_config("../csv/config.csv", params, 1, true);
+    else
+        sbmpo_config("../csv/config.csv", params, 1, false);
+    end
+    
 end
-    
- writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')

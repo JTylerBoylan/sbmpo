@@ -1,4 +1,8 @@
-%% SBMPO Results Visualizer
+% Branchout Factor Comparison Results
+% Jonathan T. Boylan
+% 2023-03-01
+
+close all
 
 stats = sbmpo_stats("../csv/stats.csv");
 

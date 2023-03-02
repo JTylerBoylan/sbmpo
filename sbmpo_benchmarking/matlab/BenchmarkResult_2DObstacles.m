@@ -1,5 +1,12 @@
-%% SBMPO Results Visualizer
+% 2D Obstacle Path Results
+% Jonathan T. Boylan
+% 2023-03-01
+
 close all
+
+goal_r = 0.25;
+start = [-3, -3];
+goal = [3, 3];
 
 stats = sbmpo_stats("../csv/stats.csv");
 [paths, nodes] = sbmpo_results("../csv/nodes.csv");
@@ -7,10 +14,6 @@ obstacles = sbmpo_obstacles("../csv/obstacles.csv");
 
 % Convert path states to points and plot
 for p = 1:length(paths)
-
-    start = V(InitialState, p);
-    goal = V(GoalState, p);
-    goal_r = V(GoalThreshold, p);
 
     figure('Color', [1 1 1])
     hold on

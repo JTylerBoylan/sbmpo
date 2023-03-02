@@ -8,29 +8,19 @@ clc
 
 %% Parameters
 
-% Non-configured parameters
-InitialState = [0, 0];
-GoalState = [10, 0];
+runs = 1;
 
-% Configured states
-MaxIterations = 1000;
-MaxGenerations = 500;
-SampleHorizonTime = 0.1;
+params = struct;
+params.max_iterations = 1000;
+params.max_generations = 100;
+params.horizon_time = 0.1;
+params.num_states = 2;
+params.num_controls = 1;
+params.grid_resolution = [0.01; 0.001];
+params.branchout_factor = 7;
+params.branchouts = [-1.0, -0.67, -0.33, 0, 0.33, 0.67, 1.0];
 
-NumberOfStates = 2;
-NumberOfControls = 1;
-NumberOfGriddedStates = 2;
-GridResolution = [0.01, 0.001];
 
-Controls = [-1.0 -0.67 -0.33 0 0.33 0.67 1.0];
-NumberOfSamples = length(Controls);
+%% Write config file
 
-%% Configurration
-
-Configuration = {[...
-        MaxIterations MaxGenerations SampleHorizonTime...
-        NumberOfStates NumberOfControls GridResolution...
-        NumberOfSamples Controls]};
-
-    
- writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')
+sbmpo_config("../csv/config.csv", params, runs);

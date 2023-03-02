@@ -1,4 +1,6 @@
-%% Book Model Configuration - Grid Rresolution vs Horizon Time Benchmark
+%% Grid2D Benchmark
+% Jonathan Boylan
+% 2023-03-01
 
 clear
 close all
@@ -6,57 +8,29 @@ clc
 
 %% Parameters
 
-% Set total number of runs
 runs = 10;
 
-MaxIterations = 10000;
-MaxGenerations = 100;
-SampleHorizonTime = 0.25;
-GoalThreshold = 0.25;
-
-NumberOfStates = 2;
-NumberOfControls = 2;
-NumberOfGriddedStates = 2;
-InitialState = [-3.0, -3.0];
-GoalState = [3.0, 3.0];
-GridResolution = [0.125, 0.125];
-
-XControls = {
-        [0 -1.0 1.0];
-      };
-  
-YControls = {
-        [0 -1.0 1.0];
-      };
-
-%% Configurration
-  
-Configuration = cell(runs,1);
-NumberOfSamples = zeros(1,runs);
-for r = 1:runs
-V = @(arr,r) arr(ceil(r * size(arr,1) / runs),:);
+params = struct;
+params.max_iterations = 5000;
+params.max_generations = 100;
+params.horizon_time = 0.25;
+params.num_states = 2;
+params.num_controls = 2;
+params.grid_resolution = [0.125; 0.125];
+params.branchout_factor = 9;
+params.branchouts = [
+    [-1; -1], ...
+    [-1; 0], ...
+    [-1; 1], ...
+    [0; 1], ...
+    [0; 0], ...
+    [0; 1], ...
+    [1; -1], ...
+    [1; 0], ...
+    [1; 1]
+    ];
 
 
-    XControl = cell2mat(V(XControls, r));
-    YControl = cell2mat(V(YControls, r));
-    
-    SizeVX = length(XControl);
-    SizeVY = length(YControl);
-    NumberOfSamples(r) = SizeVY * SizeVX;
-    Samples = zeros(1, NumberOfSamples(r)*V(NumberOfControls,r));
+%% Write config file
 
-    for v = 1:SizeVX
-        for u = 1:SizeVY
-            Samples(2*(v-1)*SizeVY + 2*(u-1) + 1) = XControl(v);
-            Samples(2*(v-1)*SizeVY + 2*(u-1) + 2) = YControl(u);
-        end
-    end 
-
-    Configuration(r) = {[...
-            V(MaxIterations,r) V(MaxGenerations,r) V(SampleHorizonTime,r)...
-            V(NumberOfStates,r) V(NumberOfControls,r) V(GridResolution,r)...
-            NumberOfSamples(r) Samples]};
-
-end
-    
- writecell(Configuration, '../csv/config.csv', 'Delimiter', ',')
+sbmpo_config("../csv/config.csv", params, runs);
