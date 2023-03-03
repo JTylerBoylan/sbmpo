@@ -29,7 +29,8 @@ To install, clone this package into your workspace and make inside the build fol
 
 ```
 git clone https://github.com/JTylerBoylan/SBMPO.git
-cd ./SBMPO/build && make
+mkdir -p ./SBMPO/build
+cd ./SBMPO/build && make ..
 ```
 
 ## Creating your own model
@@ -40,7 +41,9 @@ cd ./SBMPO/build && make
 
 namespace my_namespace {
 
-  class my_custom_model : public sbmpo::Model {
+  using namespace sbmpo;
+
+  class my_custom_model : public Model {
  
     // Constructor
     my_custom_model() {}
@@ -106,10 +109,9 @@ Here are some of the functions you can use:
 | --------- | ----------- |
 |     0     | Path found |
 |     1     | Iteration limit reached |
-|     2     | Generation limit reached |
-|     3     | No nodes left in queue |
-|     4     | Invalid path generated |
-|     5     | Unknown Error |
+|     2     | No nodes left in queue |
+|     3     | Invalid path generated |
+|     4     | Unknown Error |
 
 #### Example code
 

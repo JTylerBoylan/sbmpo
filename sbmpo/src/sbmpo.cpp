@@ -29,7 +29,7 @@ void SBMPO::run() {
     while (true) {
 
         // Max iterations check
-        if (iterations_++ > parameters_.max_iterations) {
+        if (iterations_ > parameters_.max_iterations) {
             exit_code_ = ITERATION_LIMIT;
             break;
         }
@@ -52,8 +52,7 @@ void SBMPO::run() {
 
         // Generation check
         if (next_node_->generation() > parameters_.max_generations) {
-            exit_code_ = GENERATION_LIMIT;
-            break;
+            continue;
         }
 
         // Update vertex if changed
@@ -72,6 +71,7 @@ void SBMPO::run() {
             this->update_node(chld);
 
         // Next iteration
+        this->iterations_++;
     }
 
     // Generate state and control paths

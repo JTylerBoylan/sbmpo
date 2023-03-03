@@ -44,6 +44,10 @@ class DoubleIntegratorModel : public Model {
     // Get the heuristic of a state
     virtual float heuristic(const State& state) {
 
+        /*
+        *   Time Optimal Heuristic
+        */
+
         float q_10 = state[0] - goal_state_[0];
         float q_20 = state[1] - goal_state_[1];
 

@@ -7,7 +7,7 @@
 
 namespace sbmpo {
 
-enum ExitCode {GOAL_REACHED, ITERATION_LIMIT, GENERATION_LIMIT, NO_NODES_LEFT, INVALID_PATH, UNKNOWN_ERROR};
+enum ExitCode {GOAL_REACHED, ITERATION_LIMIT, NO_NODES_LEFT, INVALID_PATH, UNKNOWN_ERROR};
 
 struct SBMPOParameters {
     int max_iterations, max_generations;
