@@ -17,13 +17,13 @@ class Obstacles2DBenchmark : public Benchmark {
     /// @param csv_folder Path to csv workspace folder
     Obstacles2DBenchmark(std::string csv_folder) : Benchmark(csv_folder)
     {
-        this->obstacles_file_ = csv_folder + "obstacles.csv";
+        obstacles_file_ = csv_folder + "obstacles.csv";
     }
 
     /// @brief Set the obstacles of the benchmark
     /// @param obstacles Obstacles to be set
     void set_obstacles(Obstacles obstacles) {
-        this->obstacles_ = obstacles;
+        obstacles_ = obstacles;
     }
 
     /// @brief Benchmark a model with 2D obstacles
@@ -34,7 +34,7 @@ class Obstacles2DBenchmark : public Benchmark {
 
         size_t par = 0;
         std::vector<SBMPOParameters> parameters_list = csv_tool_.get_params();
-        std::vector<Obstacles> obstaclesList = this->get_obstacles();
+        std::vector<Obstacles> obstaclesList = get_obstacles();
         for (auto param = parameters_list.begin(); param != parameters_list.end(); ++param) {
 
             if (verbose_) print_parameters(*param);

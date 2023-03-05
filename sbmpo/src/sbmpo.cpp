@@ -6,13 +6,13 @@ namespace sbmpo {
 
 SBMPO::SBMPO(Model &model, const SBMPOParameters &params) {
 
-    this->model_ = &model;
-    this->parameters_ = params;
+    model_ = &model;
+    parameters_ = params;
 
-    this->implicit_grid_ = std::make_shared<ImplicitGrid>(params.grid_resolution);
+    implicit_grid_ = std::make_shared<ImplicitGrid>(params.grid_resolution);
 
     int max_size = params.max_iterations*params.samples.size() + 1;
-    this->node_queue_ = std::make_shared<NodeQueue>(max_size);
+    node_queue_ = std::make_shared<NodeQueue>(max_size);
 
 }
 
@@ -23,7 +23,7 @@ void SBMPO::run() {
     high_resolution_clock::time_point clock_start = high_resolution_clock::now();
 
     // Initialize run
-    this->initialize();
+    initialize();
 
     // Iteration Loop
     while (true) {
@@ -60,26 +60,26 @@ void SBMPO::run() {
             next_node_->g() = float(next_node_->rhs());
         } else {
             next_node_->g() = std::numeric_limits<float>::infinity();
-            this->update_node(next_node_);
+            update_node(next_node_);
         }
 
         // Generate children from best node
-        this->generate_children(next_node_);
+        generate_children(next_node_);
 
         // Update children
         for (Node::Ptr chld : next_node_->children())
-            this->update_node(chld);
+            update_node(chld);
 
         // Next iteration
-        this->iterations_++;
+        iterations_++;
     }
 
     // Generate state and control paths
-    if(!this->generate_path())
+    if(!generate_path())
         exit_code_ = INVALID_PATH;
 
     // Set plan cost
-    this->cost_ = best_node_->rhs();
+    cost_ = best_node_->rhs();
 
     // End timer
     high_resolution_clock::time_point clock_end = high_resolution_clock::now();
@@ -89,24 +89,24 @@ void SBMPO::run() {
 }
 
 void SBMPO::reset() {
-    this->exit_code_ = UNKNOWN_ERROR;
-    this->iterations_ = 0;
-    this->time_us_ = 0;
-    this->cost_ = 0.0f;
-    this->start_node_ = nullptr;
-    this->next_node_ = nullptr;
-    this->best_node_ = nullptr;
-    this->implicit_grid_->clear();
-    this->node_queue_->clear();
-    this->node_path_.clear();
-    this->state_path_.clear();
-    this->control_path_.clear();
+    exit_code_ = UNKNOWN_ERROR;
+    iterations_ = 0;
+    time_us_ = 0;
+    cost_ = 0.0f;
+    start_node_ = nullptr;
+    next_node_ = nullptr;
+    best_node_ = nullptr;
+    implicit_grid_->clear();
+    node_queue_->clear();
+    node_path_.clear();
+    state_path_.clear();
+    control_path_.clear();
 }
 
 void SBMPO::initialize() {
-    this->iterations_ = 0;
-    this->exit_code_ = UNKNOWN_ERROR;
-    this->cost_ = 0.0f;
+    iterations_ = 0;
+    exit_code_ = UNKNOWN_ERROR;
+    cost_ = 0.0f;
 
     start_node_ = implicit_grid_->get(model_->initial_state());
     start_node_->rhs() = 0;
@@ -114,7 +114,7 @@ void SBMPO::initialize() {
 
     node_queue_->insert(start_node_);
 
-    this->best_node_ = start_node_;
+    best_node_ = start_node_;
 }
 
 void SBMPO::generate_children(const Node::Ptr parent_node) {

@@ -1,6 +1,4 @@
 clear
-close all
-clc
 
 %%
 

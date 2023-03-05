@@ -25,23 +25,23 @@ class CSVTool {
     /// @brief Create a new CSV Tool
     /// @param csv_folder Path to csv workspace folder
     CSVTool(std::string csv_folder) {
-        this->csv_folder_ = csv_folder;
+        csv_folder_ = csv_folder;
     }
 
     /// @brief Change the csv workspace folder
     /// @param folder Path to new workspace folder
     void set_save_folder(std::string folder) {
-        this->csv_folder_ = folder;
+        csv_folder_ = folder;
     }
 
     /// @brief Get current workspace folder
     /// @return Path to workspace folder
-    std::string get_save_folder() { return this->csv_folder_; }
+    std::string get_save_folder() { return csv_folder_; }
 
     /// @brief Clear results files (stats.csv and nodes.csv)
     void clear_results_file() {
-        this->clear_file(csv_folder_ + stats_file);
-        this->clear_file(csv_folder_ + nodes_file);
+        clear_file(csv_folder_ + stats_file);
+        clear_file(csv_folder_ + nodes_file);
     }
 
     /// @brief Get parameters from config.csv file

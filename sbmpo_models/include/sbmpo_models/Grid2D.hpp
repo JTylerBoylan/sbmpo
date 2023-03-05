@@ -11,10 +11,13 @@ class Grid2DModel : public Model {
 
     public:
 
+    enum States {X, Y};
+    enum Controls {Vx, Vy};
+
     Grid2DModel() {
-        this->start_state_ = {0.0f, 0.0f};
-        this->goal_state_ = {5.0f, 5.0f};
-        this->goal_threshold_ = 0.25f;
+        start_state_ = {0.0f, 0.0f};
+        goal_state_ = {5.0f, 5.0f};
+        goal_threshold_ = 0.25f;
     }
 
     // Get the initial state 
@@ -26,22 +29,22 @@ class Grid2DModel : public Model {
     virtual State next_state(const State &state, const Control& control, const float time_span) {
         
         // Update state
-        State next = state;
-        next[0] += control[0] * time_span;
-        next[1] += control[1] * time_span;
-        return next;
+        State next_state = state;
+        next_state[X] += control[Vx] * time_span;
+        next_state[Y] += control[Vy] * time_span;
+        return next_state;
         
     }
 
     // Get the cost of a control
     virtual float cost(const State& state, const Control& control, const float time_span) {
-        return sqrtf(control[0]*control[0] + control[1]*control[1]) * time_span;
+        return sqrtf(control[Vx]*control[Vx] + control[Vy]*control[Vy]) * time_span;
     }
 
     // Get the heuristic of a state
     virtual float heuristic(const State& state) {
-        const float dx = goal_state_[0] - state[0];
-        const float dy = goal_state_[1] - state[1];
+        const float dx = goal_state_[X] - state[X];
+        const float dy = goal_state_[Y] - state[Y];
         return sqrtf(dx*dx + dy*dy);
     }
 
@@ -60,19 +63,19 @@ class Grid2DModel : public Model {
     /// @brief Set the start state of the model
     /// @param start_state State to set as start
     void set_start_state(State start_state) {
-        this->start_state_ = start_state;
+        start_state_ = start_state;
     }
 
     /// @brief Set the goal state of the model
     /// @param goal_state State to set as goal
     void set_goal_state(State goal_state) {
-        this->goal_state_ = goal_state;
+        goal_state_ = goal_state;
     }
 
     /// @brief Set the goal threshold value
     /// @param goal_threshold Value to set as goal threshold
     void set_goal_threshold(float goal_threshold) {
-        this->goal_threshold_ = goal_threshold;
+        goal_threshold_ = goal_threshold;
     }
 
     protected:

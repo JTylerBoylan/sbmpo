@@ -13,11 +13,14 @@ class SimpleRobotModel : public Model {
 
     public:
 
+    enum States {X, Y, Q};
+    enum Controls {V, U};
+
     SimpleRobotModel() {
-        this->start_state_ = {0.0f, 0.0f, 0.0f};
-        this->goal_state_ = {5.0f, 5.0f};
-        this->goal_threshold_ = 0.25f;
-        this->integration_steps_ = 5;
+        start_state_ = {0.0f, 0.0f, 0.0f};
+        goal_state_ = {5.0f, 5.0f};
+        goal_threshold_ = 0.25f;
+        integration_steps_ = 5;
     }
 
     // Get the initial state
@@ -29,30 +32,30 @@ class SimpleRobotModel : public Model {
     virtual State next_state(const State &state, const Control& control, const float time_span) {
         
         // Update state
-        State next = state;
+        State next_state = state;
         float time_increment = time_span / integration_steps_;
         for (int i = 0; i < integration_steps_; i++) {
-            next[0] += cosf(next[2]) * control[0] * time_increment;
-            next[1] += sinf(next[2]) * control[0] * time_increment;
-            next[2] += control[1] * time_increment;
+            next_state[X] += cosf(next_state[Q]) * control[V] * time_increment;
+            next_state[Y] += sinf(next_state[Q]) * control[V] * time_increment;
+            next_state[Q] += control[U] * time_increment;
         }
 
         // Angle wrap
-        if (next[2] >= M_2PI || next[2] < 0)
-            next[2] += next[2] >= M_2PI ? -M_2PI : M_2PI;
+        while (next_state[Q] >= M_2PI)  next_state[Q] -= M_2PI;
+        while (next_state[Q] < 0)       next_state[Q] += M_2PI;
 
-        return next;
+        return next_state;
     }
 
     // Get the cost of a control
     virtual float cost(const State &state, const Control& control, const float time_span) {
-        return control[0]*time_span;
+        return control[V]*time_span;
     }
 
     // Get the heuristic of a state
     virtual float heuristic(const State& state) {
-        const float dx = goal_state_[0] - state[0];
-        const float dy = goal_state_[1] - state[1];
+        const float dx = goal_state_[X] - state[X];
+        const float dy = goal_state_[Y] - state[Y];
         return sqrtf(dx*dx + dy*dy);
     }
 
@@ -71,25 +74,25 @@ class SimpleRobotModel : public Model {
     /// @brief Set the start state of the model
     /// @param start_state State to set as start
     void set_start_state(State start_state) {
-        this->start_state_ = start_state;
+        start_state_ = start_state;
     }
 
     /// @brief Set the goal state of the model
     /// @param goal_state State to set as goal
     void set_goal_state(State goal_state) {
-        this->goal_state_ = goal_state;
+        goal_state_ = goal_state;
     }
 
     /// @brief Set the goal threshold value
     /// @param goal_threshold Value to set as goal threshold
     void set_goal_threshold(float goal_threshold) {
-        this->goal_threshold_ = goal_threshold;
+        goal_threshold_ = goal_threshold;
     }
 
     /// @brief Set the number of integration steps (Euler)
     /// @param integration_steps Number of integration steps
     void set_integration_steps(int integration_steps) {
-        this->integration_steps_ = integration_steps;
+        integration_steps_ = integration_steps;
     }
 
     protected:

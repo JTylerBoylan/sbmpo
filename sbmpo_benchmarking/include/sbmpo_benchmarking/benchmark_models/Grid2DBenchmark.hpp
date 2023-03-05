@@ -17,20 +17,20 @@ class Grid2DBenchmark : public Grid2DModel, public Obstacles2DBenchmark
     /// @param csv_folder Path to csv workspace folder
     Grid2DBenchmark(std::string csv_folder) : Grid2DModel(), Obstacles2DBenchmark(csv_folder) 
     {
-        this->body_radius_ = 0.25f;
-        this->map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};
+        body_radius_ = 0.25f;
+        map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};
     }
 
     /// @brief Change the body radius (default 0.25)
     /// @param body_radius New body radius value
     void set_body_radius(float body_radius) {
-        this->body_radius_ = body_radius;
+        body_radius_ = body_radius;
     }
 
     /// @brief Change the benchmark map boundaries
     /// @param map_bounds Array of 4 boundary values ([xmin ymin xmax ymax])
     void set_map_bounds(std::array<float, 4> map_bounds) {
-        this->map_bounds_ = map_bounds;
+        map_bounds_ = map_bounds;
     }
 
     // Determine if node is valid (with obstacles and map bounds)

@@ -16,8 +16,8 @@ class Benchmark {
     /// @param csv_folder Path to csv workspace folder
     Benchmark(std::string csv_folder) 
         : csv_tool_(csv_folder) {
-        this->verbose_ = true;
-        this->runs_per_param_ = 1;
+        verbose_ = true;
+        runs_per_param_ = 1;
     }
 
     /// @brief Change path to csv workspace folder
@@ -29,13 +29,13 @@ class Benchmark {
     /// @brief Change verbose option (default true)
     /// @param tf True if verbose
     void set_verbose(bool tf) {
-        this->verbose_ = tf;
+        verbose_ = tf;
     }
 
     /// @brief Change number of runs per parameter set
     /// @param runs_per_param Number of runs
     void set_runs_per_param(int runs_per_param) {
-        this->runs_per_param_ = runs_per_param;
+        runs_per_param_ = runs_per_param;
     }
 
     /// @brief Benchmark a model

@@ -11,13 +11,16 @@ class DoubleIntegratorModel : public Model {
 
     public:
 
+    enum States {X, V};
+    enum Controls {A};
+
     DoubleIntegratorModel() {
-        this->start_state_ = {0.0f, 0.0f};
-        this->goal_state_ = {10.0f, 0.0f};
-        this->threshold_x_ = 0.01f;
-        this->threshold_v_ = 0.01f;
-        this->min_acc_ = -1.0f;
-       this-> max_acc_ = 1.0f;
+        start_state_ = {0.0f, 0.0f};
+        goal_state_ = {10.0f, 0.0f};
+        threshold_x_ = 0.01f;
+        threshold_v_ = 0.01f;
+        min_acc_ = -1.0f;
+        max_acc_ = 1.0f;
     }
 
     // Get the initial state
@@ -29,10 +32,10 @@ class DoubleIntegratorModel : public Model {
     virtual State next_state(const State &state, const Control& control, const float time_span) {
         
         // Update state
-        State next = state;
-        next[0] += state[1] * time_span;
-        next[1] += control[0] * time_span;
-        return next;
+        State next_state = state;
+        next_state[X] += state[V] * time_span;
+        next_state[V] += control[A] * time_span;
+        return next_state;
 
     }
 
@@ -48,8 +51,8 @@ class DoubleIntegratorModel : public Model {
         *   Time Optimal Heuristic
         */
 
-        float q_10 = state[0] - goal_state_[0];
-        float q_20 = state[1] - goal_state_[1];
+        float q_10 = state[X] - goal_state_[X];
+        float q_20 = state[V] - goal_state_[V];
 
         float b = 0, c = 0;
         if (q_10 + 0.5f*q_20*std::abs(q_20) / max_acc_ >= 0) {
@@ -70,8 +73,8 @@ class DoubleIntegratorModel : public Model {
 
     // Determine if state is goal
     virtual bool is_goal(const State& state) {
-        return std::abs(goal_state_[0] - state[0]) <= threshold_x_
-            && std::abs(goal_state_[1] - state[1]) <= threshold_v_;
+        return std::abs(goal_state_[X] - state[X]) <= threshold_x_
+            && std::abs(goal_state_[V] - state[V]) <= threshold_v_;
     }
 
     virtual ~DoubleIntegratorModel() {}
@@ -79,37 +82,37 @@ class DoubleIntegratorModel : public Model {
     /// @brief Set the start state of the model
     /// @param start_state State to set as start
     void set_start_state(State start_state) {
-        this->start_state_ = start_state;
+        start_state_ = start_state;
     }
 
     /// @brief Set the goal state of the model
     /// @param goal_state State to set as goal
     void set_goal_state(State goal_state) {
-        this->goal_state_ = goal_state;
+        goal_state_ = goal_state;
     }
 
     /// @brief Set the goal threshold X value
     /// @param goal_threshold_x Value to set as goal threshold X
     void set_goal_threshold_x(float goal_threshold_x) {
-        this->threshold_x_ = goal_threshold_x;
+        threshold_x_ = goal_threshold_x;
     }
 
     /// @brief Set the goal threshold V value
     /// @param goal_threshold_v Value to set as goal threshold V
     void set_goal_threshold_v(float goal_threshold_v) {
-        this->threshold_v_ = goal_threshold_v;
+        threshold_v_ = goal_threshold_v;
     }
 
     /// @brief Set the minimum acceleration value
     /// @param min_acceleration Value to set as the minimum acceleration
     void set_min_acceleration(float min_acceleration) {
-        this->min_acc_ = min_acceleration;
+        min_acc_ = min_acceleration;
     }
 
     /// @brief Set the maximum acceleration value
     /// @param max_acceleration Value to set as the maximum acceleration
     void set_max_acceleration(float max_acceleration) {
-        this->max_acc_ = max_acceleration;
+        max_acc_ = max_acceleration;
     }
 
     protected:

@@ -28,7 +28,7 @@ class ImplicitGrid {
     /// @brief Create a new Implicit Grid
     /// @param grid_resolutions Grid resolutions of gridded states
     ImplicitGrid(std::vector<float> grid_resolutions) {
-        this->grid_resolutions_ = grid_resolutions;
+        grid_resolutions_ = grid_resolutions;
     }
 
     /// @brief Get Node pointer from State position
