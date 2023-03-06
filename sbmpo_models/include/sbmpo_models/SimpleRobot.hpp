@@ -56,7 +56,8 @@ class SimpleRobotModel : public Model {
     virtual float heuristic(const State& state) {
         const float dx = goal_state_[X] - state[X];
         const float dy = goal_state_[Y] - state[Y];
-        return sqrtf(dx*dx + dy*dy);
+        const float dq = atan2f(dy,dx);
+        return sqrtf(dx*dx + dy*dy) + dq;
     }
 
     // Determine if node is valid
