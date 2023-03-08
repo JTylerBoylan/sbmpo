@@ -16,11 +16,11 @@ target_include_directories(grid_2d_benchmark PUBLIC include)
 target_link_libraries(grid_2d_benchmark PUBLIC sbmpo sbmpo_models stdc++ stdc++fs m)
 
 # Simple Steering Model Executable
-add_executable(simple_robot_benchmark
-  src/simple_robot_benchmark.cpp
+add_executable(unicycle_steering_benchmark
+  src/unicycle_steering_benchmark.cpp
 )
-target_include_directories(simple_robot_benchmark PUBLIC include)
-target_link_libraries(simple_robot_benchmark PUBLIC sbmpo sbmpo_models stdc++ stdc++fs m)
+target_include_directories(unicycle_steering_benchmark PUBLIC include)
+target_link_libraries(unicycle_steering_benchmark PUBLIC sbmpo sbmpo_models stdc++ stdc++fs m)
 
 # Double Integrator Model Executable
 add_executable(double_integrator_benchmark

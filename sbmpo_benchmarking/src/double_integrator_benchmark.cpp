@@ -17,6 +17,12 @@ int main (int argc, char ** argv) {
     // Create new Double Integrator model
     sbmpo_models::DoubleIntegratorModel doubleIntegratorModel;
 
+    // Set start state
+    doubleIntegratorModel.set_start_state({0.0f, -4.0f});
+
+    // Set goal state
+    doubleIntegratorModel.set_goal_state({0.0f, 0.0f});
+
     // Create new benchmark
     sbmpo_benchmarking::Benchmark benchmarker(csv_folder);
 

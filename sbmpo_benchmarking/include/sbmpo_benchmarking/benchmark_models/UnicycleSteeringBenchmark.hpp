@@ -1,21 +1,21 @@
 #ifndef SBMPO_BENCHMARKING_SIMPLE_ROBOT_HPP
 #define SBMPO_BENCHMARKING_SIMPLE_ROBOT_HPP
 
-#include <sbmpo_models/SimpleRobot.hpp>
+#include <sbmpo_models/UnicycleSteering.hpp>
 #include <sbmpo_benchmarking/benchmarks/Obstacles2D.hpp>
 
 namespace sbmpo_benchmarking {
 
 using namespace sbmpo_models;
 
-class SimpleRobotBenchmark : public SimpleRobotModel, public Obstacles2DBenchmark
+class UnicycleSteeringBenchmark : public UnicycleSteeringModel, public Obstacles2DBenchmark
 {
 
     public:
 
-    /// @brief Create a new SimpleRobot benchmark
+    /// @brief Create a new UnicycleSteering benchmark
     /// @param csv_folder Path to csv workspace folder
-    SimpleRobotBenchmark(std::string csv_folder) : SimpleRobotModel(), Obstacles2DBenchmark(csv_folder) 
+    UnicycleSteeringBenchmark(std::string csv_folder) : UnicycleSteeringModel(), Obstacles2DBenchmark(csv_folder) 
     {
         body_radius_ = 0.25;
         map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};

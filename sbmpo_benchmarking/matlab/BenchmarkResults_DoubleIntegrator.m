@@ -66,3 +66,11 @@ plot(x,v,'-g','LineWidth',5)
 xlabel("X");
 ylabel("V");
 title("State space");
+axis([-15 15 -5 5])
+
+%% Time heuristic
+
+v_opt = linspace(-15, 15, 100);
+x_opt = -v_opt.*abs(v_opt)./(2*max(u));
+
+plot(x_opt, v_opt, '--k')

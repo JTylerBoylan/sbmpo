@@ -9,14 +9,14 @@ namespace sbmpo_models {
 
 using namespace sbmpo;
 
-class SimpleRobotModel : public Model {
+class UnicycleSteeringModel : public Model {
 
     public:
 
     enum States {X, Y, Q};
     enum Controls {V, U};
 
-    SimpleRobotModel() {
+    UnicycleSteeringModel() {
         start_state_ = {0.0f, 0.0f, 0.0f};
         goal_state_ = {5.0f, 5.0f};
         goal_threshold_ = 0.25f;
@@ -57,7 +57,7 @@ class SimpleRobotModel : public Model {
         const float dx = goal_state_[X] - state[X];
         const float dy = goal_state_[Y] - state[Y];
         const float dq = atan2f(dy,dx);
-        return sqrtf(dx*dx + dy*dy) + dq;
+        return sqrtf(dx*dx + dy*dy) + std::abs(dq);
     }
 
     // Determine if node is valid
@@ -70,7 +70,7 @@ class SimpleRobotModel : public Model {
         return heuristic(state) <= goal_threshold_;
     }
 
-    virtual ~SimpleRobotModel() {}
+    virtual ~UnicycleSteeringModel() {}
 
     /// @brief Set the start state of the model
     /// @param start_state State to set as start
