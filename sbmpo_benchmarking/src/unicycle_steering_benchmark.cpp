@@ -17,8 +17,6 @@ int main (int argc, char ** argv) {
     sbmpo_benchmarking::UnicycleSteeringBenchmark unicycleSteeringModel(csv_folder);
 
     // Change benchmark parameters
-    unicycleSteeringModel.set_start_state({-3.0f, -3.0f, 0.0f});
-    unicycleSteeringModel.set_goal_state({3.0f, 3.0f});
     unicycleSteeringModel.set_body_radius(0.125f);
 
     // Run benchmark (saves to csv folder)

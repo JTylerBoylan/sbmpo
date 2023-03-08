@@ -114,6 +114,16 @@ class Benchmark {
         printf("Grid Resolution: %s\n", st.c_str());
         st.clear();
 
+        for (float f : params.start_state)
+            st += std::to_string(f) + " ";
+        printf("Start State: %s\n", st.c_str());
+        st.clear();
+
+        for (float f : params.goal_state)
+            st += std::to_string(f) + " ";
+        printf("Goal State: %s\n", st.c_str());
+        st.clear();
+
         printf("Samples:\n");
         for (sbmpo::Control control : params.samples) {
             for (float f : control)
@@ -139,7 +149,7 @@ class Benchmark {
             if (n != node_path.size() - 1)
                 for (float c : control_path[n])
                     printf(" %.3f", c);
-            printf("], g: %.3f, rhs: %.2f, f: %.3f\n", node->g(), node->rhs(), node->f());
+            printf("], g: %.3f, rhs: %.3f, h: %.3f, f: %.3f\n", node->g(), node->rhs(), node->h(), node->f());
         }
         printf("--------\n");
     }

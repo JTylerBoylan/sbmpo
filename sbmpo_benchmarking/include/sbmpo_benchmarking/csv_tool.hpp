@@ -77,6 +77,16 @@ class CSVTool {
                 param.grid_resolution.push_back(std::stof(value));
             }
 
+            for (int a = 0; a < num_states; a++) {
+                std::getline(ss, value, ',');
+                param.start_state.push_back(std::stof(value));
+            }
+
+            for (int a = 0; a < num_states; a++) {
+                std::getline(ss, value, ',');
+                param.goal_state.push_back(std::stof(value));
+            }
+
             std::getline(ss, value, ',');
             int num_branchouts = std::stof(value);
 

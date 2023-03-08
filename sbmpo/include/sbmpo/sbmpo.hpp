@@ -13,6 +13,7 @@ struct SBMPOParameters {
     int max_iterations, max_generations;
     float sample_time;
     std::vector<float> grid_resolution;
+    State start_state, goal_state;
     std::vector<Control> samples;
 };
 

@@ -11,10 +11,6 @@ class Model {
 
     public:
 
-    /// @brief Get the initial state of the Model
-    /// @return State object
-    virtual State initial_state() = 0;
-
     /// @brief Evaluate a state with a control
     /// @param state Current state
     /// @param control Current control
@@ -31,13 +27,15 @@ class Model {
 
     /// @brief Get the heuristic of a state
     /// @param state State to get heuristic of
+    /// @param goal Goal state as reference
     /// @return Value of heuristic
-    virtual float heuristic(const State& state) = 0;
+    virtual float heuristic(const State& state, const State& goal) = 0;
 
     /// @brief Determine if a state is the goal
     /// @param state State to be determined
+    /// @param goal Goal state as reference
     /// @return True if the state is the goal
-    virtual bool is_goal(const State& state) = 0;
+    virtual bool is_goal(const State& state, const State& goal) = 0;
 
     /// @brief Determine if a state is valid
     /// @param state State to be determined

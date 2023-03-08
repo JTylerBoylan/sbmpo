@@ -17,8 +17,6 @@ int main (int argc, char ** argv) {
     sbmpo_benchmarking::Grid2DBenchmark grid2dModel(csv_folder);
 
     // Change benchmark parameters
-    grid2dModel.set_start_state({-3.0f, -3.0f});
-    grid2dModel.set_goal_state({3.0f, 3.0f});
     grid2dModel.set_body_radius(0.125f);
 
     // Run benchmark (saves to csv folder)

@@ -18,9 +18,6 @@ class AckermannSteeringModel : public Model {
 
     AckermannSteeringModel() {
 
-        start_state_ = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-        goal_state_ = {5.0f, 5.0f, 0.0f, 0.0f, 0.0f};
-
         goal_threshold_ = 0.5f;
         integration_steps_ = 5;
 
@@ -32,9 +29,6 @@ class AckermannSteeringModel : public Model {
         min_turn_angle_ = -M_PIf / 6.0f; // rad
         max_centrifugal_ = 10.0f; // m/s^2
     }
-
-    // Return initial state
-    virtual State initial_state() { return start_state_; }
 
     // Evaluate a node with a control
     virtual void next_state(State& state, const Control& control, const float time_span) {
@@ -64,18 +58,18 @@ class AckermannSteeringModel : public Model {
     }
 
     // Get the heuristic of a state
-    virtual float heuristic(const State& state) {
-        float dx = (goal_state_[X] - state[X]);
-        float dy = (goal_state_[Y] - state[Y]);
-        float dq = (goal_state_[Q] - state[Q]);
-        float dv = (goal_state_[V] - state[V]);
-        float dg = (goal_state_[G] - state[G]);
+    virtual float heuristic(const State& state, const State& goal) {
+        float dx = (goal[X] - state[X]);
+        float dy = (goal[Y] - state[Y]);
+        float dq = (goal[Q] - state[Q]);
+        float dv = (goal[V] - state[V]);
+        float dg = (goal[G] - state[G]);
         return sqrt(dx*dx + dy*dy + dq*dq + dv*dv + dg*dg);
     }
 
     // Determine if state is goal
-    virtual bool is_goal(const State& state) {
-        return heuristic(state) <= goal_threshold_;
+    virtual bool is_goal(const State& state, const State& goal) {
+        return heuristic(state, goal) <= goal_threshold_;
     }
 
     // Determine if state is valid
@@ -84,18 +78,6 @@ class AckermannSteeringModel : public Model {
     }
 
     virtual ~AckermannSteeringModel() {}
-
-    /// @brief Set the start state of the model
-    /// @param start_state State to set as start
-    void set_start_state(State start_state) {
-        start_state_ = start_state;
-    }
-
-    /// @brief Set the goal state of the model
-    /// @param goal_state State to set as goal
-    void set_goal_state(State goal_state) {
-        goal_state_ = goal_state;
-    }
 
     /// @brief Set the goal threshold value
     /// @param goal_threshold Value to set as goal threshold
@@ -138,9 +120,6 @@ class AckermannSteeringModel : public Model {
     }
 
     private:
-
-        State start_state_;
-        State goal_state_;
 
         float goal_threshold_;
         int integration_steps_;

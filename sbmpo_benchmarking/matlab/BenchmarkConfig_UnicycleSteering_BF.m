@@ -17,6 +17,8 @@ params.horizon_time = 2.5;
 params.num_states = 3;
 params.num_controls = 2;
 params.grid_resolution = [0.125; 0.125; 0.1963];
+params.start_state = [-3; -3; 0];
+params.goal_state = [3; 3; 0];
 
 branchout_factors = [9 15 21 27];
 linear_controls = [0.1 0.3 0.5];

@@ -15,14 +15,7 @@ class Grid2DModel : public Model {
     enum Controls {Vx, Vy};
 
     Grid2DModel() {
-        start_state_ = {0.0f, 0.0f};
-        goal_state_ = {5.0f, 5.0f};
         goal_threshold_ = 0.25f;
-    }
-
-    // Get the initial state 
-    virtual State initial_state() {
-        return start_state_;
     }
 
     // Evaluate a node with a control
@@ -42,9 +35,9 @@ class Grid2DModel : public Model {
     }
 
     // Get the heuristic of a state
-    virtual float heuristic(const State& state) {
-        const float dx = goal_state_[X] - state[X];
-        const float dy = goal_state_[Y] - state[Y];
+    virtual float heuristic(const State& state, const State& goal) {
+        const float dx = goal[X] - state[X];
+        const float dy = goal[Y] - state[Y];
         return sqrtf(dx*dx + dy*dy);
     }
 
@@ -54,23 +47,11 @@ class Grid2DModel : public Model {
     }
 
     // Determine if state is goal
-    virtual bool is_goal(const State& state) {
-        return heuristic(state) <= goal_threshold_;
+    virtual bool is_goal(const State& state, const State& goal) {
+        return heuristic(state, goal) <= goal_threshold_;
     }
 
     virtual ~Grid2DModel() {}
-
-    /// @brief Set the start state of the model
-    /// @param start_state State to set as start
-    void set_start_state(State start_state) {
-        start_state_ = start_state;
-    }
-
-    /// @brief Set the goal state of the model
-    /// @param goal_state State to set as goal
-    void set_goal_state(State goal_state) {
-        goal_state_ = goal_state;
-    }
 
     /// @brief Set the goal threshold value
     /// @param goal_threshold Value to set as goal threshold
@@ -79,9 +60,6 @@ class Grid2DModel : public Model {
     }
 
     protected:
-
-    State start_state_;
-    State goal_state_;
 
     float goal_threshold_;
 

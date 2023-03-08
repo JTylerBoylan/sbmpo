@@ -15,17 +15,10 @@ class DoubleIntegratorModel : public Model {
     enum Controls {A};
 
     DoubleIntegratorModel() {
-        start_state_ = {0.0f, 0.0f};
-        goal_state_ = {10.0f, 0.0f};
         threshold_x_ = 0.01f;
         threshold_v_ = 0.01f;
         min_acc_ = -1.0f;
         max_acc_ = 1.0f;
-    }
-
-    // Get the initial state
-    virtual State initial_state() {
-        return start_state_;
     }
 
     // Evaluate a node with a control
@@ -45,14 +38,14 @@ class DoubleIntegratorModel : public Model {
     }
 
     // Get the heuristic of a state
-    virtual float heuristic(const State& state) {
+    virtual float heuristic(const State& state, const State& goal) {
 
         /*
         *   Time Optimal Heuristic
         */
 
-        float q_10 = state[X] - goal_state_[X];
-        float q_20 = state[V] - goal_state_[V];
+        float q_10 = state[X] - goal[X];
+        float q_20 = state[V] - goal[V];
 
         float b = 0, c = 0;
         if (q_10 + 0.5f*q_20*std::abs(q_20) / max_acc_ >= 0) {
@@ -72,24 +65,12 @@ class DoubleIntegratorModel : public Model {
     }
 
     // Determine if state is goal
-    virtual bool is_goal(const State& state) {
-        return std::abs(goal_state_[X] - state[X]) <= threshold_x_
-            && std::abs(goal_state_[V] - state[V]) <= threshold_v_;
+    virtual bool is_goal(const State& state, const State& goal) {
+        return std::abs(goal[X] - state[X]) <= threshold_x_
+            && std::abs(goal[V] - state[V]) <= threshold_v_;
     }
 
     virtual ~DoubleIntegratorModel() {}
-    
-    /// @brief Set the start state of the model
-    /// @param start_state State to set as start
-    void set_start_state(State start_state) {
-        start_state_ = start_state;
-    }
-
-    /// @brief Set the goal state of the model
-    /// @param goal_state State to set as goal
-    void set_goal_state(State goal_state) {
-        goal_state_ = goal_state;
-    }
 
     /// @brief Set the goal threshold X value
     /// @param goal_threshold_x Value to set as goal threshold X
@@ -116,9 +97,6 @@ class DoubleIntegratorModel : public Model {
     }
 
     protected:
-
-    State start_state_;
-    State goal_state_;
 
     float threshold_x_;
     float threshold_v_;

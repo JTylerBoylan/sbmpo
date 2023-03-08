@@ -5,7 +5,7 @@
 close all
 
 goal_r = 0.25;
-start = [-3, -3];
+start_state = [-3, -3];
 goal = [3, 3];
 
 stats = sbmpo_stats("../csv/stats.csv");
@@ -32,8 +32,8 @@ for p = 1:length(paths)
     end
 
     % Plot goal
-    goal = [goal(1)-goal_r goal(2)-goal_r goal_r*2 goal_r*2];
-    rectangle('Position', goal, 'Curvature', [1,1], 'FaceColor', 'b')
+    goal_point = [goal(1)-goal_r goal(2)-goal_r goal_r*2 goal_r*2];
+    rectangle('Position', goal_point, 'Curvature', [1,1], 'FaceColor', 'b')
 
     % Plot all nodes
     nx = zeros(1, nodes(p).buffer_size);

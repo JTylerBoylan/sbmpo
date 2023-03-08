@@ -44,7 +44,7 @@ void SBMPO::run() {
         next_node_ = node_queue_->pop();
 
         // Goal check
-        if (model_->is_goal(next_node_->state())) {
+        if (model_->is_goal(next_node_->state(), parameters_.goal_state)) {
             exit_code_ = GOAL_REACHED;
             best_node_ = next_node_;
             break;
@@ -108,9 +108,9 @@ void SBMPO::initialize() {
     exit_code_ = UNKNOWN_ERROR;
     cost_ = 0.0f;
 
-    start_node_ = implicit_grid_->get(model_->initial_state());
+    start_node_ = implicit_grid_->get(parameters_.start_state);
     start_node_->rhs() = 0;
-    start_node_->f() = model_->heuristic(start_node_->state());
+    start_node_->f() = model_->heuristic(start_node_->state(), parameters_.goal_state);
 
     node_queue_->insert(start_node_);
 
@@ -150,7 +150,7 @@ void SBMPO::update_node(const Node::Ptr node) {
         node->rhs() = std::min(node->rhs(), prnt.first->g() + model_->cost(prnt.first->state(), prnt.second, parameters_.sample_time));
     node_queue_->remove(node);
     if (node->g() != node->rhs()) {
-        node->h() = node->h() == std::numeric_limits<float>::infinity() ? model_->heuristic(node->state()) : node->h();
+        node->h() = node->h() == std::numeric_limits<float>::infinity() ? model_->heuristic(node->state(), parameters_.goal_state) : node->h();
         node->f() = std::min(node->g(), node->rhs()) + node->h();
         node_queue_->insert(node);
     }
