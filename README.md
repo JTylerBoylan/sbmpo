@@ -47,9 +47,6 @@ namespace my_namespace {
  
     // Constructor
     my_custom_model() {}
-
-    // Get the initial state of the model
-    State initial_state() {}
     
     // Evaluate state and control in the model
     State next_state(const State& state, const Control& control, const float time_span) {}
@@ -58,10 +55,10 @@ namespace my_namespace {
     float cost(const State& state, const Control& control, const float time_span) {}
     
     // Determine the heuristic of a state
-    float heuristic(const State& state) {}
+    float heuristic(const State& state, const State& goal) {}
     
     // Determine if a state is the goal
-    bool is_goal(const State& state) {}
+    bool is_goal(const State& state, const State& goal) {}
 
     // Determine if a state statifies all constraints
     bool is_valid(const State& state) {}
@@ -80,6 +77,8 @@ These parameters include:
 | `max_generations` | Maximum branchout generations | `int` |
 | `sample_time` | Time period per branchout | `float` |
 | `grid_resolution` | Grid resolutions | `std::vector<float>` |
+| `start_state` | Initial state of plan | `sbmpo::State` |
+| `goal_state` | Goal state of plan | `sbmpo::State` |
 | `samples` | List of controls to be sampled in a branchout | `std::vector<sbmpo::Control>` |
 
 #### Run the model
