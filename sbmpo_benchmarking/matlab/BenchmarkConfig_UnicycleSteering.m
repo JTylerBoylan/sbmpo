@@ -8,7 +8,7 @@ clc
 
 %% Parameters
 
-runs = 10;
+runs = 25;
 
 params = struct;
 params.max_iterations = 5000;

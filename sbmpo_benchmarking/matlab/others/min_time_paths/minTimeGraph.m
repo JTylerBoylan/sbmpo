@@ -7,9 +7,8 @@ close all
 
 %% Data
 
-[path1, nodes1] = sbmpo_results("./plans/nodes_1.csv");
-[path2, nodes2] = sbmpo_results("./plans/nodes_2.csv");
-[path3, nodes3] = sbmpo_results("./plans/nodes_3.csv");
+[path1, nodes1] = sbmpo_results("nodes_1.csv");
+[path2, nodes2] = sbmpo_results("nodes_2.csv");
 
 %% State space
 
