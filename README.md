@@ -30,7 +30,8 @@ To install, clone this package into your workspace and make inside the build fol
 ```
 git clone https://github.com/JTylerBoylan/SBMPO.git
 mkdir -p ./SBMPO/build
-cd ./SBMPO/build && make ..
+cd ./SBMPO/build && cmake ..
+make
 ```
 
 ## Creating your own model
