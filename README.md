@@ -30,13 +30,13 @@ To install, clone this package into your workspace and make inside the build fol
 ```
 git clone https://github.com/JTylerBoylan/sbmpo.git
 mkdir -p ./sbmpo/build
-cd ./SBMPO/build && cmake ..
+cd ./sbmpo/build && cmake ..
 make
 ```
 
 ## Creating your own model
 ### Template
-**Abstract model class is provided in [`sbmpo/include/sbmpo/model.hpp`](https://github.com/JTylerBoylan/SBMPO/blob/main/sbmpo/include/sbmpo/model.hpp)**
+**Abstract model class is provided in [`sbmpo/include/sbmpo/model.hpp`](https://github.com/JTylerBoylan/sbmpo/blob/main/sbmpo/include/sbmpo/model.hpp)**
 ```
 #include <sbmpo/model.hpp>
 
