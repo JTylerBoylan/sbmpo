@@ -73,11 +73,9 @@ class SkidSteeredRobotModel : public Model {
 
     // Get the heuristic of a state
     virtual float heuristic(const State& state, const State& goal) {
-        /*
-            TODO
-            h(q) = P_inf * t_goal = P_inf * ||goal - state|| / forward_velocity
-        */
-        return 0;
+        float dx = goal[X] - state[X];
+        float dy = goal[Y] - state[Y];
+        return P_infinity_() * sqrtf(dx*dx + dy*dy) / forward_velocity_;
     }
 
     // Determine if node is valid
@@ -167,14 +165,21 @@ class SkidSteeredRobotModel : public Model {
     float wheel_radius_;
     float expansion_factor_;
 
-    float torque_lookup_left_(float turn_radius) {
+    virtual float P_infinity_() {
+        /*
+            LOOKUP VALUE
+        */
+        return 0.5;
+    }
+
+    virtual float torque_lookup_left_(float turn_radius) {
         /*
             LOOKUP TABLE
         */
        return 0.0f;
     }
 
-    float torque_lookup_right_(float turn_radius) {
+    virtual float torque_lookup_right_(float turn_radius) {
         /*
             LOOKUP TABLE
         */
