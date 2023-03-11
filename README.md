@@ -28,8 +28,8 @@ author = {Mario Harper and Camilo Ordonez and Emmanuel Collins}
 To install, clone this package into your workspace and make inside the build folder.
 
 ```
-git clone https://github.com/JTylerBoylan/SBMPO.git
-mkdir -p ./SBMPO/build
+git clone https://github.com/JTylerBoylan/sbmpo.git
+mkdir -p ./sbmpo/build
 cd ./SBMPO/build && cmake ..
 make
 ```
