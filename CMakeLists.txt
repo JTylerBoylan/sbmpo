@@ -21,4 +21,3 @@ endif()
 # Add subdirectories for each project
 add_subdirectory(sbmpo)
 add_subdirectory(sbmpo_models)
-add_subdirectory(sbmpo_benchmarking)

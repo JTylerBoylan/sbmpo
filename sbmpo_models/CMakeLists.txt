@@ -22,6 +22,3 @@ target_link_libraries(sbmpo_models INTERFACE sbmpo)
 # Set include directories for library target
 target_include_directories(sbmpo_models INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Set library versioning
-set_target_properties(sbmpo_models PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
-

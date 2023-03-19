@@ -15,6 +15,3 @@ target_sources(sbmpo PRIVATE src/sbmpo.cpp)
 
 # Set include directories for library target
 target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# Set library versioning
-set_target_properties(sbmpo PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 1)
