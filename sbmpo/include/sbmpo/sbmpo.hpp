@@ -68,6 +68,14 @@ class SBMPO {
     /// @return List of Node pointers
     std::vector<Node::Ptr> all_nodes() { return implicit_grid_->nodes(); }
 
+    /// @brief Get the implicit grid
+    /// @return Pointer to implicit grid
+    std::shared_ptr<ImplicitGrid> implicit_grid() { return implicit_grid_; }
+
+    /// @brief Get the node queue
+    /// @return Pointer to node queue
+    std::shared_ptr<NodeQueue> node_queue() { return node_queue_; }
+
     private:
 
     Model * model_;
