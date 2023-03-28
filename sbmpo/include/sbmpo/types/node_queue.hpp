@@ -14,97 +14,60 @@ class NodeQueue {
     /// @brief Create a new Node Queue
     /// @param size Maximum nodes in the queue
     NodeQueue(int size) {
-        heap.reserve(size);
+        heap_.reserve(size);
     }
 
     /// @brief Insert a node into the queue
     /// @param node Node to be inserted
-    void insert(Node::Ptr node) {
-        int size = heap.size();
-        if (size == 0) {
-            heap.push_back(node);
-        } else {
-            heap.push_back(node);
-            for (int i = size / 2 - 1; i >= 0; i--) {
-                heapify(i);
-            }
-        }
+    void insert(const Node::Ptr node) {
+        heap_.push_back(node);
+        std::push_heap(heap_.begin(), heap_.end(), NodeComparator());
     }
 
     /// @brief Remove a node from queue
     /// @param node Node to be removed
-    void remove(Node::Ptr node) {
-
-        int size = heap.size();
-
-        int i;
-        bool found = false;
-        for (i = 0; i < size; i++) {
-            if (node == heap[i]) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
+    void remove(const Node::Ptr node) {
+        // Find the node in the queue
+        auto it = std::find(heap_.begin(), heap_.end(), node);
+        if (it == heap_.end())
             return;
-        
-        std::swap(heap[i], heap[size - 1]);
-
-        heap.pop_back();
-        for (int i = size / 2 - 1; i >= 0; i--) {
-            heapify(i);
-        }
+        // Remove the node from the queue
+        std::swap(*it, heap_.back());
+        heap_.pop_back();
+        // Rebuild the heap
+        std::make_heap(heap_.begin(), heap_.end(), NodeComparator());
     }
 
     /// @brief Get best node from queue
     /// @return Pointer to Node with best f score
     Node::Ptr pop() {
-        Node::Ptr top = heap[0];
-        heap[0] = heap[heap.size() - 1];
-        heap.pop_back();
-        heapify(0);
-        return top;
+        Node::Ptr node = heap_.front();
+        std::pop_heap(heap_.begin(), heap_.end(), NodeComparator());
+        heap_.pop_back();
+        return node;
     }
 
     /// @brief Check if queue is empty
     /// @return True/False if queue is empty
     bool empty() {
-        return heap.size() == 0;
+        return heap_.empty();
     }
 
     /// @brief Clear the heap
     void clear() {
-        heap.clear();
+        heap_.clear();
     }
 
     private:
 
-    std::vector<Node::Ptr> heap;
+    std::vector<Node::Ptr> heap_;
 
     // Queue ordering comparator
-    bool compare (Node::Ptr nodeA, Node::Ptr nodeB) {
-        return nodeA->f() < nodeB->f();
-    }
-
-    /// Heapify the queue
-    void heapify(int i) {
-
-        int size = heap.size();
-        
-        int min = i;
-        int l = 2 * i + 1;
-        int r = 2 * i + 2;
-        if (l < size && compare(heap[l], heap[min]))
-            min = l;
-        if (r < size && compare(heap[r], heap[min]))
-            min = r;
-
-        if (min != i) {
-            std::swap(heap[i], heap[min]);
-            heapify(min);
+    struct NodeComparator {
+        bool operator()(const Node::Ptr& nodeA, const Node::Ptr& nodeB) {
+            return nodeA->f() > nodeB->f();
         }
-    }
+    };
 
 };
 
