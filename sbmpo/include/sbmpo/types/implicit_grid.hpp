@@ -11,70 +11,71 @@ namespace sbmpo {
 
 class ImplicitGrid {
 
-    typedef std::vector<int> GridKey;
+    using GridKey = std::vector<int>;
 
     struct GridKeyHash {
         std::size_t operator()(const std::vector<int>& v) const {
             std::size_t seed = v.size();
-            for(auto& i : v) {
-                seed ^= i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            for (const auto& i : v) {
+                seed ^= std::hash<int>()(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             }
             return seed;
         }
     };
 
-    public:
+public:
 
     /// @brief Create a new Implicit Grid
     /// @param grid_resolutions Grid resolutions of gridded states
-    ImplicitGrid(std::vector<float> grid_resolutions) {
-        grid_resolutions_ = grid_resolutions;
-    }
+    explicit ImplicitGrid(std::vector<float> grid_resolutions) noexcept
+        : grid_resolutions_(std::move(grid_resolutions)) {}
 
     /// @brief Get Node pointer from State position
     /// @param state State of the Node
     /// @return Existing Node on Implicit Grid or a new Node
-    Node::Ptr get(const State &state) {
-        GridKey key = to_key_(state);
-        if (node_map_.count(key))
-            return node_map_[key];
-        Node::Ptr new_node = std::make_shared<Node>(state);
-        node_map_[key] = new_node;
-        return new_node;
+    Node::Ptr get(const State& state) noexcept {
+        GridKey key;
+        key.reserve(state.size());
+        for (std::size_t s = 0; s < state.size(); s++) {
+            if (grid_resolutions_[s] != 0.0f) {
+                key.push_back(static_cast<int>(std::roundf(state[s] / grid_resolutions_[s])));
+            }
+        }
+        const auto it = node_map_.find(key);
+        if (it != node_map_.end()) {
+            return it->second;
+        }
+        const auto node = std::make_shared<Node>(state);
+        node_map_.emplace(std::move(key), node);
+        return node;
     }
 
     /// @brief Get the number of nodes on the grid
     /// @return Size of node map
-    size_t size() { return node_map_.size(); }
+    std::size_t size() const noexcept {
+        return node_map_.size();
+    }
 
     /// @brief Get all the nodes on the grid
     /// @return Vector with all node pointers
-    std::vector<Node::Ptr> nodes() {
+    std::vector<Node::Ptr> nodes() const noexcept {
         std::vector<Node::Ptr> node_vec;
-        for (auto it = node_map_.begin(); it != node_map_.end(); ++it)
-            node_vec.push_back(it->second);
+        node_vec.reserve(node_map_.size());
+        for (const auto& pair : node_map_) {
+            node_vec.push_back(pair.second);
+        }
         return node_vec;
     }
 
     /// @brief Clear the Implicit Grid
-    void clear() {
+    void clear() noexcept {
         node_map_.clear();
     }
 
-    private:
+private:
 
     std::vector<float> grid_resolutions_;
-
     std::unordered_map<GridKey, Node::Ptr, GridKeyHash> node_map_;
-
-    /// Convert State to a GridKey
-    GridKey to_key_(const State &state) {
-        GridKey key;
-        for (size_t s = 0; s < state.size(); s++)
-            if (grid_resolutions_[s])
-                key.push_back( roundf(state[s] / grid_resolutions_[s]) );
-        return key;
-    }
 
 };
 
