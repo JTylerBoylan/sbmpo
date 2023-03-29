@@ -18,53 +18,50 @@ class AckermannSteeringModel : public Model {
 
     AckermannSteeringModel() {
 
-        goal_threshold_ = 0.5f;
+        goal_threshold_ = 1.0f;
         integration_steps_ = 5;
 
         inv_wheel_base_length_ = 1.0f;
 
         max_velocity_ = 10.0f; // m/s
-        min_velocity_ = -2.0f; // m/s
-        max_turn_angle_ = M_PIf / 6.0f; // rad
-        min_turn_angle_ = -M_PIf / 6.0f; // rad
+        min_velocity_ = 0.0f; // m/s
+        max_turn_angle_ = M_PI / 6.0f; // rad
+        min_turn_angle_ = -M_PI / 6.0f; // rad
         max_centrifugal_ = 10.0f; // m/s^2
     }
 
     // Evaluate a node with a control
-    virtual void next_state(State& state, const Control& control, const float time_span) {
+    virtual State next_state(const State& state, const Control& control, const float time_span) override {
 
         // Integrate control into state (Euler)
-        float time_increment = time_span / integration_steps_;
+        State next_state = state;
+        const float time_increment = time_span / integration_steps_;
         for (int i = 0; i < integration_steps_; i++) {
-            state[X] += cosf(state[Q]) * state[V] * time_increment;
-            state[Y] += sinf(state[Q]) * state[V] * time_increment;
-            state[Q] += state[G] * state[V] * time_increment * inv_wheel_base_length_;
-            state[V] += control[dVdt] * time_increment;
-            state[G] += control[dGdt] * time_increment;
-            if (!is_valid(state))
-                return;
+            next_state[X] += cosf(next_state[Q]) * next_state[V] * time_increment;
+            next_state[Y] += sinf(next_state[Q]) * next_state[V] * time_increment;
+            next_state[Q] += tanf(next_state[G]) * next_state[V] * time_increment * inv_wheel_base_length_;
+            next_state[V] += control[dVdt] * time_increment;
+            next_state[G] += control[dGdt] * time_increment;
         }
 
         // Angle wrap
-        while (state[Q] >= M_2PI)  state[Q] -= M_2PI;
-        while (state[Q] < 0)       state[Q] += M_2PI;
+        if (state[Q] > M_PI)         next_state[Q] -= M_2PI;
+        else if (state[Q] <= -M_PI)  next_state[Q] += M_2PI;
 
+        return next_state;
     }
 
     // Get the cost of a control
     virtual float cost(const State& state, const Control& control, const float time_span) {
-        float cost_time = time_span;
-        return cost_time;
+        return state[V] * time_span;
     }
 
     // Get the heuristic of a state
     virtual float heuristic(const State& state, const State& goal) {
-        float dx = (goal[X] - state[X]);
-        float dy = (goal[Y] - state[Y]);
-        float dq = (goal[Q] - state[Q]);
-        float dv = (goal[V] - state[V]);
-        float dg = (goal[G] - state[G]);
-        return sqrt(dx*dx + dy*dy + dq*dq + dv*dv + dg*dg);
+        const float dx = goal[X] - state[X];
+        const float dy = goal[Y] - state[Y];
+        const float dq = abs(atan2f(dy,dx) - state[Q]);
+        return sqrtf(dx*dx + dy*dy) + std::abs(dq < M_PI ? dq : M_2PI - dq);
     }
 
     // Determine if state is goal
@@ -74,7 +71,13 @@ class AckermannSteeringModel : public Model {
 
     // Determine if state is valid
     virtual bool is_valid(const State& state) {
-        return  std::abs(state[V]*state[V]*inv_wheel_base_length_*state[G]) <= max_centrifugal_;
+        const bool valid =   
+            state[V] <= max_velocity_ && 
+            state[V] >= min_velocity_ &&
+            state[G] <= max_turn_angle_ && 
+            state[G] >= min_turn_angle_ &&
+            std::abs(state[V]*state[V]*inv_wheel_base_length_*state[G]) <= max_centrifugal_;
+        return valid;
     }
 
     virtual ~AckermannSteeringModel() {}
@@ -108,7 +111,7 @@ class AckermannSteeringModel : public Model {
     /// @brief Set the turn angle limits
     /// @param min_turn_angle Value of minimum turn angle
     /// @param max_turn_angle Value of maximim turn angle
-    void set_velocity_bounds(float min_turn_angle, float max_turn_angle) {
+    void set_turn_angle_bounds(float min_turn_angle, float max_turn_angle) {
         min_turn_angle_ = min_turn_angle;
         max_turn_angle_ = max_turn_angle;
     }

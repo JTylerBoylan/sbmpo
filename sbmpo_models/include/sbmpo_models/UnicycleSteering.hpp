@@ -34,23 +34,23 @@ class UnicycleSteeringModel : public Model {
         }
 
         // Angle wrap
-        while (next_state[Q] >= M_2PI)  next_state[Q] -= M_2PI;
-        while (next_state[Q] < 0)       next_state[Q] += M_2PI;
+        if (next_state[Q] > M_PI)         next_state[Q] -= M_2PI;
+        else if (next_state[Q] <= -M_PI)  next_state[Q] += M_2PI;
 
         return next_state;
     }
 
     // Get the cost of a control
     virtual float cost(const State &state, const Control& control, const float time_span) {
-        return control[V]*time_span;
+        return std::abs(control[V])*time_span;
     }
 
     // Get the heuristic of a state
     virtual float heuristic(const State& state, const State& goal) {
         const float dx = goal[X] - state[X];
         const float dy = goal[Y] - state[Y];
-        const float dq = atan2f(dy,dx);
-        return sqrtf(dx*dx + dy*dy) + std::abs(dq);
+        const float dq = abs(atan2f(dy,dx) - state[Q]);
+        return sqrtf(dx*dx + dy*dy) + std::abs(dq < M_PI ? dq : M_2PI - dq);
     }
 
     // Determine if node is valid
