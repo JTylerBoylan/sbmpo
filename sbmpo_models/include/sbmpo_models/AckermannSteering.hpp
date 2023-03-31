@@ -53,7 +53,7 @@ class AckermannSteeringModel : public Model {
 
     // Get the cost of a control
     virtual float cost(const State& state, const Control& control, const float time_span) {
-        return state[V] * time_span;
+        return time_span;
     }
 
     // Get the heuristic of a state
@@ -61,7 +61,7 @@ class AckermannSteeringModel : public Model {
         const float dx = goal[X] - state[X];
         const float dy = goal[Y] - state[Y];
         const float dq = abs(atan2f(dy,dx) - state[Q]);
-        return sqrtf(dx*dx + dy*dy) + std::abs(dq < M_PI ? dq : M_2PI - dq);
+        return sqrtf(dx*dx + dy*dy)/max_velocity_ + std::abs(dq < M_PI ? dq : M_2PI - dq)/(max_velocity_*max_turn_angle_*inv_wheel_base_length_);
     }
 
     // Determine if state is goal
@@ -122,7 +122,7 @@ class AckermannSteeringModel : public Model {
         max_centrifugal_ = max_centrifugal;
     }
 
-    private:
+    protected:
 
         float goal_threshold_;
         int integration_steps_;
