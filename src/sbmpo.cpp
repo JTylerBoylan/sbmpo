@@ -52,7 +52,9 @@ void SBMPO::run() {
 
         // Generation check
         if (next_node_->generation() > parameters_.max_generations) {
-            continue;
+            exit_code_ = MAX_GENERATIONS;
+            best_node_ = next_node_;
+            break;
         }
 
         // Update vertex if changed

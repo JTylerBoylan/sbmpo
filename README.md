@@ -110,8 +110,9 @@ Here are some of the functions you can use:
 |     0     | Path found |
 |     1     | Iteration limit reached |
 |     2     | No nodes left in queue |
-|     3     | Invalid path generated |
-|     4     | Unknown Error |
+|     3     | Max generations reached |
+|     4     | Invalid path generated |
+|     5     | Unknown Error |
 
 #### Example code
 
