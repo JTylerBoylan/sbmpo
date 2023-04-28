@@ -4,12 +4,12 @@
 
 namespace sbmpo {
 
-SBMPO::SBMPO(Model &model, const SBMPOParameters &params) {
+SBMPO::SBMPO(Model& model, const SBMPOParameters& params) {
 
     model_ = &model;
     parameters_ = params;
 
-    implicit_grid_ = std::make_shared<ImplicitGrid>(params.grid_resolution);
+    implicit_grid_ = std::make_shared<ImplicitGrid>(std::move(params.grid_resolution));
 
     int max_size = params.max_iterations*params.samples.size() + 1;
     node_queue_ = std::make_shared<NodeQueue>(max_size);
@@ -121,7 +121,7 @@ void SBMPO::initialize() {
 
 void SBMPO::generate_children(const Node::Ptr parent_node) {
 
-    for (Control control : parameters_.samples) {
+    for (const Control& control : parameters_.samples) {
 
         // Evaluate control on a state
         State new_state = model_->next_state(parent_node->state(), control, parameters_.sample_time);
@@ -161,6 +161,10 @@ void SBMPO::update_node(const Node::Ptr node) {
 }
 
 bool SBMPO::generate_path() {
+
+    node_path_.reserve(best_node_->generation() + 1);
+    state_path_.reserve(best_node_->generation() + 1);
+    control_path_.reserve(best_node_->generation());
 
     Node::Ptr node = best_node_;
     while (true) {

@@ -21,7 +21,7 @@ class Node {
     /// @param parent_node Parent node 
     /// @param child_node Child node
     /// @param control Control of linkage
-    static void link_nodes(Node::Ptr parent_node, Node::Ptr child_node, Control control) {
+    static void link_nodes(Node::Ptr parent_node, Node::Ptr child_node, const Control& control) {
         child_node->parents_.push_back({parent_node, control});
         parent_node->children_.push_back(child_node);
         if (parent_node->gen_ + 1 < child_node->gen_ || child_node->gen_ == 0)
@@ -30,7 +30,7 @@ class Node {
 
     /// @brief Node constructor
     /// @param state State of the Node
-    Node(const State state) {
+    Node(const State& state) {
         this->state_ = state;
         this->rhs_ = std::numeric_limits<float>::infinity();
         this->gval_ = std::numeric_limits<float>::infinity();
@@ -38,6 +38,8 @@ class Node {
         this->hval_ = std::numeric_limits<float>::infinity();
         this->gen_ = 0;
     }
+
+
 
     /// @brief Get Node state
     /// @return Reference to the state of the Node
@@ -81,7 +83,7 @@ class Node {
     std::vector<Node::Ptr> children_;
 
     // Node properties
-    float fval_, gval_, rhs_, hval_;
+    float rhs_, gval_, fval_, hval_;
     int gen_;
 
 };

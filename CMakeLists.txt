@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 # Set C++ standard library
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # Define project and its version
 project(sbmpo VERSION 1.0)

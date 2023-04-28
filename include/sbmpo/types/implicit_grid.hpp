@@ -34,22 +34,20 @@ public:
     /// @param state State of the Node
     /// @return Existing Node on Implicit Grid or a new Node
     Node::Ptr get(const State& state) noexcept {
-
         GridKey key(state.size());
         state_to_key_(state, key);
-
         const auto it = node_map_.find(key);
         if (it != node_map_.end()) {
             return it->second;
         }
-
         State key_state(state.size());
         key_to_state(key, state, key_state);
-
-        const auto node = std::make_shared<Node>(key_state);
+        const auto node = std::make_shared<Node>(std::move(key_state));
         node_map_.emplace(std::move(key), node);
         return node;
     }
+
+
 
     /// @brief Get the number of nodes on the grid
     /// @return Size of node map
@@ -63,10 +61,11 @@ public:
         std::vector<Node::Ptr> node_vec;
         node_vec.reserve(node_map_.size());
         for (const auto& pair : node_map_) {
-            node_vec.push_back(pair.second);
+            node_vec.emplace_back(pair.second);
         }
         return node_vec;
     }
+
 
     /// @brief Clear the Implicit Grid
     void clear() noexcept {
