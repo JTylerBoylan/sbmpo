@@ -1,23 +1,22 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 
-if(NOT CMAKE_CXX_COMPILER)
-    set(CMAKE_CXX_COMPILER "/usr/bin/gcc")
-endif()
+# Set C++ standard library
+set(CMAKE_CXX_STANDARD 11)
 
-project(SBMPO)
+# Define project and its version
+project(sbmpo VERSION 1.0)
 
-if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 14)
-endif()
+# Use Release mode
+set(CMAKE_BUILD_TYPE Release)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(-Wall)
-endif()
+# Specify the directory containing header files for your library
+include_directories(include)
 
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
+# Create the library target and specify source files
+add_library(sbmpo SHARED)
+target_sources(sbmpo PRIVATE 
+    src/sbmpo.cpp
+)
 
-# Add subdirectories for each project
-add_subdirectory(sbmpo)
-add_subdirectory(sbmpo_models)
+# Set include directories for library target
+target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
