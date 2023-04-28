@@ -15,10 +15,11 @@ class DoubleIntegratorModel : public Model {
     enum Controls {A};
 
     DoubleIntegratorModel() {
-        threshold_x_ = 0.01f;
-        threshold_v_ = 0.01f;
+        threshold_x_ = 0.05f;
+        threshold_v_ = 0.05f;
         min_acc_ = -1.0f;
         max_acc_ = 1.0f;
+        integration_steps_ = 10;
     }
 
     // Evaluate a node with a control
@@ -26,8 +27,11 @@ class DoubleIntegratorModel : public Model {
         
         // Update state
         State next_state = state;
-        next_state[X] += state[V] * time_span;
-        next_state[V] += control[A] * time_span;
+        float time_step = time_span / integration_steps_;
+        for (size_t i = 0; i < integration_steps_; i++) {
+            next_state[X] += state[V] * time_step;
+            next_state[V] += control[A] * time_step;
+        }
         return next_state;
 
     }
@@ -72,6 +76,12 @@ class DoubleIntegratorModel : public Model {
 
     virtual ~DoubleIntegratorModel() {}
 
+    /// @brief Set the number of integration steps
+    /// @param integration_steps Number of integration steps
+    void set_integration_steps(size_t integration_steps) {
+        integration_steps_ = integration_steps;
+    }
+
     /// @brief Set the goal threshold X value
     /// @param goal_threshold_x Value to set as goal threshold X
     void set_goal_threshold_x(float goal_threshold_x) {
@@ -97,6 +107,8 @@ class DoubleIntegratorModel : public Model {
     }
 
     protected:
+
+    size_t integration_steps_;
 
     float threshold_x_;
     float threshold_v_;

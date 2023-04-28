@@ -34,18 +34,19 @@ public:
     /// @param state State of the Node
     /// @return Existing Node on Implicit Grid or a new Node
     Node::Ptr get(const State& state) noexcept {
-        GridKey key;
-        key.reserve(state.size());
-        for (std::size_t s = 0; s < state.size(); s++) {
-            if (grid_resolutions_[s] != 0.0f) {
-                key.push_back(static_cast<int>(std::roundf(state[s] / grid_resolutions_[s])));
-            }
-        }
+
+        GridKey key(state.size());
+        state_to_key_(state, key);
+
         const auto it = node_map_.find(key);
         if (it != node_map_.end()) {
             return it->second;
         }
-        const auto node = std::make_shared<Node>(state);
+
+        State key_state(state.size());
+        key_to_state(key, state, key_state);
+
+        const auto node = std::make_shared<Node>(key_state);
         node_map_.emplace(std::move(key), node);
         return node;
     }
@@ -76,6 +77,24 @@ private:
 
     std::vector<float> grid_resolutions_;
     std::unordered_map<GridKey, Node::Ptr, GridKeyHash> node_map_;
+
+    void state_to_key_(const State &state, GridKey& key) {  
+        for (std::size_t s = 0; s < state.size(); s++) {
+            if (grid_resolutions_[s] != 0.0f) {
+                key[s] = static_cast<int>(state[s] / grid_resolutions_[s]);
+            }
+        }
+    }
+
+    void key_to_state(const GridKey &key, const State &ref_state, State &new_state) {
+        for (std::size_t k  = 0; k < key.size(); k++) {
+            if (grid_resolutions_[k] != 0.0f) {
+                new_state[k] = (float(key[k]) + 0.5f) * grid_resolutions_[k];
+            } else {
+                new_state[k] = ref_state[k];
+            }
+        }
+    }
 
 };
 

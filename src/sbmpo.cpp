@@ -29,7 +29,7 @@ void SBMPO::run() {
     while (true) {
 
         // Max iterations check
-        if (iterations_ > parameters_.max_iterations) {
+        if (iterations_ >= parameters_.max_iterations) {
             exit_code_ = ITERATION_LIMIT;
             break;
         }
