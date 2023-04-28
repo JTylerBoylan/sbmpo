@@ -79,7 +79,7 @@ private:
 
     void state_to_key_(const State &state, GridKey& key) {  
         for (std::size_t s = 0; s < state.size(); s++) {
-            if (grid_resolutions_[s] <= 0.0f) {
+            if (grid_resolutions_[s] > 0.0f) {
                 key[s] = static_cast<int>(state[s] / grid_resolutions_[s]);
             }
         }
@@ -87,7 +87,7 @@ private:
 
     void key_to_state(const GridKey &key, const State &ref_state, State &new_state) {
         for (std::size_t k  = 0; k < key.size(); k++) {
-            if (grid_resolutions_[k] <= 0.0f) {
+            if (grid_resolutions_[k] > 0.0f) {
                 new_state[k] = (float(key[k]) + 0.5f) * grid_resolutions_[k];
             } else {
                 new_state[k] = ref_state[k];
