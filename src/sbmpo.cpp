@@ -1,6 +1,7 @@
 #include <sbmpo/sbmpo.hpp>
 
 #include <chrono>
+#include <execution>
 
 namespace sbmpo {
 
@@ -121,28 +122,29 @@ void SBMPO::initialize() {
 
 void SBMPO::generate_children(const Node::Ptr parent_node) {
 
-    for (const Control& control : parameters_.samples) {
+    auto generate_child = [&](const Control& control) {
 
         // Evaluate control on a state
         State new_state = model_->next_state(parent_node->state(), control, parameters_.sample_time);
 
         // Skip if invalid state
         if (!model_->is_valid(new_state))
-            continue;
+            return;
 
         // Pull node from implicit grid
         Node::Ptr child_node = implicit_grid_->get(new_state);
 
         // Skip if landed on same node or start node
         if (child_node == parent_node || child_node == start_node_)
-            continue;
+            return;
 
         // Link the nodes
         Node::link_nodes(parent_node, child_node, control);
+    };
 
-    }
-
+    std::for_each(std::execution::par_unseq, parameters_.samples.begin(), parameters_.samples.end(), generate_child);
 }
+
 
 void SBMPO::update_node(const Node::Ptr node) {
     if (node == start_node_)
