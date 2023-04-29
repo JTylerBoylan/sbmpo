@@ -85,6 +85,7 @@ class SBMPO {
     std::shared_ptr<NodeQueue> node_queue_;
 
     Node::Ptr start_node_;
+    Node::Ptr goal_node_;
     Node::Ptr next_node_;
     Node::Ptr best_node_;
 
@@ -96,6 +97,8 @@ class SBMPO {
     std::vector<Node::Ptr> node_path_;
     std::vector<State> state_path_;
     std::vector<Control> control_path_;
+
+    std::mutex mutex_;
 
     // Initialize SBMPO run
     void initialize();

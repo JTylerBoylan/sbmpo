@@ -12,8 +12,7 @@ SBMPO::SBMPO(Model& model, const SBMPOParameters& params) {
 
     implicit_grid_ = std::make_shared<ImplicitGrid>(std::move(params.grid_resolution));
 
-    int max_size = params.max_iterations*params.samples.size() + 1;
-    node_queue_ = std::make_shared<NodeQueue>(max_size);
+    node_queue_ = std::make_shared<NodeQueue>();
 
 }
 
@@ -45,7 +44,7 @@ void SBMPO::run() {
         next_node_ = node_queue_->pop();
 
         // Goal check
-        if (model_->is_goal(next_node_->state(), parameters_.goal_state)) {
+        if (next_node_ == goal_node_ || model_->is_goal(next_node_->state(), parameters_.goal_state)) {
             exit_code_ = GOAL_REACHED;
             best_node_ = next_node_;
             break;
@@ -70,8 +69,8 @@ void SBMPO::run() {
         generate_children(next_node_);
 
         // Update children
-        for (Node::Ptr chld : next_node_->children())
-            update_node(chld);
+        std::for_each(std::execution::par_unseq, next_node_->children().begin(), next_node_->children().end(),
+            [this](const Node::Ptr node) { this->update_node(node); });
 
         // Next iteration
         iterations_++;
@@ -97,6 +96,7 @@ void SBMPO::reset() {
     time_us_ = 0;
     cost_ = 0.0f;
     start_node_ = nullptr;
+    goal_node_ = nullptr;
     next_node_ = nullptr;
     best_node_ = nullptr;
     implicit_grid_->clear();
@@ -117,6 +117,8 @@ void SBMPO::initialize() {
 
     node_queue_->insert(start_node_);
 
+    goal_node_ = implicit_grid_->get(parameters_.goal_state);
+
     best_node_ = start_node_;
 }
 
@@ -128,38 +130,71 @@ void SBMPO::generate_children(const Node::Ptr parent_node) {
         State new_state = model_->next_state(parent_node->state(), control, parameters_.sample_time);
 
         // Skip if invalid state
-        if (!model_->is_valid(new_state))
+        if (!model_->is_valid(new_state)) {
             return;
+        }
 
         // Pull node from implicit grid
-        Node::Ptr child_node = implicit_grid_->get(new_state);
+        Node::Ptr child_node;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            child_node = implicit_grid_->get(new_state);
+        }
 
         // Skip if landed on same node or start node
-        if (child_node == parent_node || child_node == start_node_)
+        if (child_node == parent_node || child_node == start_node_) {
             return;
+        }
 
         // Link the nodes
-        Node::link_nodes(parent_node, child_node, control);
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            Node::link_nodes(parent_node, child_node, control);
+        }
     };
 
-    std::for_each(std::execution::par_unseq, parameters_.samples.begin(), parameters_.samples.end(), generate_child);
+    std::for_each(std::execution::par_unseq, parameters_.samples.cbegin(), parameters_.samples.cend(), generate_child);
 }
 
 
 void SBMPO::update_node(const Node::Ptr node) {
-    if (node == start_node_)
+
+    // Check if node is the start node, return if true
+    if (node == start_node_) {
         return;
-    node->rhs() = std::numeric_limits<float>::infinity();
-    for (std::pair<Node::Ptr, Control> prnt : node->parents())
-        node->rhs() = std::min(node->rhs(), prnt.first->g() + model_->cost(prnt.first->state(), prnt.second, parameters_.sample_time));
-    node_queue_->remove(node);
-    if (node->g() != node->rhs()) {
-        node->h() = node->h() == std::numeric_limits<float>::infinity() ? model_->heuristic(node->state(), parameters_.goal_state) : node->h();
-        node->f() = std::min(node->g(), node->rhs()) + node->h();
-        node_queue_->insert(node);
     }
-    if (node->h() < best_node_->h())
-        best_node_ = node;
+
+    // Update rhs value of node
+    node->rhs() = std::numeric_limits<float>::infinity();
+    for (const auto& [parent, control] : node->parents()) {
+        node->rhs() = std::min(node->rhs(), parent->g() + model_->cost(parent->state(), control, parameters_.sample_time));
+    }
+
+    // Remove node from node queue
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        node_queue_->remove(node);
+    }
+
+    // Update f value of node if necessary
+    if (node->g() != node->rhs()) {
+        node->h() = (node->h() == std::numeric_limits<float>::infinity()) ? model_->heuristic(node->state(), parameters_.goal_state) : node->h();
+        node->f() = std::min(node->g(), node->rhs()) + node->h();
+
+        // Add node to node queue
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            node_queue_->insert(node);
+        }
+    }
+
+    // Update best node if necessary
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (node->h() < best_node_->h()) {
+            best_node_ = node;
+        }
+    }
 }
 
 bool SBMPO::generate_path() {

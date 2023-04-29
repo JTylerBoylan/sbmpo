@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <limits>
+#include <mutex>
 
 namespace sbmpo {
 
@@ -38,8 +39,6 @@ class Node {
         this->hval_ = std::numeric_limits<float>::infinity();
         this->gen_ = 0;
     }
-
-
 
     /// @brief Get Node state
     /// @return Reference to the state of the Node
