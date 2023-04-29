@@ -1,8 +1,9 @@
-#ifndef SBMPO_BENCHMARK_BENCHMARK_HPP
-#define SBMPO_BENCHMARK_BENCHMARK_HPP
+#ifndef SBMPO_BENCHMARK_HPP_
+#define SBMPO_BENCHMARK_HPP_
 
 #include <sbmpo/sbmpo.hpp>
 #include <sbmpo/tools/csv_tool.hpp>
+#include <sbmpo/tools/print_tool.hpp>
 
 namespace sbmpo {
 
@@ -67,14 +68,15 @@ static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must d
     int runs_per_param_;
 
     CSVTool csv_tool_;
+    PrintTool print_tool_;
 
     void run_param(SBMPOParameters &param) {
 
-        if (verbose_) print_parameters(param);
+        if (verbose_) print_tool_.print_parameters(param);
 
         int exit_code = UNKNOWN_ERROR;
         unsigned long time_us = 0.0;
-        double cost = 0.0;
+        float cost = 0.0;
         int node_count = 0;
         int success_count = 0;
         int iterations = 0;
@@ -96,86 +98,19 @@ static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must d
         }
 
         unsigned long time_us_avg = time_us / runs_per_param_;
-        float iterations_avg = double(iterations) / runs_per_param_;
+        float iterations_avg = float(iterations) / runs_per_param_;
         float cost_avg = cost / runs_per_param_;
-        float node_count_avg = double(node_count) / runs_per_param_;
-        float success_rate = double(success_count) / runs_per_param_;
+        float node_count_avg = float(node_count) / runs_per_param_;
+        float success_rate = float(success_count) / runs_per_param_;
 
-        if (verbose_) print_stats(time_us_avg, exit_code, iterations_avg, cost_avg, node_count_avg, success_rate);
-        if (verbose_) print_results(sbmpo);
+        if (verbose_) print_tool_.print_stats(time_us_avg, exit_code, iterations_avg, cost_avg, node_count_avg, success_rate);
+        if (verbose_) print_tool_.print_results(sbmpo);
 
         if (verbose_) printf("Writing results in folder %s ...\n", csv_tool_.get_save_folder().c_str());
         csv_tool_.append_stats(time_us_avg, exit_code, iterations_avg, cost_avg, node_count_avg, success_rate);
         csv_tool_.append_node_path(sbmpo.node_path(), sbmpo.control_path());
         csv_tool_.append_nodes(sbmpo.all_nodes());
         printf("\n");
-    }
-
-    int print_count = 0;
-    // Print parameters
-    void print_parameters(const sbmpo::SBMPOParameters &params) {
-        printf("---- Planner Parameters [%d] ----\n", print_count);
-        printf("Max iterations: %d\n", params.max_iterations);
-        printf("Max generations: %d\n", params.max_generations);
-        printf("Sample Time: %.2f\n", params.sample_time);;
-
-        std::string st;
-
-        for (float f : params.grid_resolution)
-            st += std::to_string(f) + " ";
-        printf("Grid Resolution: %s\n", st.c_str());
-        st.clear();
-
-        for (float f : params.start_state)
-            st += std::to_string(f) + " ";
-        printf("Start State: %s\n", st.c_str());
-        st.clear();
-
-        for (float f : params.goal_state)
-            st += std::to_string(f) + " ";
-        printf("Goal State: %s\n", st.c_str());
-        st.clear();
-
-        printf("Samples:\n");
-        for (sbmpo::Control control : params.samples) {
-            for (float f : control)
-                st += std::to_string(f) + " ";
-            printf("  - %s\n", st.c_str());
-            st.clear();
-        }
-    }
-
-    // Print results
-    void print_results(sbmpo::SBMPO &results) {
-        printf("---- Planner Path [%d] ----\n", print_count++);
-        std::vector<sbmpo::Node::Ptr> node_path = results.node_path();
-        std::vector<sbmpo::State> state_path = results.state_path();
-        std::vector<sbmpo::Control> control_path = results.control_path();
-        for (size_t n = 0; n < node_path.size(); n++) {
-            sbmpo::Node::Ptr node = node_path[n];
-            printf(" (%d) ", node->generation());
-            printf("state: [");
-            for (float s : state_path[n])
-                printf(" %.3f", s);
-            printf(" ], control: [");
-            if (n != node_path.size() - 1)
-                for (float c : control_path[n])
-                    printf(" %.3f", c);
-            printf("], g: %.3f, rhs: %.3f, h: %.3f, f: %.3f\n", node->g(), node->rhs(), node->h(), node->f());
-        }
-        printf("--------\n");
-    }
-
-    // Print statistics
-    void print_stats(const unsigned long timeUs, const int exitCode, const int iterations, const float cost, const int bufferSize, const float successRate) {
-        printf("---- Planner Stats ----\n");
-        printf("  Time: %lu us\n", timeUs);
-        printf("  Exit Code: %d\n", exitCode);
-        printf("  Iterations: %d\n", iterations);
-        printf("  Cost: %.2f\n", cost);
-        printf("  Buffer Size: %d\n", bufferSize);
-        printf("  Success Rate: %.1f\n", successRate * 100);
-        printf("--------\n");
     }
 
 };

@@ -1,5 +1,5 @@
-#ifndef SBMPO_BECNHMARKING_CSV_TOOL_HPP
-#define SBMPO_BECNHMARKING_CSV_TOOL_HPP
+#ifndef SBMPO_CSV_TOOL_HPP_
+#define SBMPO_CSV_TOOL_HPP_
 
 #include <string>
 #include <iostream>

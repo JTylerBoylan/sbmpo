@@ -1,5 +1,5 @@
-#ifndef SBMPO_TYPE_QUEUE_HPP
-#define SBMPO_TYPE_QUEUE_HPP
+#ifndef SBMPO_TYPE_QUEUE_HPP_
+#define SBMPO_TYPE_QUEUE_HPP_
 
 #include <sbmpo/types/node.hpp>
 

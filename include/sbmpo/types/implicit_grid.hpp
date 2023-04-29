@@ -1,5 +1,5 @@
-#ifndef SBMPO_TYPE_IMPLICITGRID_HPP
-#define SBMPO_TYPE_IMPLICITGRID_HPP
+#ifndef SBMPO_TYPE_IMPLICITGRID_HPP_
+#define SBMPO_TYPE_IMPLICITGRID_HPP_
 
 #include <sbmpo/types/node.hpp>
 

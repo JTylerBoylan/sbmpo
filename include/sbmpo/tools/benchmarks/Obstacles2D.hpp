@@ -50,7 +50,7 @@ static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must d
     std::string obstacles_file_;
 
     // Print obstacles
-    void print_obstacles(const Obstacles obstacles) {
+    void print_obstacles(const Obstacles& obstacles) {
         printf("Obstacles:\n");
         for (std::array<float, 3> obs : obstacles) {
             std::string st;

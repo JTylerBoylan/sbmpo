@@ -1,5 +1,5 @@
-#ifndef SBMPO_SBMPO_HPP
-#define SBMPO_SBMPO_HPP
+#ifndef SBMPO_SBMPO_HPP_
+#define SBMPO_SBMPO_HPP_
 
 #include <sbmpo/types/implicit_grid.hpp>
 #include <sbmpo/types/node_queue.hpp>

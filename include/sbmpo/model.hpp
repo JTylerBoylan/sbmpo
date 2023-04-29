@@ -1,5 +1,5 @@
-#ifndef SBMPO_MODEL_HPP
-#define SBMPO_MODEL_HPP
+#ifndef SBMPO_MODEL_HPP_
+#define SBMPO_MODEL_HPP_
 
 #include <sbmpo/types/node.hpp>
 
