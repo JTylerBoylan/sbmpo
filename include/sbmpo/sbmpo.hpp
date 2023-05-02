@@ -27,14 +27,14 @@ class SBMPO {
     SBMPO(Model &model, const SBMPOParameters &params);
 
     /// @brief Run the SBMPO planner
-    void run();
+    void run() noexcept;
 
     /// @brief Reset the SBMPO planner
-    void reset();
+    void reset() noexcept;
 
     /// @brief Iteration count of planner
     /// @return Iteration value
-    int iterations(){ return iterations_; }
+    int iterations() { return iterations_; }
 
     /// @brief Exit code of the plan run
     /// @return Value of the exit code
@@ -70,11 +70,11 @@ class SBMPO {
 
     /// @brief Get the implicit grid
     /// @return Pointer to implicit grid
-    std::shared_ptr<ImplicitGrid> implicit_grid() { return implicit_grid_; }
+    std::shared_ptr<ImplicitGrid> &implicit_grid() { return implicit_grid_; }
 
     /// @brief Get the node queue
     /// @return Pointer to node queue
-    std::shared_ptr<NodeQueue> node_queue() { return node_queue_; }
+    std::shared_ptr<NodeQueue> &node_queue() { return node_queue_; }
 
     private:
 
@@ -98,19 +98,14 @@ class SBMPO {
     std::vector<State> state_path_;
     std::vector<Control> control_path_;
 
-    std::mutex mutex_;
-
     // Initialize SBMPO run
-    void initialize();
+    void initialize() noexcept;
 
     // Generate children from node
-    void generate_children(const Node::Ptr node);
-
-    // Update node
-    void update_node(const Node::Ptr node);
+    void generate_children(const Node::Ptr node) noexcept;
 
     // Generate path
-    bool generate_path();
+    bool generate_path() noexcept;
 
 };
 

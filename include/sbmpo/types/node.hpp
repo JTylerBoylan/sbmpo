@@ -22,18 +22,19 @@ class Node {
     /// @param parent_node Parent node 
     /// @param child_node Child node
     /// @param control Control of linkage
-    static void link_nodes(Node::Ptr parent_node, Node::Ptr child_node, const Control& control) {
-        child_node->parents_.push_back({parent_node, control});
-        parent_node->children_.push_back(child_node);
-        if (parent_node->gen_ + 1 < child_node->gen_ || child_node->gen_ == 0)
-            child_node->gen_ = parent_node->gen_ + 1;
+    static void link_nodes(Node::Ptr parent_node, Node::Ptr child_node, const Control& control, const float cost) noexcept {
+        const float new_g = parent_node->gval_ + cost;
+        if (new_g < child_node->gval_) {
+            child_node->gval_ = new_g;
+            child_node->parent_ = {parent_node, control};
+        }
+        parent_node->add_child_(child_node);
     }
 
     /// @brief Node constructor
     /// @param state State of the Node
     Node(const State& state) {
         this->state_ = state;
-        this->rhs_ = std::numeric_limits<float>::infinity();
         this->gval_ = std::numeric_limits<float>::infinity();
         this->fval_ = std::numeric_limits<float>::infinity();
         this->hval_ = std::numeric_limits<float>::infinity();
@@ -44,9 +45,9 @@ class Node {
     /// @return Reference to the state of the Node
     State& state() { return state_; }
 
-    /// @brief Get the parents of this Node
-    /// @return Reference vector of pointers to parent Nodes 
-    std::vector<std::pair<Node::Ptr, Control>> &parents() { return parents_; }
+    /// @brief Get the parent of this Node
+    /// @return Reference pointer to parent Nodes and Control pair
+    std::pair<Node::Ptr, Control> &parent() { return parent_; }
 
     /// @brief Get the children of this Node
     /// @return Reference vector of pointers to children Nodes
@@ -59,10 +60,6 @@ class Node {
     /// @brief Get the g value of the Node
     /// @return Reference to G value float
     float &g() { return gval_; }
-
-    /// @brief Get the rhs value of the Node
-    /// @return Reference to rhs value float
-    float &rhs() { return rhs_; }
 
     /// @brief Get the h value of the Node
     /// @return Reference to h value float
@@ -78,12 +75,19 @@ class Node {
     State state_;
     
     // Node linkages
-    std::vector<std::pair<Node::Ptr, Control>> parents_;
+    std::pair<Node::Ptr, Control> parent_;
     std::vector<Node::Ptr> children_;
 
     // Node properties
-    float rhs_, gval_, fval_, hval_;
+    float gval_, fval_, hval_;
     int gen_;
+
+    std::mutex mutex_;
+
+    void add_child_(Node::Ptr child) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        children_.push_back(child);
+    }
 
 };
 

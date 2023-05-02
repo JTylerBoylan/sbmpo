@@ -158,11 +158,7 @@ class CSVTool {
     /// @brief Append path of nodes to nodes.csv
     /// @param nodes List of nodes to append
     /// @param control_path Control path of the nodes
-    void append_node_path(std::vector<Node::Ptr> nodes, std::vector<Control> control_path) {
-
-        // Bad parameter check
-        if (nodes.empty() || control_path.size() != nodes.size() - 1)
-            return;
+    void append_node_path(const std::vector<Node::Ptr>& nodes, const std::vector<Control>& control_path) {
 
         std::ofstream myFile(csv_folder_ + nodes_file, std::ofstream::out | std::fstream::app);
 
@@ -183,19 +179,18 @@ class CSVTool {
             myFile << node->f();
             myFile << ",";
             myFile << node->g();
-            myFile << ",";
-            myFile << node->rhs();
             
             for (float s : node->state()) {
                 myFile << ",";
                 myFile << s;
             }
 
-            if (n < nodes.size() - 1)
+            if (n < nodes.size() - 1) {
                 for (float c : control_path[n]) {
                     myFile << ",";
                     myFile << c;
                 }
+            }
         }
         
         myFile << '\n';
@@ -206,7 +201,7 @@ class CSVTool {
 
     /// @brief Append list of nodes to nodes.csv
     /// @param nodes List of nodes to append
-    void append_nodes(std::vector<Node::Ptr> nodes) {
+    void append_nodes(const std::vector<Node::Ptr>& nodes) {
 
         std::ofstream myFile(csv_folder_ + nodes_file, std::ofstream::out | std::fstream::app);
 
@@ -225,8 +220,6 @@ class CSVTool {
             myFile << node->f();
             myFile << ",";
             myFile << node->g();
-            myFile << ",";
-            myFile << node->rhs();
             
             for (float s : node->state()) {
                 myFile << ",";

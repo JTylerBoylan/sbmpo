@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <execution>
+#include <sbmpo/types/heaps/priority_heap.hpp>
 
 namespace sbmpo {
 
@@ -12,11 +13,11 @@ SBMPO::SBMPO(Model& model, const SBMPOParameters& params) {
 
     implicit_grid_ = std::make_shared<ImplicitGrid>(std::move(params.grid_resolution));
 
-    node_queue_ = std::make_shared<NodeQueue>();
+    node_queue_ = std::make_shared<PriorityHeap>();
 
 }
 
-void SBMPO::run() {
+void SBMPO::run() noexcept {
 
     // Start clock
     using namespace std::chrono;
@@ -57,23 +58,15 @@ void SBMPO::run() {
             break;
         }
 
-        // Update vertex if changed
-        if (next_node_->g() > next_node_->rhs()) {
-            next_node_->g() = float(next_node_->rhs());
-        } else {
-            next_node_->g() = std::numeric_limits<float>::infinity();
-            update_node(next_node_);
-        }
+        // Best H score check
+        if (next_node_->h() < best_node_->h())
+            best_node_ = next_node_;
 
         // Generate children from best node
         generate_children(next_node_);
 
-        // Update children
-        std::for_each(std::execution::par_unseq, next_node_->children().begin(), next_node_->children().end(),
-            [this](const Node::Ptr node) { this->update_node(node); });
-
         // Next iteration
-        iterations_++;
+        ++iterations_;
     }
 
     // Generate state and control paths
@@ -81,7 +74,7 @@ void SBMPO::run() {
         exit_code_ = INVALID_PATH;
 
     // Set plan cost
-    cost_ = best_node_->rhs();
+    cost_ = best_node_->g();
 
     // End timer
     high_resolution_clock::time_point clock_end = high_resolution_clock::now();
@@ -90,7 +83,7 @@ void SBMPO::run() {
 
 }
 
-void SBMPO::reset() {
+void SBMPO::reset() noexcept {
     exit_code_ = UNKNOWN_ERROR;
     iterations_ = 0;
     time_us_ = 0;
@@ -106,13 +99,13 @@ void SBMPO::reset() {
     control_path_.clear();
 }
 
-void SBMPO::initialize() {
+void SBMPO::initialize() noexcept {
     iterations_ = 0;
     exit_code_ = UNKNOWN_ERROR;
     cost_ = 0.0f;
 
     start_node_ = implicit_grid_->get(parameters_.start_state);
-    start_node_->rhs() = 0;
+    start_node_->g() = 0;
     start_node_->f() = model_->heuristic(start_node_->state(), parameters_.goal_state);
 
     node_queue_->insert(start_node_);
@@ -122,7 +115,7 @@ void SBMPO::initialize() {
     best_node_ = start_node_;
 }
 
-void SBMPO::generate_children(const Node::Ptr parent_node) {
+void SBMPO::generate_children(const Node::Ptr parent_node) noexcept {
 
     auto generate_child = [&](const Control& control) {
 
@@ -135,99 +128,55 @@ void SBMPO::generate_children(const Node::Ptr parent_node) {
         }
 
         // Pull node from implicit grid
-        Node::Ptr child_node;
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            child_node = implicit_grid_->get(new_state);
-        }
+        Node::Ptr child_node = implicit_grid_->get(new_state);
 
         // Skip if landed on same node or start node
         if (child_node == parent_node || child_node == start_node_) {
             return;
         }
 
-        // Link the nodes
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            Node::link_nodes(parent_node, child_node, control);
+        // Calculate cost between nodes
+        const float cost = model_->cost(child_node->state(), control, parameters_.sample_time);
+
+        // Create link between parent and child 
+        Node::link_nodes(parent_node, child_node, control, cost);
+
+        // Check if the node is new
+        if (child_node->f() == std::numeric_limits<float>::infinity()) {
+
+            // Calculate F score
+            const float heuristic = model_->heuristic(child_node->state(), parameters_.goal_state);
+            child_node->h() = heuristic;
+            child_node->f() = child_node->g() + heuristic;
+            child_node->generation() = parent_node->generation() + 1;
+
+            // Add new node to queue
+            node_queue_->insert(child_node);
+
         }
+
+        // End of sample
     };
 
     std::for_each(std::execution::par_unseq, parameters_.samples.cbegin(), parameters_.samples.cend(), generate_child);
 }
 
+bool SBMPO::generate_path() noexcept {
 
-void SBMPO::update_node(const Node::Ptr node) {
-
-    // Check if node is the start node, return if true
-    if (node == start_node_) {
-        return;
-    }
-
-    // Update rhs value of node
-    node->rhs() = std::numeric_limits<float>::infinity();
-    for (const auto& [parent, control] : node->parents()) {
-        node->rhs() = std::min(node->rhs(), parent->g() + model_->cost(parent->state(), control, parameters_.sample_time));
-    }
-
-    // Remove node from node queue
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        node_queue_->remove(node);
-    }
-
-    // Update f value of node if necessary
-    if (node->g() != node->rhs()) {
-        node->h() = (node->h() == std::numeric_limits<float>::infinity()) ? model_->heuristic(node->state(), parameters_.goal_state) : node->h();
-        node->f() = std::min(node->g(), node->rhs()) + node->h();
-
-        // Add node to node queue
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            node_queue_->insert(node);
-        }
-    }
-
-    // Update best node if necessary
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (node->h() < best_node_->h()) {
-            best_node_ = node;
-        }
-    }
-}
-
-bool SBMPO::generate_path() {
-
-    node_path_.reserve(best_node_->generation() + 1);
-    state_path_.reserve(best_node_->generation() + 1);
-    control_path_.reserve(best_node_->generation());
+    size_t path_size = best_node_->generation() + 1;
+    node_path_ = std::vector<Node::Ptr>(path_size);
+    state_path_ = std::vector<State>(path_size);
+    control_path_ = std::vector<Control>(path_size - 1);
 
     Node::Ptr node = best_node_;
-    while (true) {
-
-        if (std::count(node_path_.begin(), node_path_.end(), node))
-            return false;
-
-        node_path_.push_back(node);
-        state_path_.push_back(node->state());
-
-        std::vector<std::pair<Node::Ptr, Control>> parents = node->parents();
-        if (parents.empty())
-            break;
-
-        std::pair<Node::Ptr, Control> min_parent = parents[0];
-        for (auto prnt = parents.begin()+1; prnt != parents.end(); ++prnt)
-            if (prnt->first->g() < min_parent.first->g())
-                min_parent = *prnt;
-
-        control_path_.push_back(min_parent.second);
-        node = min_parent.first;
+    for (int idx = path_size - 1; idx >= 0; idx--) {
+        node_path_[idx] = node;
+        state_path_[idx] = node->state();
+        if (idx != 0)
+            control_path_[idx-1] = node->parent().second;
+        node = node->parent().first;
     }
 
-    std::reverse(node_path_.begin(), node_path_.end());
-    std::reverse(state_path_.begin(), state_path_.end());
-    std::reverse(control_path_.begin(), control_path_.end());
     return true;
 }
 
