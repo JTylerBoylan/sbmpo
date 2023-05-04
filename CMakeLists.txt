@@ -28,7 +28,11 @@ add_library(sbmpo SHARED
 )
 
 # Set include directories for library target
-target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 # Export the package so it can be used by other packages
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
@@ -44,10 +48,9 @@ install(
   INCLUDES DESTINATION include
 )
 
-# Install the package.xml file
 install(
-  FILES package.xml
-  DESTINATION share/${PROJECT_NAME}
+  DIRECTORY include/${PROJECT_NAME}
+  DESTINATION include
 )
 
 # Generate ament package environment files
