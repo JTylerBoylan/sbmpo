@@ -20,8 +20,7 @@ function [paths, nodes] = sbmpo_results(results_file)
             paths(p).nodes(n).generation = plan_data(i+1);
             paths(p).nodes(n).f = plan_data(i+2);
             paths(p).nodes(n).g = plan_data(i+3);
-            paths(p).nodes(n).rhs = plan_data(i+4);
-            i = i+4;
+            i = i+3;
 
             paths(p).nodes(n).state = plan_data(i+1:i+paths(p).num_states);
             i = i+paths(p).num_states;
@@ -49,8 +48,7 @@ function [paths, nodes] = sbmpo_results(results_file)
             nodes(p).nodes(n).generation = plan_data(i+1);
             nodes(p).nodes(n).f = plan_data(i+2);
             nodes(p).nodes(n).g = plan_data(i+3);
-            nodes(p).nodes(n).rhs = plan_data(i+4);
-            i = i+4;
+            i = i+3;
 
             nodes(p).nodes(n).state = plan_data(i+1:i+nodes(p).num_states);
             i = i+nodes(p).num_states;
