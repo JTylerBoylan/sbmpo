@@ -1,13 +1,14 @@
-#ifndef SBMPO_BENCHMARK_MODEL_OBSTACLE2D_HPP_
-#define SBMPO_BENCHMARK_MODEL_OBSTACLE2D_HPP_
+#ifndef SBMPO_BENCHMARK_OBSTACLE2D_MODEL_HPP_
+#define SBMPO_BENCHMARK_OBSTACLE2D_MODEL_HPP_
 
-#include <sbmpo/sbmpo.hpp>
+#include <sbmpo/types/types.hpp>
+#include <sbmpo/types/Model.hpp>
 
-namespace sbmpo {
+namespace sbmpo_benchmarks {
 
 using namespace sbmpo;
 
-typedef std::vector<std::array<float,3>> Obstacles;
+using Obstacles = std::vector<std::array<float,3>>;
 
 template<typename ModelType>
 class Obstacle2DModel : public ModelType {
@@ -19,20 +20,15 @@ class Obstacle2DModel : public ModelType {
         map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};
     }
 
-    /// @brief Set the obstacles of the benchmark
-    /// @param obstacles Obstacles to be set
     void set_obstacles(Obstacles obstacles) {
         obstacles_ = obstacles;
     }
 
-    /// @brief Change the body radius (default 0.25)
-    /// @param body_radius New body radius value
     void set_body_radius(float body_radius) {
         body_radius_ = body_radius;
     }
 
-    /// @brief Change the benchmark map boundaries
-    /// @param map_bounds Array of 4 boundary values ([xmin ymin xmax ymax])
+    // Array of 4 boundary values ([xmin ymin xmax ymax])
     void set_map_bounds(std::array<float, 4> map_bounds) {
         map_bounds_ = map_bounds;
     }

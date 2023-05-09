@@ -8,9 +8,9 @@ goal_r = 1.0;
 start_state = params.start_state;
 goal = params.goal_state;
 
-stats = sbmpo_stats("../csv/stats.csv");
-[paths, nodes] = sbmpo_results("../csv/nodes.csv");
-obstacles = sbmpo_obstacles("../csv/obstacles.csv");
+stats = sbmpo_stats("../../csv/stats.csv");
+[paths, nodes] = sbmpo_results("../../csv/nodes.csv");
+obstacles = sbmpo_obstacles("../../csv/obstacles.csv");
 
 % Convert path states to points and plot
 for p = 1:length(paths)

@@ -1,8 +1,9 @@
-#include <sbmpo/models/UnicycleSteering.hpp>
-#include <sbmpo/tools/benchmarks/Obstacles2D.hpp>
+#include <sbmpo/models/UnicycleSteeringModel.hpp>
+#include <sbmpo/benchmarks/Obstacles2DBenchmark.hpp>
 
 using namespace sbmpo;
 using namespace sbmpo_models;
+using namespace sbmpo_benchmarks;
 
 int main (int argc, char ** argv) {
 

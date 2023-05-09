@@ -1,111 +1,59 @@
-#ifndef SBMPO_SBMPO_HPP_
-#define SBMPO_SBMPO_HPP_
+#ifndef SBMPO_HPP_
+#define SBMPO_HPP_
 
-#include <sbmpo/types/implicit_grid.hpp>
-#include <sbmpo/types/node_queue.hpp>
-#include <sbmpo/model.hpp>
+#include <sbmpo/types/types.hpp>
+#include <sbmpo/types/Model.hpp>
+#include <sbmpo/types/SearchAlgorithm.hpp>
+#include <sbmpo/algorithms/Astar.hpp>
+#include <chrono>
+
+#define DEFAULT_SEARCH_ALGORITHM sbmpo_algorithms::Astar
 
 namespace sbmpo {
 
-enum ExitCode {GOAL_REACHED, ITERATION_LIMIT, NO_NODES_LEFT, MAX_GENERATIONS, INVALID_PATH, UNKNOWN_ERROR};
-
-struct SBMPOParameters {
-    int max_iterations, max_generations;
-    float sample_time;
-    std::vector<float> grid_resolution;
-    State start_state, goal_state;
-    std::vector<Control> samples;
-};
-
+template<typename ModelType, typename SearchType = DEFAULT_SEARCH_ALGORITHM>
 class SBMPO {
+static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must derive from sbmpo::Model");
+static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "SearchType must derive from sbmpo::SearchAlgorithm");
 
-    public:
+public:
 
-    /// @brief Create a new SBMPO object
-    /// @param model Model to run the planner on
-    /// @param params SBMPO Parameters for planning
-    SBMPO(Model &model, const SBMPOParameters &params);
+    SBMPO() 
+    : model_(std::make_shared<ModelType>()), search_(std::make_shared<SearchType>(model_)) {}
 
-    /// @brief Run the SBMPO planner
-    void run() noexcept;
+    virtual void run(const SearchParameters& parameters) {
+        results_ = search_->solve(parameters);
+    }
 
-    /// @brief Reset the SBMPO planner
-    void reset() noexcept;
+    SearchResults results() { return results_; }
 
-    /// @brief Iteration count of planner
-    /// @return Iteration value
-    int iterations() { return iterations_; }
+    std::vector<State> state_path() { return results_.state_path; };
 
-    /// @brief Exit code of the plan run
-    /// @return Value of the exit code
-    ExitCode exit_code() { return exit_code_; }
+    std::vector<Control> control_path() { return results_.control_path; }
 
-    /// @brief Computation time of the plan run
-    /// @return Time in microseconds
-    time_t time_us() { return time_us_; }
+    std::vector<NodePtr> node_path() { return results_.node_path; }
 
-    /// @brief Cost of the latest planner run
-    /// @return Cost of the plan
-    float cost() { return cost_; }
+    std::vector<NodePtr> nodes() { return results_.nodes; }
 
-    /// @brief Number of nodes in plan run
-    /// @return Size of implicit grid map
-    size_t size() { return implicit_grid_->size(); }
+    std::shared_ptr<ModelType> model() { return model_; }
 
-    /// @brief Get the plan path in terms of Nodes
-    /// @return List of Node pointers
-    std::vector<Node::Ptr> node_path() { return node_path_; }
+    std::shared_ptr<SearchType> algorithm() { return search_; };
 
-    /// @brief Get the plan path in terms of States
-    /// @return List of States
-    std::vector<State> state_path() { return state_path_; }
+    time_t time_us() { return results_.time_us; }
 
-    /// @brief Get the plan path in terms of Controls
-    /// @return List of Controls
-    std::vector<Control> control_path() { return control_path_; }
+    uint16_t iterations() { return results_.iteration; }
 
-    /// @brief Get all nodes in plan run
-    /// @return List of Node pointers
-    std::vector<Node::Ptr> all_nodes() { return implicit_grid_->nodes(); }
+    ExitCode exit_code() { return results_.exit_code; }
 
-    /// @brief Get the implicit grid
-    /// @return Pointer to implicit grid
-    std::shared_ptr<ImplicitGrid> &implicit_grid() { return implicit_grid_; }
+    float cost() { return results_.cost; }
 
-    /// @brief Get the node queue
-    /// @return Pointer to node queue
-    std::shared_ptr<NodeQueue> &node_queue() { return node_queue_; }
+    size_t size() { return results_.node_count; }
 
-    private:
+protected:
 
-    Model * model_;
-    SBMPOParameters parameters_;
-
-    std::shared_ptr<ImplicitGrid> implicit_grid_;
-    std::shared_ptr<NodeQueue> node_queue_;
-
-    Node::Ptr start_node_;
-    Node::Ptr goal_node_;
-    Node::Ptr next_node_;
-    Node::Ptr best_node_;
-
-    ExitCode exit_code_;
-    int iterations_;
-    time_t time_us_;
-    float cost_;
-
-    std::vector<Node::Ptr> node_path_;
-    std::vector<State> state_path_;
-    std::vector<Control> control_path_;
-
-    // Initialize SBMPO run
-    void initialize() noexcept;
-
-    // Generate children from node
-    void generate_children(const Node::Ptr node) noexcept;
-
-    // Generate path
-    bool generate_path() noexcept;
+    SearchResults results_;
+    std::shared_ptr<ModelType> model_;
+    std::shared_ptr<SearchType> search_;
 
 };
 

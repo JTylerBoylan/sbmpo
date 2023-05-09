@@ -36,7 +36,7 @@ params.branchouts = [
 
 %% Write config file
 
-sbmpo_config("../csv/config.csv", params, runs);
+sbmpo_config("../../csv/config.csv", params, runs);
 
 
 %% Create random set of obstacles
@@ -51,4 +51,4 @@ obs.max_y = 0;
 obs.min_r = 1;
 obs.max_r = 1;
 
-random_obstacles("../csv/obstacles.csv", obs, runs);
+random_obstacles("../../csv/obstacles.csv", obs, runs);

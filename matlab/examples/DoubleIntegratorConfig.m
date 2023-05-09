@@ -24,4 +24,4 @@ params.branchouts = linspace(-1,1,params.branchout_factor);
 
 %% Write config file
 
-sbmpo_config("../csv/config.csv", params, runs);
+sbmpo_config("../../csv/config.csv", params, runs);
