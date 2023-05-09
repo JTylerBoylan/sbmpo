@@ -3,7 +3,7 @@
 
 #include <sbmpo/sbmpo.hpp>
 
-namespace sbmpo_benchmarking {
+namespace sbmpo {
 
 using namespace sbmpo;
 

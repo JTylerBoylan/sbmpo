@@ -3,7 +3,6 @@
 
 using namespace sbmpo;
 using namespace sbmpo_models;
-using namespace sbmpo_benchmarking;
 
 int main (int argc, char ** argv) {
 

@@ -4,7 +4,7 @@
 #include <sbmpo/tools/benchmark.hpp>
 #include <sbmpo/tools/benchmarks/models/Obstacles2D.hpp>
 
-namespace sbmpo_benchmarking {
+namespace sbmpo {
 
 using namespace sbmpo;
 
