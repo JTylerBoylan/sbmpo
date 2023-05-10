@@ -15,7 +15,7 @@ using NodePtr = std::shared_ptr<Node>;
 enum ExitCode {SOLUTION_FOUND, ITERATION_LIMIT, NO_NODES_IN_QUEUE, GENERATION_LIMIT, RUNNING};
 
 struct SearchParameters {
-    uint16_t max_iterations, max_generations;
+    uint32_t max_iterations, max_generations;
     float sample_time;
     std::vector<float> grid_resolution;
     State start_state, goal_state;
@@ -25,7 +25,7 @@ struct SearchParameters {
 struct SearchResults {
     time_t time_us = 0;
     ExitCode exit_code = RUNNING;
-    uint16_t iteration = 0;
+    uint32_t iteration = 0;
     size_t node_count = 0;
     float cost = 0.0f;
     float success_rate = 0.0f;

@@ -30,16 +30,16 @@ std::vector<SearchParameters> get_params(const std::string& params_file) {
         std::stringstream ss(line);
 
         std::getline(ss, value, ',');
-        param.max_iterations = std::stof(value);
+        param.max_iterations = std::stoi(value);
         std::getline(ss, value, ',');
-        param.max_generations = std::stof(value);
+        param.max_generations = std::stoi(value);
         std::getline(ss, value, ',');
         param.sample_time = std::stof(value);
 
         std::getline(ss, value, ',');
-        int num_states = std::stof(value);
+        int num_states = std::stoi(value);
         std::getline(ss, value, ',');
-        int num_controls = std::stof(value);
+        int num_controls = std::stoi(value);
 
         for (int a = 0; a < num_states; a++) {
             std::getline(ss, value, ',');
@@ -57,7 +57,7 @@ std::vector<SearchParameters> get_params(const std::string& params_file) {
         }
 
         std::getline(ss, value, ',');
-        int num_branchouts = std::stof(value);
+        int num_branchouts = std::stoi(value);
 
         for (int b = 0; b < num_branchouts; b++) {
             Control control(num_controls);
