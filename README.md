@@ -146,8 +146,8 @@ int main(int argc, char ** argv) {
   sbmpo::SBMPOParameters params;
   /* Add in parameters here */
   
-  sbmpo::SBMPO planner(model, params);
-  planner.run();
+  sbmpo::SBMPO<MyCustomModel> planner;
+  planner.run(params);
   
   sbmpo_io::print_parameters(params);
   sbmpo_io::print_results(planner.results());
