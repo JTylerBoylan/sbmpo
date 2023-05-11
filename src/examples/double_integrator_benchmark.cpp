@@ -1,8 +1,9 @@
-#include <sbmpo/models/DoubleIntegrator.hpp>
-#include <sbmpo/tools/benchmark.hpp>
+#include <sbmpo/models/DoubleIntegratorModel.hpp>
+#include <sbmpo/benchmarks/benchmark.hpp>
 
 using namespace sbmpo;
 using namespace sbmpo_models;
+using namespace sbmpo_benchmarks;
 
 int main (int argc, char ** argv) {
 
@@ -19,6 +20,8 @@ int main (int argc, char ** argv) {
 
     // Create new benchmark
     Benchmark<DoubleIntegratorModel> benchmarker(csv_folder);
+
+    benchmarker.set_runs_per_param(10000);
 
     // Run benchmark on the model (saves to csv folder)
     benchmarker.benchmark();

@@ -22,7 +22,7 @@ author = {Mario Harper and Camilo Ordonez and Emmanuel Collins}
 ```
 
 ## Dependencies
-### CMake 3.5
+### CMake 3.15
 
 ## Installation
 To install, clone this package into your workspace and make inside the build folder.
@@ -36,32 +36,51 @@ make
 
 ## Creating your own model
 ### Template
-**Abstract model class is provided in [`sbmpo/include/sbmpo/model.hpp`](https://github.com/JTylerBoylan/sbmpo/blob/main/sbmpo/include/sbmpo/model.hpp)**
+**Abstract model class is provided in [`sbmpo/include/sbmpo/types/Model.hpp`](https://github.com/JTylerBoylan/sbmpo/blob/main/sbmpo/include/sbmpo/types/Model.hpp)**
 ```
-#include <sbmpo/model.hpp>
+#include <sbmpo/types/types.hpp>
+#include <sbmpo/types/Model.hpp>
 
 namespace my_namespace {
 
   using namespace sbmpo;
 
-  class my_custom_model : public Model {
+  class MyCustomModel : public Model {
  
     // Constructor
-    my_custom_model() {}
+    MyCustomModel() {}
     
-    // Evaluate state and control in the model
+    /*
+        Dynamics of the system
+        How does each state change with respect to the controls?
+    */
     State next_state(const State& state, const Control& control, const float time_span) {}
-    
-    // Determine the cost of a state after a control
+
+
+    /*
+        Cost of a state and control
+        What am I trying to minimize?
+        i.e Distance, Time, Energy
+    */
     float cost(const State& state, const Control& control, const float time_span) {}
-    
-    // Determine the heuristic of a state
+
+
+    /*
+        Heuristic of a state with respect to the goal
+        Leads the planner to the goal
+        What is the lowest cost possible from this state to the goal?
+    */
     float heuristic(const State& state, const State& goal) {}
-    
-    // Determine if a state is the goal
+
+    /*
+        Is this state close enough to the goal to end the plan?
+    */
     bool is_goal(const State& state, const State& goal) {}
 
-    // Determine if a state statifies all constraints
+    /*
+        Does this state meet the model constraints?
+        i.e Boundary constraints, Obstacles, State limits
+    */
     bool is_valid(const State& state) {}
   
   };
@@ -85,8 +104,8 @@ These parameters include:
 #### Run the model
 To run the model, simply create a SBMPO planner object with your custom model class and parameters, then execute it's `run()` function.
 ```
-sbmpo::SBMPO planner(my_custom_model, params);
-planner.run();
+sbmpo::SBMPO<MyCustomModel> planner;
+planner.run(params);
 ```
 
 #### Evaluate the results
@@ -99,33 +118,30 @@ Here are some of the functions you can use:
 | `time_t` | `time_us()` | Get the computation time of the run in microseconds |
 | `float` | `cost()` | Get the cost of the best path |
 | `size_t` | `size()` | Get the number of nodes on the grid |
-| `std::vector<sbmpo::Node::Ptr>` | `node_path()` | Returns the best path found as a list of Node pointers |
+| `std::vector<sbmpo::NodePtr>` | `node_path()` | Returns the best path found as a list of Node pointers |
 | `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
 | `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
-| `std::vector<sbmpo::Node::Ptr>` | `all_nodes()` | Returns all nodes on the grid as a list of Node pointers |
+| `std::vector<sbmpo::NodePtr>` | `nodes()` | Returns all nodes on the grid as a list of Node pointers |
 
 ##### Exit Codes:
 | Exit Code | Description |
 | --------- | ----------- |
-|     0     | Path found |
+|     0     | Solution found |
 |     1     | Iteration limit reached |
 |     2     | No nodes left in queue |
 |     3     | Max generations reached |
-|     4     | Invalid path generated |
-|     5     | Unknown Error |
+|     5     | Unknown Error / Running |
 
 #### Example code
 
 ```
-#include <sbmpo/sbmpo.hpp>
+#include <sbmpo/SBMPO.hpp>
 #include <my_package/my_custom_model.hpp>
-#include <iostream>
+#include <sbmpo/tools/PrintTool.hpp>
 
 using namespace my_namespace;
 
 int main(int argc, char ** argv) {
-
-  my_custom_model model;
 
   sbmpo::SBMPOParameters params;
   /* Add in parameters here */
@@ -133,31 +149,10 @@ int main(int argc, char ** argv) {
   sbmpo::SBMPO planner(model, params);
   planner.run();
   
-  std::cout << "---- Planner Results ----" << std::endl;
-  std::cout << "Iterations: " << planner.iterations() << std::endl;
-  std::cout << "Exit code: " << planner.exit_code() << std::endl;
-  std::cout << "Computation Time: " << planner.time_us() << "us" << std::endl;
-  std::cout << "Path cost: " << planner.cost() << std::endl;
-  std::cout << "Number of nodes: " << planner.size() << std::endl;
-  
-  std::cout << "-- State Path --" << std::endl;
-  for (sbmpo::State state : planner.state_path()) {
-    std::cout << "  - [ ";
-    for (float s : state) {
-      std::cout << s << " ";
-    }
-    std::cout << "]" << std::endl;
-  }
-  
-  std::cout << "-- Control Path --" << std::endl;
-  for (sbmpo::Control control : planner.control_path()) {
-    std::cout << "  - [ ";
-    for (float c : control) {
-      std::cout << c << " ";
-    }
-    std::cout << "]" << std::endl;
-  }
-  
+  sbmpo_io::print_parameters(params);
+  sbmpo_io::print_results(planner.results());
+  sbmpo_io::print_stats(planner.results());
+
   return 0;
 }
 ```

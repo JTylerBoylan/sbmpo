@@ -4,8 +4,8 @@
 
 close all
 
-stats = sbmpo_stats("../csv/stats.csv");
-[path, nodes] = sbmpo_results("../csv/nodes.csv");
+stats = sbmpo_stats("../../csv/stats.csv");
+[path, nodes] = sbmpo_results("../../csv/nodes.csv");
 
 %% Path
 
@@ -17,7 +17,7 @@ for nd = 1:path.path_size
     t(nd) = path.nodes(nd).g;
     x(nd) = path.nodes(nd).state(1);
     v(nd) = path.nodes(nd).state(2);
-    if (nd < path.path_size)
+    if (nd ~= 1)
         u(nd) = path.nodes(nd).control(1);
     else
         u(nd) = NaN;

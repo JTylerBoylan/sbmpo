@@ -24,7 +24,7 @@ function [paths, nodes] = sbmpo_results(results_file)
 
             paths(p).nodes(n).state = plan_data(i+1:i+paths(p).num_states);
             i = i+paths(p).num_states;
-            if (n ~= paths(p).path_size)
+            if (n ~= 1)
                 paths(p).nodes(n).control = plan_data(i+1:i+paths(p).num_controls);
                 i = i+paths(p).num_controls;
             end

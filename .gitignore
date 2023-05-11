@@ -1,0 +1,5 @@
+.vscode
+csv/stats.csv
+csv/nodes.csv
+csv/config.csv
+csv/obstacles.csv
