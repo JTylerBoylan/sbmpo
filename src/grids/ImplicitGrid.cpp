@@ -1,4 +1,5 @@
 #include <sbmpo/grids/ImplicitGrid.hpp>
+#include <math.h>
 
 namespace sbmpo {
 
@@ -24,7 +25,7 @@ GridKey ImplicitGrid::state_to_key_(const State &state) {
     GridKey key(state.size());
     for (std::size_t s = 0; s < state.size(); s++) {
         if (resolution_[s] > 0.0f) {
-            key[s] = static_cast<int>(state[s] / resolution_[s]);
+            key[s] = static_cast<int>(std::round(state[s] / resolution_[s]));
         }
     }
     return key;
@@ -43,7 +44,7 @@ State ImplicitGrid::key_to_state_(const GridKey &key, const State &ref_state) {
     State new_state(ref_state.size());
     for (std::size_t k  = 0; k < key.size(); k++) {
         if (resolution_[k] > 0.0f) {
-            new_state[k] = (float(key[k]) + 0.5f) * resolution_[k];
+            new_state[k] = static_cast<float>(key[k]) * resolution_[k];
         } else {
             new_state[k] = ref_state[k];
         }
