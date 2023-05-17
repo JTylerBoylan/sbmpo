@@ -1,5 +1,5 @@
 # Use the latest Ubuntu as the base image
-FROM ubuntu:latest
+FROM ros:noetic
 
 # Install necessary packages for building C++ applications
 RUN apt-get update
@@ -7,10 +7,11 @@ RUN apt-get install -y \
         build-essential \
         cmake \
         gdb
+RUN apt-get install libttb-dev
 
 # Set the working directory to /app
-WORKDIR /sbmpo_ws
+WORKDIR /sbmpo_ws/src
 
 # Set /app as the default volume path
-VOLUME /sbmpo_ws
+VOLUME /sbmpo_ws/src
 
