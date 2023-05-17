@@ -51,6 +51,8 @@ public:
 
     size_t size() { return results_->node_count; }
 
+    void quit() { results_->exit_code = sbmpo::QUIT_SEARCH; }
+
 protected:
 
     std::shared_ptr<SearchResults> results_;
