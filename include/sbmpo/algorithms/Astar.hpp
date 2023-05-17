@@ -14,18 +14,18 @@ class Astar : public SearchAlgorithm {
 
 public:
 
-    Astar(const std::shared_ptr<Model> model) 
-    : SearchAlgorithm(model) {}
+    Astar(const std::shared_ptr<Model> model, std::shared_ptr<SearchResults> results) 
+    : SearchAlgorithm(model, results) {}
 
-    SearchResults solve(const SearchParameters parameters) override;
+    void solve(const SearchParameters parameters) override;
+
+    std::shared_ptr<SearchResults> latest() { return results_; }
 
 private:
 
+    SearchParameters params_;
     std::shared_ptr<ImplicitGrid> grid_;
     std::shared_ptr<PriorityQueue> queue_;
-    SearchParameters params_;
-    SearchResults results_;
-
     NodePtr start_node_, goal_node_, best_node_;
 
     void initialize_();

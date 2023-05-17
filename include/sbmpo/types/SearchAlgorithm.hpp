@@ -10,13 +10,15 @@ class SearchAlgorithm {
 
 public:
 
-    SearchAlgorithm(const std::shared_ptr<Model> model) : model_(model) {}
+    SearchAlgorithm(const std::shared_ptr<Model> model, std::shared_ptr<SearchResults> results) 
+    : model_(model), results_(results) {}
 
-    virtual SearchResults solve(const SearchParameters parameters) = 0;
+    virtual void solve(const SearchParameters parameters) = 0;
 
 protected:
 
     const std::shared_ptr<Model> model_;
+    std::shared_ptr<SearchResults> results_;
 
 };
 
