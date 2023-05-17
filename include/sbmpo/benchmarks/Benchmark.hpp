@@ -56,25 +56,26 @@ public:
 
         if (verbose_) sbmpo_io::print_parameters(params);
 
+        SearchResults avg_results;
         for (int r = 0; r < runs_per_param_; r++) {
-            SearchResults run_results = this->search_->solve(params);
+            this->search_->solve(params);
             if (r == 0) {
-                this->results_ = run_results;
+                avg_results = this->results();
             } else {
-                this->results_.time_us += run_results.time_us;
-                this->results_.success_rate += run_results.success_rate;
+                avg_results.time_us += this->results_->time_us;
+                avg_results.success_rate += this->results_->success_rate;
             }
         }
-        this->results_.time_us /= runs_per_param_;
-        this->results_.success_rate /= runs_per_param_;
+        avg_results.time_us /= runs_per_param_;
+        avg_results.success_rate /= runs_per_param_;
 
-        if (verbose_) sbmpo_io::print_results(this->results_, index_);
-        if (verbose_) sbmpo_io::print_stats(this->results_, ++index_);
+        if (verbose_) sbmpo_io::print_results(avg_results, index_);
+        if (verbose_) sbmpo_io::print_stats(avg_results, ++index_);
 
         if (verbose_) printf("Writing results in folder %s ...\n", csv_folder_.c_str());
-        sbmpo_csv::append_stats(csv_folder_ + STATS_FILE, this->results_);
-        sbmpo_csv::append_node_path(csv_folder_ + NODES_FILE, this->results_.node_path);
-        sbmpo_csv::append_nodes(csv_folder_ + NODES_FILE, this->results_.nodes);
+        sbmpo_csv::append_stats(csv_folder_ + STATS_FILE, avg_results);
+        sbmpo_csv::append_node_path(csv_folder_ + NODES_FILE, avg_results.node_path);
+        sbmpo_csv::append_nodes(csv_folder_ + NODES_FILE, avg_results.nodes);
         if (verbose_) printf("\n");
     }
 

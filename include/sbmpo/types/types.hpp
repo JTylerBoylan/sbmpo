@@ -12,7 +12,7 @@ using Control = std::vector<float>;
 class Node;
 using NodePtr = std::shared_ptr<Node>;
 
-enum ExitCode {SOLUTION_FOUND, ITERATION_LIMIT, NO_NODES_IN_QUEUE, GENERATION_LIMIT, RUNNING};
+enum ExitCode {SOLUTION_FOUND, ITERATION_LIMIT, NO_NODES_IN_QUEUE, GENERATION_LIMIT, RUNNING, QUIT_SEARCH};
 
 struct SearchParameters {
     uint32_t max_iterations, max_generations;

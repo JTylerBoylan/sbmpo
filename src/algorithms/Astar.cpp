@@ -5,7 +5,7 @@ namespace sbmpo_algorithms {
 
 using namespace sbmpo;
 
-SearchResults Astar::solve(const SearchParameters parameters) {
+void Astar::solve(const SearchParameters parameters) {
 
     // Start clock
     using namespace std::chrono;
@@ -19,15 +19,22 @@ SearchResults Astar::solve(const SearchParameters parameters) {
     // Iteration loop
     while (true) {
 
+        // Check for quit command
+        if (results_->exit_code == QUIT_SEARCH) {
+            break;
+        }
+
+        // TODO: Add time limit + check
+
         // Check if iteration limit reached
-        if (results_.iteration >= params_.max_iterations) {
-            results_.exit_code = ITERATION_LIMIT;
+        if (results_->iteration >= params_.max_iterations) {
+            results_->exit_code = ITERATION_LIMIT;
             break;
         }
 
         // Check if the queue is empty
         if (queue_->empty()) {
-            results_.exit_code = NO_NODES_IN_QUEUE;
+            results_->exit_code = NO_NODES_IN_QUEUE;
             break;
         }
 
@@ -36,14 +43,14 @@ SearchResults Astar::solve(const SearchParameters parameters) {
 
         // Check for solution
         if (current_node == goal_node_ || model_->is_goal(current_node->state(), params_.goal_state)) {
-            results_.exit_code = SOLUTION_FOUND;
+            results_->exit_code = SOLUTION_FOUND;
             best_node_ = current_node;
             break;
         }
 
         // Check if generation limit reached
         if (current_node->generation() > params_.max_generations) {
-            results_.exit_code = GENERATION_LIMIT;
+            results_->exit_code = GENERATION_LIMIT;
             best_node_ = current_node;
             break;
         }
@@ -76,28 +83,32 @@ SearchResults Astar::solve(const SearchParameters parameters) {
         std::for_each(std::execution::par_unseq, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
 
         // Next iteration
-        ++results_.iteration;
+        ++results_->iteration;
+
+        // Update clock
+        auto clock_now = high_resolution_clock::now();
+        results_->time_us = time_t(duration_cast<duration<double>>(clock_now - clock_start).count() * 1E6);
     }
 
     // Generate path to goal
     generatePath_();
 
-    results_.success_rate = !results_.exit_code;
-    results_.nodes = std::move(grid_->nodes());
+    results_->success_rate = !results_->exit_code;
+    results_->nodes = std::move(grid_->nodes());
 
     // End clock
     auto clock_end = high_resolution_clock::now();
-    results_.time_us = time_t(duration_cast<duration<double>>(clock_end - clock_start).count() * 1E6);
+    results_->time_us = time_t(duration_cast<duration<double>>(clock_end - clock_start).count() * 1E6);
 
     // End of solve
-    return results_;
 }
 
 void Astar::initialize_() {
     // Create new grid, queue, and results
     grid_ = std::make_shared<ImplicitGrid>(params_.grid_resolution);
     queue_ = std::make_shared<PriorityQueue>();
-    results_ = SearchResults();
+    results_->iteration = 0;
+    results_->exit_code = RUNNING;
     // Initialize start and goal on the grid
     start_node_ = grid_->get(params_.start_state);
     goal_node_ = grid_->get(params_.goal_state);
@@ -140,19 +151,19 @@ void Astar::updateLineage_(NodePtr child, const NodePtr parent, const Control& c
 
 void Astar::generatePath_() {
 
-    results_.cost = best_node_->g();
+    results_->cost = best_node_->g();
 
     size_t path_size = best_node_->generation() + 1;
-    results_.node_path = std::vector<NodePtr>(path_size);
-    results_.state_path = std::vector<State>(path_size);
-    results_.control_path = std::vector<Control>(path_size - 1);
+    results_->node_path = std::vector<NodePtr>(path_size);
+    results_->state_path = std::vector<State>(path_size);
+    results_->control_path = std::vector<Control>(path_size - 1);
 
     NodePtr node = best_node_;
     for (int idx = path_size - 1; idx >= 0; idx--) {
-        results_.node_path[idx] = node;
-        results_.state_path[idx] = node->state();
+        results_->node_path[idx] = node;
+        results_->state_path[idx] = node->state();
         if (idx != 0)
-            results_.control_path[idx-1] = node->parent()->control();
+            results_->control_path[idx-1] = node->parent()->control();
         node = node->parent();
     }
 }

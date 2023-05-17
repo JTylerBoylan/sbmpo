@@ -1,4 +1,5 @@
 .vscode
+build
 csv/stats.csv
 csv/nodes.csv
 csv/config.csv
