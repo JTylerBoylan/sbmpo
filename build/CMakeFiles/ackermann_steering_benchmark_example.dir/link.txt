@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/ackermann_steering_benchmark_example.dir/src/examples/ackermann_steering_benchmark.cpp.o -o ackermann_steering_benchmark_example  -Wl,-rpath,/sbmpo_ws/build libsbmpo.so -lstdc++ -lstdc++fs -lm 

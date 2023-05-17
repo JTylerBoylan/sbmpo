@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/unicycle_planner_test.dir/src/tests/unicycle_planner.cpp.o -o unicycle_planner_test  -Wl,-rpath,/sbmpo_ws/build libsbmpo.so -lstdc++ -lstdc++fs -lm 
