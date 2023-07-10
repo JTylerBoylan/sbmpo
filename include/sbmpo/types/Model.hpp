@@ -1,6 +1,7 @@
 #ifndef SBMPO_MODEL_HPP_
 #define SBMPO_MODEL_HPP_
 
+#include <math.h>
 #include <sbmpo/types/types.hpp>
 
 namespace sbmpo {

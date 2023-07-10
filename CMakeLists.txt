@@ -15,12 +15,7 @@ include_directories(include)
 # Create the library target and specify source files
 add_library(sbmpo SHARED)
 target_sources(sbmpo PRIVATE 
-    src/grids/ImplicitGrid.cpp
-    src/queues/PriorityQueue.cpp
-    src/algorithms/Astar.cpp
-    src/models/UnicycleSteeringModel.cpp
-    src/models/AckermannSteeringModel.cpp
-    src/models/DoubleIntegratorModel.cpp
+    src/Astar.cpp
 )
 
 # Set include directories for library target
@@ -28,7 +23,7 @@ target_include_directories(sbmpo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Unicycle Planner Test Executable
 add_executable(unicycle_planner_test
-  src/tests/unicycle_planner.cpp
+  src/examples/unicycle_planner_test.cpp
 )
 target_link_libraries(unicycle_planner_test PUBLIC sbmpo stdc++ stdc++fs m)
 
