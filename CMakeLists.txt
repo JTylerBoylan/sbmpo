@@ -26,12 +26,7 @@ catkin_package(
 
 # Create the library target and specify source files
 add_library(sbmpo
-  src/grids/ImplicitGrid.cpp
-  src/queues/PriorityQueue.cpp
-  src/algorithms/Astar.cpp
-  src/models/UnicycleSteeringModel.cpp
-  src/models/AckermannSteeringModel.cpp
-  src/models/DoubleIntegratorModel.cpp
+  src/Astar.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
