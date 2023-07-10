@@ -24,7 +24,7 @@ static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "Searc
 public:
 
     Benchmark(std::string csv_folder = DEFAULT_CSV_FOLDER) 
-    : SBMPO<ModelType,SearchType>(), csv_folder_(csv_folder), verbose_(true), runs_per_param_(1), index_(0) {}
+    : SBMPO<ModelType,SearchType>(), csv_folder_(csv_folder), verbose_(true), runs_per_param_(1), index_(1) {}
 
     void set_folder(std::string folder_path) {
         csv_folder_ = folder_path;
@@ -42,7 +42,6 @@ public:
         // Clear results
         sbmpo_csv::clear_file(csv_folder_ + STATS_FILE);
         sbmpo_csv::clear_file(csv_folder_ + NODES_FILE);
-        index_ = 0;
 
         // Loop through parameter set
         auto param_list = sbmpo_csv::get_params(csv_folder_ + PARAMS_FILE);
@@ -54,7 +53,7 @@ public:
 
     virtual void run(const SearchParameters& params) override {
 
-        if (verbose_) sbmpo_io::print_parameters(params);
+        if (verbose_) sbmpo_io::print_parameters(params, index_);
 
         SearchResults avg_results;
         for (int r = 0; r < runs_per_param_; r++) {
@@ -70,13 +69,14 @@ public:
         avg_results.success_rate /= runs_per_param_;
 
         if (verbose_) sbmpo_io::print_results(avg_results, index_);
-        if (verbose_) sbmpo_io::print_stats(avg_results, ++index_);
+        if (verbose_) sbmpo_io::print_stats(avg_results, index_);
 
         if (verbose_) printf("Writing results in folder %s ...\n", csv_folder_.c_str());
         sbmpo_csv::append_stats(csv_folder_ + STATS_FILE, avg_results);
         sbmpo_csv::append_node_path(csv_folder_ + NODES_FILE, avg_results.node_path);
         sbmpo_csv::append_nodes(csv_folder_ + NODES_FILE, avg_results.nodes);
         if (verbose_) printf("\n");
+        index_++;
     }
 
 protected:
