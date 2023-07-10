@@ -82,7 +82,6 @@ static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "Searc
         // Clear results
         sbmpo_csv::clear_file(this->csv_folder_ + STATS_FILE);
         sbmpo_csv::clear_file(this->csv_folder_ + NODES_FILE);
-        this->index_ = 0;
 
         size_t par = 0;
         auto param_list = sbmpo_csv::get_params(this->csv_folder_ + PARAMS_FILE);

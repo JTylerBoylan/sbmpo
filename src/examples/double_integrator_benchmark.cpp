@@ -1,5 +1,5 @@
 #include <sbmpo/models/DoubleIntegratorModel.hpp>
-#include <sbmpo/benchmarks/benchmark.hpp>
+#include <sbmpo/benchmarks/Benchmark.hpp>
 
 using namespace sbmpo;
 using namespace sbmpo_models;

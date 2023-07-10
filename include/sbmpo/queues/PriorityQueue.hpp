@@ -14,11 +14,22 @@ public:
 
     PriorityQueue() {}
 
-    NodePtr pop();
+    NodePtr pop() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        NodePtr best_node = node_priority_queue_.top();
+        node_priority_queue_.pop();
+        return best_node;
+    }
 
-    void push(NodePtr node);
+    void push(NodePtr node) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        node_priority_queue_.push(node);
+    }
 
-    bool empty();
+    bool empty() { 
+        std::lock_guard<std::mutex> lock(mutex_);
+        return node_priority_queue_.empty();
+    }
 
 private:
 

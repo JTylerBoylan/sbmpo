@@ -8,7 +8,7 @@ clc
 
 %% Parameters
 
-runs = 1;
+runs = 3;
 
 params = struct;
 params.max_iterations = 5000;
@@ -42,13 +42,13 @@ sbmpo_config("../../csv/config.csv", params, runs);
 %% Create random set of obstacles
 
 obs = struct;
-obs.min_n = 1;
-obs.max_n = 1;
-obs.min_x = 0;
-obs.max_x = 0;
-obs.min_y = 0;
-obs.max_y = 0;
-obs.min_r = 1;
-obs.max_r = 1;
+obs.min_n = 5;
+obs.max_n = 8;
+obs.min_x = -2;
+obs.max_x = 2;
+obs.min_y = -2;
+obs.max_y = 2;
+obs.min_r = 0.35;
+obs.max_r = 0.55;
 
 random_obstacles("../../csv/obstacles.csv", obs, runs);
