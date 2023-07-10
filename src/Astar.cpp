@@ -16,6 +16,12 @@ void Astar::solve(const SearchParameters parameters) {
     // Initialize run
     initialize_();
 
+    // Check if start state is valid
+    if (!model_->is_valid(params_.start_state)) {
+        results_->exit_code = INVALID_START_STATE;
+        return;
+    }
+
     // Iteration loop
     while (true) {
 
@@ -24,7 +30,12 @@ void Astar::solve(const SearchParameters parameters) {
             break;
         }
 
-        // TODO: Add time limit + check
+        // Check if time limit reached
+        const float curr_time = time_t(duration_cast<duration<double>>(high_resolution_clock::now() - clock_start).count() * 1E6);
+        if (curr_time > parameters.time_limit_us) {
+            results_->exit_code = TIME_LIMIT;
+            break;
+        }
 
         // Check if iteration limit reached
         if (results_->iteration >= params_.max_iterations) {
@@ -80,7 +91,7 @@ void Astar::solve(const SearchParameters parameters) {
             }
 
         };
-        std::for_each(std::execution::par_unseq, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
+        std::for_each(std::execution::par, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
 
         // Next iteration
         ++results_->iteration;
@@ -95,6 +106,7 @@ void Astar::solve(const SearchParameters parameters) {
 
     results_->success_rate = !results_->exit_code;
     results_->nodes = std::move(grid_->nodes());
+    results_->node_count = results_->nodes.size();
 
     // End clock
     auto clock_end = high_resolution_clock::now();
@@ -109,6 +121,10 @@ void Astar::initialize_() {
     queue_ = std::make_shared<PriorityQueue>();
     results_->iteration = 0;
     results_->exit_code = RUNNING;
+    results_->time_us = 0;
+    results_->cost = 0.0f;
+    results_->success_rate = 0.0f;
+    results_->node_count = 0;
     // Initialize start and goal on the grid
     start_node_ = grid_->get(params_.start_state);
     goal_node_ = grid_->get(params_.goal_state);

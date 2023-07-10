@@ -2,7 +2,7 @@ function [paths, nodes] = sbmpo_results(results_file)
 %SBMPO_RESULTS Convert results CSV to MATLAB data
 %   Input: File path
 
-    csv_matrix = readmatrix(results_file);
+    csv_matrix = readmatrix(results_file, delimitedTextImportOptions('DataLines',[1,Inf], 'VariableTypes', 'double'));
 
     paths = struct;
     p = 1;
