@@ -7,7 +7,7 @@ RUN apt-get install -y \
         build-essential \
         cmake \
         gdb
-RUN apt-get install libtbb-dev
+RUN apt-get install -y libtbb-dev
 
 # Set the working directory to /app
 WORKDIR /sbmpo_ws/src
