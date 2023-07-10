@@ -24,12 +24,7 @@ include_directories(include)
 
 # Create the library target and specify source files
 add_library(sbmpo SHARED
-  src/grids/ImplicitGrid.cpp
-  src/queues/PriorityQueue.cpp
-  src/algorithms/Astar.cpp
-  src/models/UnicycleSteeringModel.cpp
-  src/models/AckermannSteeringModel.cpp
-  src/models/DoubleIntegratorModel.cpp
+  src/Astar.cpp
 )
 
 # Set include directories for library target
