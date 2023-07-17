@@ -79,20 +79,49 @@ static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "Searc
     : Benchmark<Obstacle2DModel<ModelType>, SearchType>(csv_folder) {}
 
     void benchmark() override {
-        // Clear results
-        sbmpo_csv::clear_file(this->csv_folder_ + STATS_FILE);
-        sbmpo_csv::clear_file(this->csv_folder_ + NODES_FILE);
-
-        size_t par = 0;
-        auto param_list = sbmpo_csv::get_params(this->csv_folder_ + PARAMS_FILE);
-        auto obstacles_list = sbmpo_csv::get_obstacles(this->csv_folder_ + OBSTACLES_FILE);
-        for (auto param = param_list.cbegin(); param != param_list.cend(); ++param) {
-            this->model_->set_obstacles(par < obstacles_list.size() ? obstacles_list[par++] : Obstacles());
-            this->run(*param);
+        obstacles_list_ = sbmpo_csv::get_obstacles(this->csv_folder_ + OBSTACLES_FILE);
+        num_obstacles_ = obstacles_list_.size();
+        if (num_obstacles_ != this->runs_per_param_) {
+            printf("Warning: Number of obstacles in 'obstacles.csv' (%lu) does not match 'runs_per_param' (%d).\n",
+                num_obstacles_, this->runs_per_param_);
         }
-
-        if (this->verbose_) printf("Finished benchmarking.\n");
+        Benchmark<Obstacle2DModel<ModelType>, SearchType>::benchmark();
     }
+
+    void run(const SearchParameters& params) override {
+
+        if (this->verbose_) sbmpo_io::print_parameters(params, this->index_);
+
+        SearchResults avg_results;
+        for (size_t r = 0; r < this->runs_per_param_; r++) {
+            this->model_->set_obstacles(r < num_obstacles_ ? obstacles_list_[r] : Obstacles());
+            this->search_->solve(params);
+            if (r == 0) {
+                avg_results = this->results();
+            } else {
+                avg_results.time_us += this->results_->time_us;
+                avg_results.success_rate += this->results_->success_rate;
+            }
+        }
+        avg_results.time_us /= this->runs_per_param_;
+        avg_results.success_rate /= this->runs_per_param_;
+
+        if (this->verbose_) sbmpo_io::print_results(avg_results, this->index_);
+        if (this->verbose_) sbmpo_io::print_stats(avg_results, this->index_);
+
+        if (this->verbose_) printf("Writing results in folder %s ...\n", this->csv_folder_.c_str());
+        sbmpo_csv::append_stats(this->csv_folder_ + STATS_FILE, avg_results);
+        if (this->print_path_) sbmpo_csv::append_node_path(this->csv_folder_ + NODES_FILE, avg_results.node_path);
+        if (this->print_nodes_) sbmpo_csv::append_nodes(this->csv_folder_ + NODES_FILE, avg_results.nodes);
+        if (this->verbose_) printf("\n");
+        this->index_++;
+
+    }
+
+    private:
+
+        size_t num_obstacles_;
+        std::vector<sbmpo_benchmarks::Obstacles> obstacles_list_;
 
 
 

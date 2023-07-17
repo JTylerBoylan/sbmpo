@@ -23,7 +23,14 @@ int main (int argc, char ** argv) {
 
     // Change benchmark parameters
     benchmarker.model()->set_body_radius(0.125f);
+    benchmarker.model()->set_goal_threshold(0.5f);
+    benchmarker.model()->set_integration_steps(10);
+    benchmarker.model()->set_map_bounds({-10, -10, 10, 10});
+
     benchmarker.set_runs_per_param(100);
+    benchmarker.set_verbose(false);
+    benchmarker.set_print_path(false);
+    benchmarker.set_print_nodes(false);
 
     // Run benchmark (saves to csv folder)
     benchmarker.benchmark();

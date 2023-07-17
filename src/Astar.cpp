@@ -169,19 +169,23 @@ void Astar::generatePath_() {
 
     results_->cost = best_node_->g();
 
-    size_t path_size = best_node_->generation() + 1;
-    results_->node_path = std::vector<NodePtr>(path_size);
-    results_->state_path = std::vector<State>(path_size);
-    results_->control_path = std::vector<Control>(path_size - 1);
+    const size_t max_gen = best_node_->generation();
+    results_->node_path.reserve(max_gen+1);
+    results_->state_path.reserve(max_gen+1);
+    results_->control_path.reserve(max_gen+1);
 
     NodePtr node = best_node_;
-    for (int idx = path_size - 1; idx >= 0; idx--) {
-        results_->node_path[idx] = node;
-        results_->state_path[idx] = node->state();
-        if (idx != 0)
-            results_->control_path[idx-1] = node->parent()->control();
+    while (node) {
+        results_->node_path.emplace_back(node);
+        results_->state_path.emplace_back(node->state());
+        if (node != start_node_)
+            results_->control_path.emplace_back(node->parent()->control());
         node = node->parent();
     }
+
+    std::reverse(results_->node_path.begin(), results_->node_path.end());
+    std::reverse(results_->state_path.begin(), results_->state_path.end());
+    std::reverse(results_->control_path.begin(), results_->control_path.end());
 }
 
 }
