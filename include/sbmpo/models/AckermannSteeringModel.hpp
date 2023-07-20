@@ -48,7 +48,7 @@ public:
         return next_state;
     }
 
-    float cost(const State& state, const Control& control, const float time_span) override {
+    float cost(const State& state1, const State& state2, const Control& control, const float time_span) override {
         return time_span;
     }
 

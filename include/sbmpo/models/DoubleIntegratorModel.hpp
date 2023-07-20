@@ -34,7 +34,7 @@ class DoubleIntegratorModel : public Model {
         return next_state;
     }
 
-    virtual float cost(const State& state, const Control& control, const float time_span) {
+    virtual float cost(const State& state1, const State& state2, const Control& control, const float time_span) {
         return time_span;
     }
 

@@ -27,7 +27,7 @@ int main (int argc, char ** argv) {
     benchmarker.model()->set_integration_steps(10);
     benchmarker.model()->set_map_bounds({-10, -10, 10, 10});
 
-    benchmarker.set_runs_per_param(100);
+    benchmarker.set_runs_per_param(25);
     benchmarker.set_verbose(false);
     benchmarker.set_print_path(false);
     benchmarker.set_print_nodes(false);

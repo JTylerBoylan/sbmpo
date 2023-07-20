@@ -81,7 +81,8 @@ void Astar::solve(const SearchParameters parameters) {
             if (!neighbor)  return;
 
             // Update if better path found
-            const float new_g = current_node->g() + model_->cost(neighbor->state(), control, params_.sample_time);
+            const float new_g = current_node->g()
+                + model_->cost(current_node->state(), neighbor->state(), control, params_.sample_time);
             if (new_g < neighbor->g()) {
                 neighbor->g() = new_g;
                 updateLineage_(neighbor, current_node, control);

@@ -100,10 +100,17 @@ static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "Searc
                 avg_results = this->results();
             } else {
                 avg_results.time_us += this->results_->time_us;
+                avg_results.cost += this->results_->cost;
+                avg_results.iteration += this->results_->iteration;
                 avg_results.success_rate += this->results_->success_rate;
+                if (this->results_->exit_code != SOLUTION_FOUND) {
+                    avg_results.exit_code = this->results_->exit_code;
+                }
             }
         }
         avg_results.time_us /= this->runs_per_param_;
+        avg_results.cost /= this->runs_per_param_;
+        avg_results.iteration /= this->runs_per_param_;
         avg_results.success_rate /= this->runs_per_param_;
 
         if (this->verbose_) sbmpo_io::print_results(avg_results, this->index_);
