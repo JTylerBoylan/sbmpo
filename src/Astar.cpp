@@ -92,7 +92,7 @@ void Astar::solve(const SearchParameters parameters) {
             }
 
         };
-        std::for_each(std::execution::par, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
+        std::for_each(std::execution::seq, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
 
         // Next iteration
         ++results_->iteration;
