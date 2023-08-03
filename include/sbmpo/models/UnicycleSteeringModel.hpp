@@ -37,8 +37,10 @@ public:
         return next_state;
     }
 
-    float cost(const State& state, const Control& control, const float time_span) {
-        return std::abs(control[V])*time_span;
+    float cost(const State& state1, const State& state2, const Control& control, const float time_span) {
+        const float dx = state2[X] - state1[X];
+        const float dy = state2[Y] - state1[Y];
+        return std::sqrt(dx*dx + dy*dy);
     }
 
     float heuristic(const State& state, const State& goal) {

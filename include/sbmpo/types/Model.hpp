@@ -22,7 +22,7 @@ public:
         What am I trying to minimize?
         i.e Distance, Time, Energy
     */
-    virtual float cost(const State& state, const Control& control, const float time_span) = 0;
+    virtual float cost(const State& state1, const State& state2, const Control& control, const float time_span) = 0;
 
 
     /*

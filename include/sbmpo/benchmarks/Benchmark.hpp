@@ -34,21 +34,34 @@ public:
         verbose_ = tf;
     }
 
+    void set_print_path(bool tf) {
+        print_path_ = tf;
+    }
+
+    void set_print_nodes(bool tf) {
+        print_nodes_ = tf;
+    }
+
     void set_runs_per_param(int runs_per_param) {
         runs_per_param_ = runs_per_param;
     }
     
     virtual void benchmark() {
+
         // Clear results
         sbmpo_csv::clear_file(csv_folder_ + STATS_FILE);
         sbmpo_csv::clear_file(csv_folder_ + NODES_FILE);
 
         // Loop through parameter set
         auto param_list = sbmpo_csv::get_params(csv_folder_ + PARAMS_FILE);
-        for (auto param = param_list.cbegin(); param != param_list.cend(); ++param)
-            this->run(*param);
 
-        if (verbose_) printf("Finished benchmarking.\n");
+        printf("Starting benchmarking.\n");
+        for (auto param = param_list.cbegin(); param != param_list.cend(); ++param) {
+            if (!verbose_) printf("Running Parameters [%d]\n", index_);
+            this->run(*param);
+        }
+
+        printf("Finished benchmarking.\n");
     }
 
     virtual void run(const SearchParameters& params) override {
@@ -73,8 +86,8 @@ public:
 
         if (verbose_) printf("Writing results in folder %s ...\n", csv_folder_.c_str());
         sbmpo_csv::append_stats(csv_folder_ + STATS_FILE, avg_results);
-        sbmpo_csv::append_node_path(csv_folder_ + NODES_FILE, avg_results.node_path);
-        sbmpo_csv::append_nodes(csv_folder_ + NODES_FILE, avg_results.nodes);
+        if (print_path_) sbmpo_csv::append_node_path(csv_folder_ + NODES_FILE, avg_results.node_path);
+        if (print_nodes_) sbmpo_csv::append_nodes(csv_folder_ + NODES_FILE, avg_results.nodes);
         if (verbose_) printf("\n");
         index_++;
     }
@@ -83,6 +96,8 @@ protected:
 
     std::string csv_folder_;
     bool verbose_;
+    bool print_path_;
+    bool print_nodes_;
     uint16_t runs_per_param_;
     uint16_t index_;
 
