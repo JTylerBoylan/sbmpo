@@ -126,6 +126,10 @@ void Astar::initialize_() {
     results_->cost = 0.0f;
     results_->success_rate = 0.0f;
     results_->node_count = 0;
+    results_->node_path.clear();
+    results_->state_path.clear();
+    results_->control_path.clear();
+    results_->nodes.clear();
     // Initialize start and goal on the grid
     start_node_ = grid_->get(params_.start_state);
     goal_node_ = grid_->get(params_.goal_state);
