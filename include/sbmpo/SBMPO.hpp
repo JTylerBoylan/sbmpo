@@ -9,57 +9,56 @@
 
 #define DEFAULT_SEARCH_ALGORITHM sbmpo_algorithms::Astar
 
-namespace sbmpo {
+namespace sbmpo
+{
+    template <typename ModelType, typename SearchType = DEFAULT_SEARCH_ALGORITHM>
+    class SBMPO
+    {
+        static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must derive from sbmpo::Model");
+        static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "SearchType must derive from sbmpo::SearchAlgorithm");
 
-template<typename ModelType, typename SearchType = DEFAULT_SEARCH_ALGORITHM>
-class SBMPO {
-static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must derive from sbmpo::Model");
-static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "SearchType must derive from sbmpo::SearchAlgorithm");
+    public:
+        SBMPO()
+            : results_(std::make_unique<SearchResults>()),
+              model_(std::make_unique<ModelType>()),
+              search_(std::make_unique<SearchType>(model_.get(), results_.get())) {}
 
-public:
+        virtual void run(const SearchParameters &parameters)
+        {
+            search_->solve(parameters);
+        }
 
-    SBMPO() 
-    : results_(std::make_shared<SearchResults>()),
-      model_(std::make_shared<ModelType>()),
-      search_(std::make_shared<SearchType>(model_, results_)) {}
+        SearchResults *results() { return results_.get(); }
 
-    virtual void run(const SearchParameters& parameters) {
-        search_->solve(parameters);
-    }
+        std::vector<State> state_path() { return results_->state_path; };
 
-    SearchResults results() { return *results_; }
+        std::vector<Control> control_path() { return results_->control_path; }
 
-    std::vector<State> state_path() { return results_->state_path; };
+        std::vector<Node *> node_path() { return results_->node_path; }
 
-    std::vector<Control> control_path() { return results_->control_path; }
+        std::vector<Node *> nodes() { return results_->nodes; }
 
-    std::vector<NodePtr> node_path() { return results_->node_path; }
+        ModelType *model() { return model_.get(); }
 
-    std::vector<NodePtr> nodes() { return results_->nodes; }
+        SearchType *algorithm() { return search_.get(); };
 
-    std::shared_ptr<ModelType> model() { return model_; }
+        time_t time_us() { return results_->time_us; }
 
-    std::shared_ptr<SearchType> algorithm() { return search_; };
+        uint16_t iterations() { return results_->iteration; }
 
-    time_t time_us() { return results_->time_us; }
+        ExitCode exit_code() { return results_->exit_code; }
 
-    uint16_t iterations() { return results_->iteration; }
+        float cost() { return results_->cost; }
 
-    ExitCode exit_code() { return results_->exit_code; }
+        size_t size() { return results_->node_count; }
 
-    float cost() { return results_->cost; }
+        void quit() { results_->exit_code = sbmpo::QUIT_SEARCH; }
 
-    size_t size() { return results_->node_count; }
-
-    void quit() { results_->exit_code = sbmpo::QUIT_SEARCH; }
-
-protected:
-
-    std::shared_ptr<SearchResults> results_;
-    std::shared_ptr<ModelType> model_;
-    std::shared_ptr<SearchType> search_;
-
-};
+    protected:
+        std::unique_ptr<SearchResults> results_;
+        std::unique_ptr<ModelType> model_;
+        std::unique_ptr<SearchType> search_;
+    };
 
 }
 

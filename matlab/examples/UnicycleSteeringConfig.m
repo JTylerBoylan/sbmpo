@@ -6,9 +6,10 @@ clear
 close all
 clc
 
+addpath('..')
 %% Parameters
 
-runs = 3;
+runs = 25;
 
 params = struct;
 params.max_iterations = 5000;

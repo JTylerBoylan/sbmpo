@@ -5,6 +5,7 @@
 clear
 close all
 
+addpath('..')
 %% Parameters
 
 runs = 1;

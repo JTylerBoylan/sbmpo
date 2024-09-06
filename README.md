@@ -30,7 +30,7 @@ To install, clone this package into your workspace and make inside the build fol
 ```
 git clone https://github.com/JTylerBoylan/sbmpo.git
 mkdir -p ./sbmpo/build
-cd ./sbmpo/build && cmake ..
+cd ./sbmpo/build && cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
@@ -118,10 +118,10 @@ Here are some of the functions you can use:
 | `time_t` | `time_us()` | Get the computation time of the run in microseconds |
 | `float` | `cost()` | Get the cost of the best path |
 | `size_t` | `size()` | Get the number of nodes on the grid |
-| `std::vector<sbmpo::NodePtr>` | `node_path()` | Returns the best path found as a list of Node pointers |
+| `std::vector<sbmpo::Node*>` | `node_path()` | Returns the best path found as a list of Node pointers |
 | `std::vector<State>` | `state_path()` | Returns the best path found as a list of states |
 | `std::vector<Control>` | `control_path()` | Returns the best path found as a list of controls |
-| `std::vector<sbmpo::NodePtr>` | `nodes()` | Returns all nodes on the grid as a list of Node pointers |
+| `std::vector<sbmpo::Node*>` | `nodes()` | Returns all nodes on the grid as a list of Node pointers |
 
 ##### Exit Codes:
 | Exit Code | Description |

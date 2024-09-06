@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 # Define project and its version
 project(sbmpo VERSION 1.0)
 
-# Use Release mode
-set(CMAKE_BUILD_TYPE Release)
-
 # Specify the directory containing header files for your library
 include_directories(include)
 

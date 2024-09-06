@@ -6,6 +6,7 @@ clear
 close all
 clc
 
+addpath('..')
 %% Parameters
 
 runs = 1;

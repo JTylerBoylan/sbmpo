@@ -6,37 +6,34 @@
 #include <sbmpo/grids/ImplicitGrid.hpp>
 #include <sbmpo/queues/PriorityQueue.hpp>
 
-namespace sbmpo_algorithms {
+namespace sbmpo_algorithms
+{
+    using namespace sbmpo;
 
-using namespace sbmpo;
+    class Astar : public SearchAlgorithm
+    {
+    public:
+        Astar(Model *model, SearchResults *results)
+            : SearchAlgorithm(model, results) {}
 
-class Astar : public SearchAlgorithm {
+        void solve(const SearchParameters parameters) override;
 
-public:
+        SearchResults *latest() { return results_; }
 
-    Astar(const std::shared_ptr<Model> model, std::shared_ptr<SearchResults> results) 
-    : SearchAlgorithm(model, results) {}
+    private:
+        SearchParameters params_;
+        std::shared_ptr<ImplicitGrid> grid_;
+        std::shared_ptr<PriorityQueue> queue_;
+        Node *start_node_, *goal_node_, *best_node_;
 
-    void solve(const SearchParameters parameters) override;
+        void initialize_();
 
-    std::shared_ptr<SearchResults> latest() { return results_; }
+        Node *getNeighbor_(const Node *node, const Control &control, const float sample_time);
 
-private:
+        void updateLineage_(Node *child, Node *parent, const Control &control);
 
-    SearchParameters params_;
-    std::shared_ptr<ImplicitGrid> grid_;
-    std::shared_ptr<PriorityQueue> queue_;
-    NodePtr start_node_, goal_node_, best_node_;
-
-    void initialize_();
-
-    NodePtr getNeighbor_(const NodePtr node, const Control& control, const float sample_time);
-
-    void updateLineage_(NodePtr child, const NodePtr parent, const Control& control);
-
-    void generatePath_();
-
-};
+        void generatePath_();
+    };
 
 }
 
