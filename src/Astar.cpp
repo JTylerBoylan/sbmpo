@@ -77,8 +77,20 @@ namespace sbmpo_algorithms
             if (current_node->h < best_node_->h)
                 best_node_ = current_node;
 
-            // Loop through all neighbors of the node (Parallelized)
-            auto update_neighbors = [&](const Control &control)
+            // Get control samples
+            std::vector<Control> controls;
+            switch (params_.sample_type)
+            {
+            case FIXED:
+                controls = params_.fixed_samples;
+                break;
+            case DYNAMIC:
+                controls = params_.getDynamicSamples(current_node->state);
+                break;
+            }
+
+            // Loop through all neighbors of the node
+            const auto update_neighbors = [&](const Control &control)
             {
                 // Get neighbor based on control
                 Node *neighbor = getNeighbor_(current_node, control, params_.sample_time);
@@ -98,7 +110,7 @@ namespace sbmpo_algorithms
                     queue_->push(neighbor);
                 }
             };
-            std::for_each(std::execution::seq, params_.samples.cbegin(), params_.samples.cend(), update_neighbors);
+            std::for_each(std::execution::seq, controls.cbegin(), controls.cend(), update_neighbors);
 
             // Next iteration
             ++results_->iteration;

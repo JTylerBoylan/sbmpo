@@ -31,13 +31,22 @@ namespace sbmpo_io
         printf("Goal State: %s\n", st.c_str());
         st.clear();
 
-        printf("Samples:\n");
-        for (sbmpo::Control control : params.samples)
+        switch (params.sample_type)
         {
-            for (float f : control)
-                st += std::to_string(f) + " ";
-            printf("  - %s\n", st.c_str());
-            st.clear();
+        case sbmpo::ControlSampleType::FIXED:
+            printf("Sample Type: FIXED\n");
+            printf("Fixed Samples:\n");
+            for (sbmpo::Control control : params.fixed_samples)
+            {
+                for (float f : control)
+                    st += std::to_string(f) + " ";
+                printf("  - %s\n", st.c_str());
+                st.clear();
+            }
+            break;
+        case sbmpo::ControlSampleType::DYNAMIC:
+            printf("Sample Type: DYNAMIC\n");
+            break;
         }
     }
 

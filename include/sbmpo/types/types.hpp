@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace sbmpo
 {
@@ -24,6 +25,12 @@ namespace sbmpo
         INVALID_START_STATE
     };
 
+    enum ControlSampleType
+    {
+        FIXED,
+        DYNAMIC
+    };
+
     struct SearchParameters
     {
         uint32_t max_iterations = 100000U;
@@ -32,7 +39,9 @@ namespace sbmpo
         float sample_time = 1.0F;
         std::vector<float> grid_resolution;
         State start_state, goal_state;
-        std::vector<Control> samples;
+        ControlSampleType sample_type = FIXED;
+        std::vector<Control> fixed_samples;
+        std::function<std::vector<Control>(const State &)> getDynamicSamples;
     };
 
     struct SearchResults

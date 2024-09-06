@@ -63,7 +63,7 @@ namespace sbmpo_csv
                     std::getline(ss, value, ',');
                     control[c] = std::stof(value);
                 }
-                param.samples.push_back(control);
+                param.fixed_samples.push_back(control);
             }
             parameters.push_back(param);
         }
