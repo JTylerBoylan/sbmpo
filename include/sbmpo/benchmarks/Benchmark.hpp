@@ -24,7 +24,14 @@ namespace sbmpo_benchmarks
 
     public:
         Benchmark(std::string csv_folder = DEFAULT_CSV_FOLDER)
-            : SBMPO<ModelType, SearchType>(), csv_folder_(csv_folder), verbose_(true), runs_per_param_(1), index_(1) {}
+            : SBMPO<ModelType, SearchType>(),
+              csv_folder_(csv_folder),
+              verbose_(true),
+              runs_per_param_(1),
+              index_(1),
+              dynamic_sampling_(false)
+        {
+        }
 
         void set_folder(std::string folder_path)
         {
@@ -51,6 +58,12 @@ namespace sbmpo_benchmarks
             runs_per_param_ = runs_per_param;
         }
 
+        void set_dynamic_sampling(std::function<std::vector<Control>(const State &)> dynamicSamplingFcn)
+        {
+            dynamic_sampling_ = true;
+            dynamicSamplingFcn_ = dynamicSamplingFcn;
+        }
+
         virtual void benchmark()
         {
             // Clear results
@@ -59,6 +72,15 @@ namespace sbmpo_benchmarks
 
             // Loop through parameter set
             auto param_list = sbmpo_csv::get_params(csv_folder_ + PARAMS_FILE);
+
+            if (dynamic_sampling_)
+            {
+                for (auto &param : param_list)
+                {
+                    param.sample_type = sbmpo::ControlSampleType::DYNAMIC;
+                    param.getDynamicSamples = dynamicSamplingFcn_;
+                }
+            }
 
             printf("Starting benchmarking.\n");
             for (auto param = param_list.cbegin(); param != param_list.cend(); ++param)
@@ -117,6 +139,8 @@ namespace sbmpo_benchmarks
         bool print_nodes_;
         uint16_t runs_per_param_;
         uint16_t index_;
+        bool dynamic_sampling_;
+        std::function<std::vector<Control>(const State &)> dynamicSamplingFcn_;
     };
 
 }
