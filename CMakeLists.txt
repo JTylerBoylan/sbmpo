@@ -71,6 +71,12 @@ install(TARGETS sbmpo
 # Install header files to the include directory
 install(DIRECTORY include/ DESTINATION include)
 
+# Install the config file
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/sbmpoConfig.cmake"
+  DESTINATION "lib/cmake/sbmpo"
+)
+
 ######################
 ## EXPORTING TARGET ##
 ######################
@@ -83,6 +89,13 @@ write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/sbmpoConfigVersion.cmake"
   VERSION ${sbmpo_VERSION}
   COMPATIBILITY AnyNewerVersion
+)
+
+# Configure the config file for the project
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/sbmpoConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/sbmpoConfig.cmake"
+  INSTALL_DESTINATION "lib/cmake/sbmpo"
 )
 
 # Export the library targets to a file
