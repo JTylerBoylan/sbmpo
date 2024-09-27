@@ -4,7 +4,7 @@
 #include <sbmpo/types/types.hpp>
 #include <sbmpo/types/Node.hpp>
 #include <unordered_map>
-#include <mutex>
+#include <memory>
 
 namespace sbmpo
 {
@@ -42,7 +42,6 @@ namespace sbmpo
 
         void clear()
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             node_map_.clear();
         }
 
@@ -62,7 +61,6 @@ namespace sbmpo
 
         const std::vector<float> resolution_;
         std::unordered_map<GridKey, std::unique_ptr<Node>, GridKeyHash> node_map_;
-        std::mutex mutex_;
 
         GridKey state_to_key_(const State &state)
         {
@@ -79,7 +77,6 @@ namespace sbmpo
 
         Node *key_to_node_(const GridKey &key)
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             const auto it = node_map_.find(key);
             if (it != node_map_.end())
             {
@@ -109,7 +106,6 @@ namespace sbmpo
         {
             State key_state = key_to_state_(key, state);
             std::unique_ptr<Node> node = std::make_unique<Node>(key_state);
-            std::lock_guard<std::mutex> lock(mutex_);
             node_map_.emplace(key, std::move(node));
             return node_map_[key].get();
         }

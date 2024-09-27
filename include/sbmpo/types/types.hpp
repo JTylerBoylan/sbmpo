@@ -2,8 +2,8 @@
 #define SBMPO_TYPES_HPP_
 
 #include <vector>
-#include <memory>
 #include <functional>
+#include <cstdint>
 
 namespace sbmpo
 {

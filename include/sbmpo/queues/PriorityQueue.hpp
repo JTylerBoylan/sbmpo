@@ -4,7 +4,6 @@
 #include <sbmpo/types/types.hpp>
 #include <sbmpo/types/Node.hpp>
 #include <queue>
-#include <mutex>
 
 namespace sbmpo
 {
@@ -15,7 +14,6 @@ namespace sbmpo
 
         Node *pop()
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             Node *best_node = node_priority_queue_.top();
             node_priority_queue_.pop();
             return best_node;
@@ -23,13 +21,11 @@ namespace sbmpo
 
         void push(Node *node)
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             node_priority_queue_.push(node);
         }
 
         bool empty()
         {
-            std::lock_guard<std::mutex> lock(mutex_);
             return node_priority_queue_.empty();
         }
 
@@ -43,7 +39,6 @@ namespace sbmpo
         };
 
         std::priority_queue<Node *, std::vector<Node *>, CompareNodePtr> node_priority_queue_;
-        std::mutex mutex_;
     };
 }
 
