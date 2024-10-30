@@ -24,14 +24,14 @@ author = {Mario Harper and Camilo Ordonez and Emmanuel Collins}
 ## Dependencies
 ### CMake 3.15
 
-## Installation
+## Installation (Linux)
 To install, clone this package into your workspace and make inside the build folder.
 
 ```
 git clone https://github.com/JTylerBoylan/sbmpo.git
 mkdir -p ./sbmpo/build
 cd ./sbmpo/build && cmake .. -DCMAKE_BUILD_TYPE=Release
-make
+make && sudo make install
 ```
 
 ## Creating your own model
