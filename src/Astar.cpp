@@ -1,5 +1,5 @@
 #include <sbmpo/algorithms/Astar.hpp>
-#include <execution>
+#include <chrono>
 
 namespace sbmpo_algorithms
 {
@@ -90,7 +90,7 @@ namespace sbmpo_algorithms
             }
 
             // Loop through all neighbors of the node
-            const auto update_neighbors = [&](const Control &control)
+            for (const Control &control : controls)
             {
                 // Get neighbor based on control
                 Node *neighbor = getNeighbor_(current_node, control, params_.sample_time);
@@ -109,8 +109,7 @@ namespace sbmpo_algorithms
                     // Add into queue
                     queue_->push(neighbor);
                 }
-            };
-            std::for_each(std::execution::seq, controls.cbegin(), controls.cend(), update_neighbors);
+            }
 
             // Next iteration
             ++results_->iteration;
