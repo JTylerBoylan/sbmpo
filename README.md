@@ -54,7 +54,7 @@ namespace my_namespace {
         Dynamics of the system
         How does each state change with respect to the controls?
     */
-    State next_state(const State& state, const Control& control, const float time_span) {}
+    State next_state(const State& state, const Control& control, const float time_span) override {}
 
 
     /*
@@ -62,7 +62,7 @@ namespace my_namespace {
         What am I trying to minimize?
         i.e Distance, Time, Energy
     */
-    float cost(const State& state, const Control& control, const float time_span) {}
+    float cost(const State& state, const Control& control, const float time_span) override {}
 
 
     /*
@@ -70,18 +70,24 @@ namespace my_namespace {
         Leads the planner to the goal
         What is the lowest cost possible from this state to the goal?
     */
-    float heuristic(const State& state, const State& goal) {}
+    float heuristic(const State& state, const State& goal) override {}
 
     /*
         Is this state close enough to the goal to end the plan?
     */
-    bool is_goal(const State& state, const State& goal) {}
+    bool is_goal(const State& state, const State& goal) override {}
 
     /*
         Does this state meet the model constraints?
         i.e Boundary constraints, Obstacles, State limits
     */
-    bool is_valid(const State& state) {}
+    bool is_valid(const State& state) override {}
+
+    /*
+        Get control samples based on the current state (Optional)
+        Enabled using SearchParameters.sample_type = DYNAMIC
+    */
+    std::vector<Control> get_dynamic_samples(const State &state) override {}
   
   };
 
@@ -99,7 +105,8 @@ These parameters include:
 | `grid_resolution` | Grid resolutions | `std::vector<float>` |
 | `start_state` | Initial state of plan | `sbmpo::State` |
 | `goal_state` | Goal state of plan | `sbmpo::State` |
-| `samples` | List of controls to be sampled in a branchout | `std::vector<sbmpo::Control>` |
+| `sample_type` | Type of sampling to use (0: fixed or 1: dynamic) | `int` |
+| `fixed_samples` | List of controls to be sampled in a branchout | `std::vector<sbmpo::Control>` |
 
 #### Run the model
 To run the model, simply create a SBMPO planner object with your custom model class and parameters, then execute it's `run()` function.
@@ -130,7 +137,10 @@ Here are some of the functions you can use:
 |     1     | Iteration limit reached |
 |     2     | No nodes left in queue |
 |     3     | Max generations reached |
-|     5     | Unknown Error / Running |
+|     4     | Unknown Error / Running |
+|     5     | Manual Quit Search |
+|     6     | Time limit reached |
+|     7     | Invalid start state |
 
 #### Example code
 
