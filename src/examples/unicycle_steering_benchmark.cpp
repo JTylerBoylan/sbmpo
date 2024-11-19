@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     Obstacles2DBenchmark<UnicycleSteeringModel> benchmarker(csv_folder);
 
     // Change benchmark parameters
+    benchmarker.model()->set_horizon_time(0.5f);
     benchmarker.model()->set_body_radius(0.125f);
     benchmarker.model()->set_goal_threshold(0.5f);
     benchmarker.model()->set_integration_steps(10);

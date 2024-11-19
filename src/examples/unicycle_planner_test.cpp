@@ -14,7 +14,6 @@ int main(int argc, char **argv)
     parameters.max_iterations = 5000;
     parameters.max_generations = 50;
     parameters.time_limit_us = 10000;
-    parameters.sample_time = 1.0;
     parameters.sample_type = ControlSampleType::FIXED;
     parameters.fixed_samples = {
         {0.25, -M_2PI / 8.0},

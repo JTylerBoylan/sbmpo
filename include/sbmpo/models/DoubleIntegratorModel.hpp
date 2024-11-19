@@ -24,6 +24,7 @@ namespace sbmpo_models
 
         DoubleIntegratorModel()
         {
+            horizon_time_ = 1.0f;
             threshold_x_ = 0.05f;
             threshold_v_ = 0.05f;
             min_acc_ = -1.0f;
@@ -31,11 +32,11 @@ namespace sbmpo_models
             integration_steps_ = 10;
         }
 
-        virtual State next_state(const State &state, const Control &control, const float time_span)
+        virtual State next_state(const State &state, const Control &control)
         {
             // Update state
             State next_state = state;
-            float time_step = time_span / integration_steps_;
+            float time_step = horizon_time_ / integration_steps_;
             for (int i = 0; i < integration_steps_; i++)
             {
                 next_state[X] += state[V] * time_step;
@@ -44,9 +45,9 @@ namespace sbmpo_models
             return next_state;
         }
 
-        virtual float cost(const State &state1, const State &state2, const Control &control, const float time_span)
+        virtual float cost(const State &state1, const State &state2, const Control &control)
         {
-            return time_span;
+            return horizon_time_;
         }
 
         virtual float heuristic(const State &state, const State &goal)
@@ -83,6 +84,11 @@ namespace sbmpo_models
             return std::abs(goal[X] - state[X]) <= threshold_x_ && std::abs(goal[V] - state[V]) <= threshold_v_;
         }
 
+        void set_horizon_time(float time_span)
+        {
+            horizon_time_ = time_span;
+        }
+
         void set_integration_steps(size_t integration_steps)
         {
             integration_steps_ = integration_steps;
@@ -109,6 +115,7 @@ namespace sbmpo_models
         }
 
     protected:
+        float horizon_time_;
         int integration_steps_;
         float threshold_x_;
         float threshold_v_;

@@ -27,15 +27,16 @@ namespace sbmpo_models
 
         UnicycleSteeringModel()
         {
+            horizon_time_ = 1.0f;
             goal_threshold_ = 0.25;
             integration_steps_ = 5;
         }
 
-        State next_state(const State &state, const Control &control, const float time_span)
+        State next_state(const State &state, const Control &control) override
         {
             // Update state
             State next_state = state;
-            float time_increment = time_span / integration_steps_;
+            float time_increment = horizon_time_ / integration_steps_;
             for (int i = 0; i < integration_steps_; i++)
             {
                 next_state[X] += cosf(next_state[Q]) * control[V] * time_increment;
@@ -51,14 +52,14 @@ namespace sbmpo_models
             return next_state;
         }
 
-        float cost(const State &state1, const State &state2, const Control &control, const float time_span)
+        float cost(const State &state1, const State &state2, const Control &control) override
         {
             const float dx = state2[X] - state1[X];
             const float dy = state2[Y] - state1[Y];
             return std::sqrt(dx * dx + dy * dy);
         }
 
-        float heuristic(const State &state, const State &goal)
+        float heuristic(const State &state, const State &goal) override
         {
             const float dx = goal[X] - state[X];
             const float dy = goal[Y] - state[Y];
@@ -66,14 +67,19 @@ namespace sbmpo_models
             return sqrtf(dx * dx + dy * dy) + std::abs(dq < M_PI ? dq : M_2PI - dq);
         }
 
-        bool is_goal(const State &state, const State &goal)
+        bool is_goal(const State &state, const State &goal) override
         {
             return heuristic(state, goal) <= goal_threshold_;
         }
 
-        bool is_valid(const State &state)
+        bool is_valid(const State &state) override
         {
             return true;
+        }
+
+        void set_horizon_time(float time_span)
+        {
+            horizon_time_ = time_span;
         }
 
         void set_goal_threshold(float goal_threshold)
@@ -87,6 +93,7 @@ namespace sbmpo_models
         }
 
     protected:
+        float horizon_time_;
         float goal_threshold_;
         int integration_steps_;
     };

@@ -14,7 +14,6 @@ runs = 25;
 params = struct;
 params.max_iterations = 5000;
 params.max_generations = 100;
-params.horizon_time = 0.5;
 params.num_states = 3;
 params.num_controls = 2;
 params.grid_resolution = [0.10; 0.10; pi/36];

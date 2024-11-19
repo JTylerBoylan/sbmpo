@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     // Create new benchmark
     Benchmark<DoubleIntegratorModel> benchmarker(csv_folder);
     benchmarker.set_runs_per_param(10000);
+    benchmarker.model()->set_horizon_time(0.25f);
 
     // Run benchmark on the model (saves to csv folder)
     benchmarker.benchmark();

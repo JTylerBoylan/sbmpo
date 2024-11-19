@@ -13,14 +13,14 @@ namespace sbmpo
             Dynamics of the system
             How does each state change with respect to the controls?
         */
-        virtual State next_state(const State &state, const Control &control, const float time_span) = 0;
+        virtual State next_state(const State &state, const Control &control) = 0;
 
         /*
             Cost of a state and control
             What am I trying to minimize?
             i.e Distance, Time, Energy
         */
-        virtual float cost(const State &state1, const State &state2, const Control &control, const float time_span) = 0;
+        virtual float cost(const State &state1, const State &state2, const Control &control) = 0;
 
         /*
             Heuristic of a state with respect to the goal

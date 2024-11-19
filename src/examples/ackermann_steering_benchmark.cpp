@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     Obstacles2DBenchmark<AckermannSteeringModel> benchmarker(csv_folder);
 
     // Change benchmark parameters
+    benchmarker.model()->set_horizon_time(0.25f);
     benchmarker.model()->set_body_radius(0.5f);
     benchmarker.model()->set_map_bounds({-20.0f, -20.0f, 20.0f, 20.0f});
     benchmarker.set_runs_per_param(1);

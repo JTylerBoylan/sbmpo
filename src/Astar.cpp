@@ -93,14 +93,14 @@ namespace sbmpo_algorithms
             for (const Control &control : controls)
             {
                 // Get neighbor based on control
-                Node *neighbor = getNeighbor_(current_node, control, params_.sample_time);
+                Node *neighbor = getNeighbor_(current_node, control);
 
                 // Check if valid neighbor
                 if (!neighbor)
                     return;
 
                 // Update if better path found
-                const float new_g = current_node->g + model_->cost(current_node->state, neighbor->state, control, params_.sample_time);
+                const float new_g = current_node->g + model_->cost(current_node->state, neighbor->state, control);
                 if (new_g < neighbor->g)
                 {
                     neighbor->g = new_g;
@@ -160,10 +160,10 @@ namespace sbmpo_algorithms
         best_node_ = start_node_;
     }
 
-    Node *Astar::getNeighbor_(const Node *node, const Control &control, const float sample_time)
+    Node *Astar::getNeighbor_(const Node *node, const Control &control)
     {
         // Get new state from control
-        State new_state = model_->next_state(node->state, control, sample_time);
+        State new_state = model_->next_state(node->state, control);
         // Check if the state is valid
         if (model_->is_valid(new_state))
         {

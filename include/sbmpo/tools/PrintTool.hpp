@@ -13,7 +13,6 @@ namespace sbmpo_io
         printf("---- Planner Parameters [%d] ----\n", index);
         printf("Max iterations: %d\n", params.max_iterations);
         printf("Max generations: %d\n", params.max_generations);
-        printf("Sample Time: %.2f\n", params.sample_time);
 
         std::string st;
         for (float f : params.grid_resolution)

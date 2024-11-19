@@ -33,8 +33,6 @@ namespace sbmpo_csv
             std::getline(ss, value, ',');
             param.max_generations = std::stoi(value);
             std::getline(ss, value, ',');
-            param.sample_time = std::stof(value);
-            std::getline(ss, value, ',');
             int num_states = std::stoi(value);
             std::getline(ss, value, ',');
             int num_controls = std::stoi(value);

@@ -29,6 +29,7 @@ namespace sbmpo_models
 
         AckermannSteeringModel()
         {
+            horizon_time_ = 1.0f;
             goal_threshold_ = 0.25f;
             integration_steps_ = 5;
             inv_wheel_base_length_ = 1.0f;
@@ -39,11 +40,11 @@ namespace sbmpo_models
             max_centrifugal_ = 10.0f;         // m/s^2
         }
 
-        State next_state(const State &state, const Control &control, const float time_span) override
+        State next_state(const State &state, const Control &control) override
         {
             // Integrate control into state (Euler)
             State next_state = state;
-            const float time_increment = time_span / integration_steps_;
+            const float time_increment = horizon_time_ / integration_steps_;
             for (int i = 0; i < integration_steps_; i++)
             {
                 next_state[X] += cosf(next_state[Q]) * next_state[V] * time_increment;
@@ -62,9 +63,9 @@ namespace sbmpo_models
             return next_state;
         }
 
-        float cost(const State &state1, const State &state2, const Control &control, const float time_span) override
+        float cost(const State &state1, const State &state2, const Control &control) override
         {
-            return time_span;
+            return horizon_time_;
         }
 
         float heuristic(const State &state, const State &goal) override
@@ -89,6 +90,11 @@ namespace sbmpo_models
                 state[G] >= min_turn_angle_ &&
                 std::abs(state[V] * state[V] * inv_wheel_base_length_ * state[G]) <= max_centrifugal_;
             return valid;
+        }
+
+        void set_horizon_time(float time_span)
+        {
+            horizon_time_ = time_span;
         }
 
         void set_goal_threshold(float goal_threshold)
@@ -124,6 +130,7 @@ namespace sbmpo_models
         }
 
     protected:
+        float horizon_time_;
         float goal_threshold_;
         int integration_steps_;
         float inv_wheel_base_length_;

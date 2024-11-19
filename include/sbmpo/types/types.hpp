@@ -36,7 +36,6 @@ namespace sbmpo
         uint32_t max_iterations = 100000U;
         uint32_t max_generations = 1000U;
         time_t time_limit_us = 10000000UL; // 10s
-        float sample_time = 1.0F;
         std::vector<float> grid_resolution;
         State start_state, goal_state;
         ControlSampleType sample_type = FIXED;

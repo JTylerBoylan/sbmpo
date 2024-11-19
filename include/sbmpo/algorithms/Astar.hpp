@@ -28,7 +28,7 @@ namespace sbmpo_algorithms
 
         void initialize_();
 
-        Node *getNeighbor_(const Node *node, const Control &control, const float sample_time);
+        Node *getNeighbor_(const Node *node, const Control &control);
 
         void updateLineage_(Node *child, Node *parent, const Control &control);
 
