@@ -46,6 +46,8 @@ namespace my_namespace {
   using namespace sbmpo;
 
   class MyCustomModel : public Model {
+
+  public:
  
     // Constructor
     MyCustomModel() {}
@@ -62,7 +64,7 @@ namespace my_namespace {
         What am I trying to minimize?
         i.e Distance, Time, Energy
     */
-    float cost(const State& state, const Control& control) override {}
+    float cost(const State& state1, const State& state2, const Control& control) override {}
 
 
     /*
