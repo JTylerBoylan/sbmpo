@@ -54,7 +54,7 @@ namespace my_namespace {
         Dynamics of the system
         How does each state change with respect to the controls?
     */
-    State next_state(const State& state, const Control& control, const float time_span) override {}
+    State next_state(const State& state, const Control& control) override {}
 
 
     /*
@@ -62,7 +62,7 @@ namespace my_namespace {
         What am I trying to minimize?
         i.e Distance, Time, Energy
     */
-    float cost(const State& state, const Control& control, const float time_span) override {}
+    float cost(const State& state, const Control& control) override {}
 
 
     /*
@@ -101,7 +101,6 @@ These parameters include:
 | ---- | ----------- | ---- |
 | `max_iterations` | Maximum branchout iterations | `int` |
 | `max_generations` | Maximum branchout generations | `int` |
-| `sample_time` | Time period per branchout | `float` |
 | `grid_resolution` | Grid resolutions | `std::vector<float>` |
 | `start_state` | Initial state of plan | `sbmpo::State` |
 | `goal_state` | Goal state of plan | `sbmpo::State` |
