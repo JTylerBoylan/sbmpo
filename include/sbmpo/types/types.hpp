@@ -41,7 +41,6 @@ namespace sbmpo
         State start_state, goal_state;
         ControlSampleType sample_type = FIXED;
         std::vector<Control> fixed_samples;
-        std::function<std::vector<Control>(const State &)> getDynamicSamples;
     };
 
     struct SearchResults

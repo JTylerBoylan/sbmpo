@@ -85,7 +85,7 @@ namespace sbmpo_algorithms
                 controls = params_.fixed_samples;
                 break;
             case DYNAMIC:
-                controls = params_.getDynamicSamples(current_node->state);
+                controls = model_->get_dynamic_samples(current_node->state);
                 break;
             }
 

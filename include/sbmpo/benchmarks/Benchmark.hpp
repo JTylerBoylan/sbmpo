@@ -58,10 +58,9 @@ namespace sbmpo_benchmarks
             runs_per_param_ = runs_per_param;
         }
 
-        void set_dynamic_sampling(std::function<std::vector<Control>(const State &)> dynamicSamplingFcn)
+        void set_dynamic_sampling(bool tf)
         {
-            dynamic_sampling_ = true;
-            dynamicSamplingFcn_ = dynamicSamplingFcn;
+            dynamic_sampling_ = tf;
         }
 
         virtual void benchmark()
@@ -78,7 +77,6 @@ namespace sbmpo_benchmarks
                 for (auto &param : param_list)
                 {
                     param.sample_type = sbmpo::ControlSampleType::DYNAMIC;
-                    param.getDynamicSamples = dynamicSamplingFcn_;
                 }
             }
 

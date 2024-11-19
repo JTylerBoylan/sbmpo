@@ -39,6 +39,15 @@ namespace sbmpo
             i.e Boundary constraints, Obstacles, State limits
         */
         virtual bool is_valid(const State &state) = 0;
+
+        /*
+            Get control samples based on the current state
+            Enabled using SearchParameters.sample_type = DYNAMIC
+        */
+        virtual std::vector<Control> get_dynamic_samples(const State &state)
+        {
+            return {};
+        };
     };
 
 }
