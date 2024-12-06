@@ -57,6 +57,13 @@ namespace sbmpo_algorithms
             // Next best node
             Node *current_node = queue_->pop();
 
+            // Check if closed
+            if (closed_set_.find(current_node) != closed_set_.end())
+                continue;
+
+            // Add to closed set
+            closed_set_.insert(current_node);
+
             // Check for solution
             if (current_node == goal_node_ || model_->is_goal(current_node->state, params_.goal_state))
             {
@@ -138,6 +145,7 @@ namespace sbmpo_algorithms
         // Create new grid, queue, and results
         grid_ = std::make_shared<ImplicitGrid>(params_.grid_resolution);
         queue_ = std::make_shared<PriorityQueue>();
+        closed_set_.clear();
         results_->iteration = 0;
         results_->exit_code = RUNNING;
         results_->time_us = 0;
