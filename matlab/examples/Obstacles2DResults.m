@@ -24,9 +24,9 @@ for p = 1:length(paths)
     ylabel("Y (m)")
 
     % Plot obstacles
-    for o = 1:obstacles(p).n
-        obs = [obstacles(p).x(o)-obstacles(p).r(o) obstacles(p).y(o)-obstacles(p).r(o) ...
-            obstacles(p).r(o)*2 obstacles(p).r(o)*2];
+    for o = 1:obstacles(end).n
+        obs = [obstacles(end).x(o)-obstacles(end).r(o) obstacles(end).y(o)-obstacles(end).r(o) ...
+            obstacles(end).r(o)*2 obstacles(end).r(o)*2];
         rectangle('Position', obs, 'Curvature', [1,1], 'FaceColor', 'k')
     end
 

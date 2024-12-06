@@ -5,6 +5,9 @@
 #include <sbmpo/benchmarks/Benchmark.hpp>
 #include <sbmpo/benchmarks/models/Obstacles2DModel.hpp>
 
+#include <cassert>
+#define assertm(exp, msg) assert(((void)msg, exp))
+
 namespace sbmpo_io
 {
     // Print obstacles
@@ -63,15 +66,15 @@ namespace sbmpo_benchmarks
 
     const std::string OBSTACLES_FILE = "obstacles.csv";
 
-    template <typename ModelType, typename SearchType = DEFAULT_SEARCH_ALGORITHM>
-    class Obstacles2DBenchmark : public Benchmark<Obstacle2DModel<ModelType>, SearchType>
+    template <typename ModelType>
+    class Obstacles2DBenchmark : public Benchmark
     {
-        static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must derive from sbmpo::Model");
-        static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "SearchType must derive from sbmpo::SearchAlgorithm");
-
     public:
-        Obstacles2DBenchmark(std::string csv_folder)
-            : Benchmark<Obstacle2DModel<ModelType>, SearchType>(csv_folder) {}
+        Obstacles2DBenchmark(std::string csv_folder, std::shared_ptr<Obstacle2DModel<ModelType>> model, std::unique_ptr<SearchAlgorithm> search = nullptr)
+            : Benchmark(csv_folder, model, std::move(search))
+        {
+            obstacle2d_model_ = model;
+        }
 
         void benchmark() override
         {
@@ -82,7 +85,7 @@ namespace sbmpo_benchmarks
                 printf("Warning: Number of obstacles in 'obstacles.csv' (%lu) does not match 'runs_per_param' (%d).\n",
                        num_obstacles_, this->runs_per_param_);
             }
-            Benchmark<Obstacle2DModel<ModelType>, SearchType>::benchmark();
+            Benchmark::benchmark();
         }
 
         void run(const SearchParameters &params) override
@@ -91,24 +94,18 @@ namespace sbmpo_benchmarks
                 sbmpo_io::print_parameters(params, this->index_);
 
             SearchResults avg_results;
+            avg_results.exit_code = SOLUTION_FOUND;
             for (size_t r = 0; r < this->runs_per_param_; r++)
             {
-                this->model_->set_obstacles(r < num_obstacles_ ? obstacles_list_[r] : Obstacles());
+                obstacle2d_model_->set_obstacles(r < num_obstacles_ ? obstacles_list_[r] : Obstacles());
                 this->search_->solve(params);
-                if (r == 0)
+                avg_results.time_us += this->results_->time_us;
+                avg_results.cost += this->results_->cost;
+                avg_results.iteration += this->results_->iteration;
+                avg_results.success_rate += this->results_->success_rate;
+                if (this->results_->exit_code != SOLUTION_FOUND)
                 {
-                    avg_results = *this->results();
-                }
-                else
-                {
-                    avg_results.time_us += this->results_->time_us;
-                    avg_results.cost += this->results_->cost;
-                    avg_results.iteration += this->results_->iteration;
-                    avg_results.success_rate += this->results_->success_rate;
-                    if (this->results_->exit_code != SOLUTION_FOUND)
-                    {
-                        avg_results.exit_code = this->results_->exit_code;
-                    }
+                    avg_results.exit_code = this->results_->exit_code;
                 }
             }
             avg_results.time_us /= this->runs_per_param_;
@@ -117,7 +114,7 @@ namespace sbmpo_benchmarks
             avg_results.success_rate /= this->runs_per_param_;
 
             if (this->verbose_)
-                sbmpo_io::print_results(&avg_results, this->index_);
+                sbmpo_io::print_results(this->results_.get(), this->index_);
             if (this->verbose_)
                 sbmpo_io::print_stats(&avg_results, this->index_);
 
@@ -125,15 +122,16 @@ namespace sbmpo_benchmarks
                 printf("Writing results in folder %s ...\n", this->csv_folder_.c_str());
             sbmpo_csv::append_stats(this->csv_folder_ + STATS_FILE, avg_results);
             if (this->print_path_)
-                sbmpo_csv::append_node_path(this->csv_folder_ + NODES_FILE, avg_results.node_path);
+                sbmpo_csv::append_node_path(this->csv_folder_ + NODES_FILE, this->results_->node_path);
             if (this->print_nodes_)
-                sbmpo_csv::append_nodes(this->csv_folder_ + NODES_FILE, avg_results.nodes);
+                sbmpo_csv::append_nodes(this->csv_folder_ + NODES_FILE, this->results_->nodes);
             if (this->verbose_)
                 printf("\n");
             this->index_++;
         }
 
-    private:
+    protected:
+        std::shared_ptr<Obstacle2DModel<ModelType>> obstacle2d_model_;
         size_t num_obstacles_;
         std::vector<sbmpo_benchmarks::Obstacles> obstacles_list_;
     };

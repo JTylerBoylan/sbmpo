@@ -10,11 +10,14 @@ namespace sbmpo_benchmarks
 
     using Obstacles = std::vector<std::array<float, 3>>;
 
-    template <typename ModelType>
+    template <typename ModelType, typename... Args>
     class Obstacle2DModel : public ModelType
     {
+        static_assert(std::is_base_of<Model, ModelType>::value, "ModelType must be a subclass of Model.");
+
     public:
-        Obstacle2DModel()
+        Obstacle2DModel(Args &&...args)
+            : ModelType(std::forward<Args>(args)...)
         {
             body_radius_ = 0.25f;
             map_bounds_ = {-10.0f, -10.0f, 10.0f, 10.0f};

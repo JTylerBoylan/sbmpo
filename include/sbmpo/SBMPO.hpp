@@ -11,17 +11,17 @@
 
 namespace sbmpo
 {
-    template <typename ModelType, typename SearchType = DEFAULT_SEARCH_ALGORITHM>
     class SBMPO
     {
-        static_assert(std::is_base_of<sbmpo::Model, ModelType>::value, "ModelType must derive from sbmpo::Model");
-        static_assert(std::is_base_of<sbmpo::SearchAlgorithm, SearchType>::value, "SearchType must derive from sbmpo::SearchAlgorithm");
-
     public:
-        SBMPO()
-            : results_(std::make_unique<SearchResults>()),
-              model_(std::make_unique<ModelType>()),
-              search_(std::make_unique<SearchType>(model_.get(), results_.get())) {}
+        SBMPO(std::shared_ptr<Model> model, std::unique_ptr<SearchAlgorithm> search = nullptr)
+            : model_(model),
+              search_(std::move(search)),
+              results_(std::make_unique<SearchResults>())
+        {
+            if (!search_)
+                search_ = std::make_unique<DEFAULT_SEARCH_ALGORITHM>(model_.get(), results_.get());
+        }
 
         virtual void run(const SearchParameters &parameters)
         {
@@ -38,9 +38,9 @@ namespace sbmpo
 
         std::vector<Node *> nodes() { return results_->nodes; }
 
-        ModelType *model() { return model_.get(); }
+        Model *model() { return model_.get(); }
 
-        SearchType *algorithm() { return search_.get(); };
+        SearchAlgorithm *algorithm() { return search_.get(); };
 
         time_t time_us() { return results_->time_us; }
 
@@ -55,9 +55,9 @@ namespace sbmpo
         void quit() { results_->exit_code = sbmpo::QUIT_SEARCH; }
 
     protected:
+        std::shared_ptr<Model> model_;
+        std::unique_ptr<SearchAlgorithm> search_;
         std::unique_ptr<SearchResults> results_;
-        std::unique_ptr<ModelType> model_;
-        std::unique_ptr<SearchType> search_;
     };
 
 }

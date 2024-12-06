@@ -21,13 +21,14 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // Create new UnicycleSteering benchmark
-    Obstacles2DBenchmark<AckermannSteeringModel> benchmarker(csv_folder);
+    // Create Obstacles2D model
+    auto model = std::make_shared<Obstacle2DModel<AckermannSteeringModel>>();
+    model->set_horizon_time(0.5f);
+    model->set_body_radius(0.5f);
+    model->set_map_bounds({-20.0f, -20.0f, 20.0f, 20.0f});
 
-    // Change benchmark parameters
-    benchmarker.model()->set_horizon_time(0.25f);
-    benchmarker.model()->set_body_radius(0.5f);
-    benchmarker.model()->set_map_bounds({-20.0f, -20.0f, 20.0f, 20.0f});
+    // Create new UnicycleSteering benchmark
+    Obstacles2DBenchmark benchmarker(csv_folder, model);
     benchmarker.set_runs_per_param(1);
 
     // Run benchmark (saves to csv folder)

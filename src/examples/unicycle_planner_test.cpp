@@ -28,7 +28,8 @@ int main(int argc, char **argv)
 
     sbmpo_io::print_parameters(parameters);
 
-    SBMPO<UnicycleSteeringModel> sbmpo;
+    auto model = std::make_shared<UnicycleSteeringModel>();
+    SBMPO sbmpo(model);
     sbmpo.run(parameters);
 
     sbmpo_io::print_results(sbmpo.results());

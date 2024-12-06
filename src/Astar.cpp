@@ -104,7 +104,7 @@ namespace sbmpo_algorithms
 
                 // Check if valid neighbor
                 if (!neighbor)
-                    return;
+                    continue;
 
                 // Update if better path found
                 const float new_g = current_node->g + model_->cost(current_node->state, neighbor->state, control);

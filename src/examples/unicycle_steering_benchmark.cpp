@@ -21,20 +21,20 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    // Create new UnicycleSteering benchmark
-    Obstacles2DBenchmark<UnicycleSteeringModel> benchmarker(csv_folder);
+    // Create Obstacle2D model
+    auto model = std::make_shared<Obstacle2DModel<UnicycleSteeringModel>>();
+    model->set_horizon_time(0.5f);
+    model->set_body_radius(0.125f);
+    model->set_goal_threshold(0.5f);
+    model->set_integration_steps(10);
+    model->set_map_bounds({-10, -10, 10, 10});
 
-    // Change benchmark parameters
-    benchmarker.model()->set_horizon_time(0.5f);
-    benchmarker.model()->set_body_radius(0.125f);
-    benchmarker.model()->set_goal_threshold(0.5f);
-    benchmarker.model()->set_integration_steps(10);
-    benchmarker.model()->set_map_bounds({-10, -10, 10, 10});
-
-    benchmarker.set_runs_per_param(25);
-    benchmarker.set_verbose(false);
-    benchmarker.set_print_path(false);
-    benchmarker.set_print_nodes(false);
+    // Create new benchmark
+    Obstacles2DBenchmark benchmarker(csv_folder, model);
+    benchmarker.set_runs_per_param(1);
+    benchmarker.set_verbose(true);
+    benchmarker.set_print_path(true);
+    benchmarker.set_print_nodes(true);
 
     // Run benchmark (saves to csv folder)
     benchmarker.benchmark();

@@ -21,10 +21,13 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    // Create model
+    auto model = std::make_shared<DoubleIntegratorModel>();
+    model->set_horizon_time(0.25f);
+
     // Create new benchmark
-    Benchmark<DoubleIntegratorModel> benchmarker(csv_folder);
+    Benchmark benchmarker(csv_folder, model);
     benchmarker.set_runs_per_param(10000);
-    benchmarker.model()->set_horizon_time(0.25f);
 
     // Run benchmark on the model (saves to csv folder)
     benchmarker.benchmark();

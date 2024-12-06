@@ -113,6 +113,14 @@ namespace sbmpo_csv
         std::ofstream myFile(nodes_file, std::ofstream::out | std::fstream::app);
 
         myFile << nodes.size();
+
+        if (nodes.empty())
+        {
+            myFile << '\n';
+            myFile.close();
+            return;
+        }
+
         myFile << ",";
         myFile << nodes[0]->state.size();
         myFile << ",";
@@ -147,6 +155,14 @@ namespace sbmpo_csv
         std::ofstream myFile(nodes_file, std::ofstream::out | std::fstream::app);
 
         myFile << nodes.size();
+
+        if (nodes.empty())
+        {
+            myFile << '\n';
+            myFile.close();
+            return;
+        }
+
         myFile << ",";
         myFile << nodes[0]->state.size();
         for (size_t n = 0; n < nodes.size(); n++)

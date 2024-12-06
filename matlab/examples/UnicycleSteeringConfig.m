@@ -9,8 +9,6 @@ clc
 addpath('..')
 %% Parameters
 
-runs = 25;
-
 params = struct;
 params.max_iterations = 5000;
 params.max_generations = 100;
@@ -36,7 +34,7 @@ params.branchouts = [
 
 %% Write config file
 
-sbmpo_config("../../csv/config.csv", params, runs);
+sbmpo_config("../../csv/config.csv", params, 1);
 
 
 %% Create random set of obstacles
@@ -51,4 +49,4 @@ obs.max_y = 2;
 obs.min_r = 0.35;
 obs.max_r = 0.55;
 
-random_obstacles("../../csv/obstacles.csv", obs, runs);
+random_obstacles("../../csv/obstacles.csv", obs, 1);
