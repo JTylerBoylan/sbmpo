@@ -112,7 +112,8 @@ These parameters include:
 #### Run the model
 To run the model, simply create a SBMPO planner object with your custom model class and parameters, then execute it's `run()` function.
 ```
-sbmpo::SBMPO<MyCustomModel> planner;
+auto model = std::make_shared<MyCustomModel>();
+sbmpo::SBMPO planner(model);
 planner.run(params);
 ```
 
@@ -157,7 +158,8 @@ int main(int argc, char ** argv) {
   sbmpo::SBMPOParameters params;
   /* Add in parameters here */
   
-  sbmpo::SBMPO<MyCustomModel> planner;
+  auto model = std::make_shared<MyCustomModel>();
+  sbmpo::SBMPO planner(model);
   planner.run(params);
   
   sbmpo_io::print_parameters(params);
