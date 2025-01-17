@@ -26,8 +26,8 @@ namespace sbmpo_algorithms
         // Iteration loop
         while (true)
         {
-            // Check for quit command
-            if (results_->exit_code == QUIT_SEARCH)
+            // Check if exit code is not running
+            if (results_->exit_code != RUNNING)
             {
                 break;
             }
@@ -106,8 +106,16 @@ namespace sbmpo_algorithms
                 if (!neighbor)
                     continue;
 
+                // Get control cost
+                const float cost = model_->cost(current_node->state, neighbor->state, control);
+                if (cost < 0)
+                {
+                    results_->exit_code = NEGATIVE_COST;
+                    break;
+                }
+
                 // Update if better path found
-                const float new_g = current_node->g + model_->cost(current_node->state, neighbor->state, control);
+                const float new_g = current_node->g + cost;
                 if (new_g < neighbor->g)
                 {
                     neighbor->g = new_g;

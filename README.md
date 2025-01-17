@@ -143,6 +143,7 @@ Here are some of the functions you can use:
 |     5     | Manual Quit Search |
 |     6     | Time limit reached |
 |     7     | Invalid start state |
+|     8     | Negative cost |
 
 #### Example code
 
