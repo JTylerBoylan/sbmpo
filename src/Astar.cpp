@@ -217,7 +217,7 @@ namespace sbmpo_algorithms
         const size_t max_gen = best_node_->generation;
         results_->node_path.reserve(max_gen + 1);
         results_->state_path.reserve(max_gen + 1);
-        results_->control_path.reserve(max_gen + 1);
+        results_->control_path.reserve(max_gen);
 
         Node *node = best_node_;
         while (node)
@@ -225,7 +225,7 @@ namespace sbmpo_algorithms
             results_->node_path.emplace_back(node);
             results_->state_path.emplace_back(node->state);
             if (node != start_node_)
-                results_->control_path.emplace_back(node->parent->control);
+                results_->control_path.emplace_back(node->control);
             node = node->parent;
         }
 
