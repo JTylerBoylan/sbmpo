@@ -23,7 +23,8 @@ namespace sbmpo
         QUIT_SEARCH,
         TIME_LIMIT,
         INVALID_START_STATE,
-        NEGATIVE_COST
+        NEGATIVE_COST,
+        INVALID_PARAMETERS
     };
 
     enum ControlSampleType

@@ -5,13 +5,20 @@ namespace sbmpo_algorithms
 {
     using namespace sbmpo;
 
-    void Astar::solve(const SearchParameters parameters)
+    void Astar::solve(const SearchParameters &parameters)
     {
         // Start clock
         using namespace std::chrono;
         auto clock_start = high_resolution_clock::now();
 
         params_ = parameters;
+
+        // Check for correct state size
+        if (params_.grid_resolution.size() != params_.start_state.size())
+        {
+            results_->exit_code = INVALID_PARAMETERS;
+            return;
+        }
 
         // Initialize run
         initialize_();
@@ -33,8 +40,9 @@ namespace sbmpo_algorithms
             }
 
             // Check if time limit reached
-            const float curr_time = time_t(duration_cast<duration<double>>(high_resolution_clock::now() - clock_start).count() * 1E6);
-            if (curr_time > parameters.time_limit_us)
+            const auto clock_now = high_resolution_clock::now();
+            const time_t run_time = duration_cast<microseconds>(clock_now - clock_start).count();
+            if (run_time > parameters.time_limit_us)
             {
                 results_->exit_code = TIME_LIMIT;
                 break;
@@ -59,7 +67,9 @@ namespace sbmpo_algorithms
 
             // Check if closed
             if (closed_set_.find(current_node) != closed_set_.end())
+            {
                 continue;
+            }
 
             // Add to closed set
             closed_set_.insert(current_node);
@@ -82,7 +92,9 @@ namespace sbmpo_algorithms
 
             // Best H score check
             if (current_node->h < best_node_->h)
+            {
                 best_node_ = current_node;
+            }
 
             // Get control samples
             std::vector<Control> controls;
@@ -93,6 +105,9 @@ namespace sbmpo_algorithms
                 break;
             case DYNAMIC:
                 controls = model_->get_dynamic_samples(current_node->state);
+                break;
+            default:
+                results_->exit_code = INVALID_PARAMETERS;
                 break;
             }
 
@@ -128,10 +143,6 @@ namespace sbmpo_algorithms
 
             // Next iteration
             ++results_->iteration;
-
-            // Update clock
-            auto clock_now = high_resolution_clock::now();
-            results_->time_us = time_t(duration_cast<duration<double>>(clock_now - clock_start).count() * 1E6);
         }
 
         // Generate path to goal
@@ -142,8 +153,8 @@ namespace sbmpo_algorithms
         results_->node_count = results_->nodes.size();
 
         // End clock
-        auto clock_end = high_resolution_clock::now();
-        results_->time_us = time_t(duration_cast<duration<double>>(clock_end - clock_start).count() * 1E6);
+        const auto clock_end = high_resolution_clock::now();
+        results_->time_us = duration_cast<microseconds>(clock_end - clock_start).count();
 
         // End of solve
     }

@@ -12,7 +12,7 @@ namespace sbmpo
         SearchAlgorithm(Model *model, SearchResults *results)
             : model_(model), results_(results) {}
 
-        virtual void solve(const SearchParameters parameters) = 0;
+        virtual void solve(const SearchParameters &parameters) = 0;
 
     protected:
         Model *model_;

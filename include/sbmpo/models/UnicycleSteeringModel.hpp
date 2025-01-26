@@ -39,8 +39,8 @@ namespace sbmpo_models
             float time_increment = horizon_time_ / integration_steps_;
             for (int i = 0; i < integration_steps_; i++)
             {
-                next_state[X] += cosf(next_state[Q]) * control[V] * time_increment;
-                next_state[Y] += sinf(next_state[Q]) * control[V] * time_increment;
+                next_state[X] += std::cos(next_state[Q]) * control[V] * time_increment;
+                next_state[Y] += std::sin(next_state[Q]) * control[V] * time_increment;
                 next_state[Q] += control[U] * time_increment;
             }
             // Angle wrap
@@ -63,7 +63,7 @@ namespace sbmpo_models
         {
             const float dx = goal[X] - state[X];
             const float dy = goal[Y] - state[Y];
-            const float dq = abs(atan2f(dy, dx) - state[Q]);
+            const float dq = std::abs(atan2f(dy, dx) - state[Q]);
             return sqrtf(dx * dx + dy * dy) + std::abs(dq < M_PI ? dq : M_2PI - dq);
         }
 

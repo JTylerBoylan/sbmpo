@@ -17,7 +17,7 @@ namespace sbmpo_algorithms
         Astar(Model *model, SearchResults *results)
             : SearchAlgorithm(model, results) {}
 
-        void solve(const SearchParameters parameters) override;
+        void solve(const SearchParameters &parameters) override;
 
         SearchResults *latest() { return results_; }
 
@@ -25,7 +25,7 @@ namespace sbmpo_algorithms
         SearchParameters params_;
         std::shared_ptr<ImplicitGrid> grid_;
         std::shared_ptr<PriorityQueue> queue_;
-        std::unordered_set<Node*> closed_set_;
+        std::unordered_set<Node *> closed_set_;
         Node *start_node_, *goal_node_, *best_node_;
 
         void initialize_();
